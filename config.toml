@@ -1,0 +1,115 @@
+# Site basic settings
+baseURL = "https://artan.live"
+title = "ARTAN"
+languageCode = "en-us"
+theme = "hello-friend"
+
+# Build settings
+buildDrafts = false          # preview drafts locally
+buildFuture = false
+buildExpired = false
+canonifyURLs = true
+
+# Features
+enableRobotsTXT = true
+enableGitInfo = false
+enableEmoji = true
+
+# Directories (default Hugo structure)
+archetypeDir = "archetypes"
+contentDir = "content"
+dataDir = "data"
+layoutDir = "layouts"
+publishDir = "public"
+
+# Code highlighting
+pygmentsCodeFences = true
+pygmentsStyle = "monokai"
+
+# Permalinks
+[permalinks]
+  posts = "/posts/:year/:month/:title/"
+
+# Taxonomies
+[taxonomies]
+  tag      = "tags"
+  category = "categories"
+  series   = "series"
+
+# Pagination
+[pagination]
+  pagerSize = 20
+
+# Author and copyright
+[params]
+  dateFormat = "Jan 2, 2006"
+  description = "ARTAN — Music and Books"
+  enableGlobalLanguageMenu = true
+  enableReadingTime = true
+  disableReadOtherPosts = false
+
+  [params.author]
+    name = "ARTAN"
+
+  [params.footer]
+    copyright = true
+    topText = []
+    bottomText = [
+      "Powered by <a href='http://gohugo.io'>Hugo</a>",
+      "Made with &#10084; by ARTAN"
+    ]
+
+  [[params.social]]
+    name = "twitter"
+    url  = "https://twitter.com/"
+
+  [[params.social]]
+    name = "email"
+    url  = "mailto:you@artan.live"
+
+  [[params.social]]
+    name = "github"
+    url  = "https://github.com/"
+
+  [[params.social]]
+    name = "linkedin"
+    url  = "https://www.linkedin.com/"
+
+# Languages
+[languages]
+  [languages.en]
+    weight = 1
+    subtitle = "ARTAN — Music & Books"
+  [languages.fa]
+    weight = 2
+    subtitle = "آرتان — موسیقی و کتاب"
+  [languages.de]
+    weight = 3
+    subtitle = "ARTAN — Musik & Bücher"
+
+# Menu structure
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url  = "/"
+
+  [[menu.main]]
+    identifier = "books"
+    name = "Books"
+    url  = "/books/"
+
+  [[menu.main]]
+    identifier = "music"
+    name = "Music"
+    url  = "/music/"
+
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url  = "/about/"
+
+  [[menu.main]]
+    identifier = "contact"
+    name = "Contact"
+    url  = "/contact/"
