@@ -1,0 +1,11 @@
+{{ define "main" }}
+<section class="hero" style="text-align:center; margin:5rem 0;">
+  <h1>Welcome to ARTAN</h1>
+  <p class="subtitle">Music, Books, Projects & Art — in the now</p>
+  <nav class="hero-nav" style="margin-top:3rem;">
+    {{ range .Site.Menus.main }}
+      <a href="{{ .URL }}" style="margin:0 1rem; text-decoration:none; color:inherit;">{{ .Name }}</a>
+    {{ end }}
+  </nav>
+</section>
+{{ end }}

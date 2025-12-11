@@ -1,80 +1,157 @@
-baseURL = "https://example.com"
+# =========================================
+# ARTAN Website – Minimalistic Apple-Inspired Config
+# Clean, elegant, multilingual, functional
+# =========================================
+
+baseURL = "https://artan.live"
+title = "ARTAN"
 languageCode = "en-us"
-defaultContentLanguage = "en"
-title = "Hugo Hermit"
 theme = "hermit"
-# enableGitInfo = true
-pygmentsCodefences  = true
-pygmentsUseClasses  = true
-# hasCJKLanguage = true  # If Chinese/Japanese/Korean is your main content language, enable this to make wordCount works right.
-rssLimit = 10  # Maximum number of items in the RSS feed.
-copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License." # This message is only used by the RSS template.
-enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/functions/emojify/
-# googleAnalytics = "UA-123-45"
-# disqusShortname = "yourdiscussshortname"
+canonifyURLs = true
 
-[author]
-  name = "John Doe"
+# Build
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+enableRobotsTXT = true
+enableGitInfo = false
+enableEmoji = true
 
-[blackfriday]
-  # hrefTargetBlank = true
-  # noreferrerLinks = true
-  # nofollowLinks = true
+# Directories
+archetypeDir = "archetypes"
+contentDir = "content"
+dataDir = "data"
+layoutDir = "layouts"
+publishDir = "public"
 
+# Code highlighting
+pygmentsCodeFences = true
+pygmentsStyle = "monokai"
+
+# Permalinks
+[permalinks]
+posts = "/posts/:year/:month/:title/"
+
+# Taxonomies
 [taxonomies]
-  tag = "tags"
-  # Categories are disabled by default.
+tag = "tags"
+category = "categories"
+series = "series"
 
+# Pagination
+[pagination]
+pagerSize = 12
+
+# =========================================
+# Global params
+# =========================================
 [params]
-  dateform        = "Jan 2, 2006"
-  dateformShort   = "Jan 2"
-  dateformNum     = "2006-01-02"
-  dateformNumTime = "2006-01-02 15:04 -0700"
+dateformShort = "Jan 2, 2025"
+description = "ARTAN — Music, Books, Projects & Art"
+enableGlobalLanguageMenu = true
+enableReadingTime = true
+disableReadOtherPosts = false
+justifyContent = true
+relatedPosts = true
+code_copy_button = true
 
-  # Metadata mostly used in document's head
-  # description = ""
-  # images = [""]
-  themeColor = "#494f5c"
+[params.author]
+name = "ARTAN"
 
-  homeSubtitle = "A minimal and fast theme for Hugo."
-  footerCopyright = ' &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
-  # bgImg = ""  # Homepage background-image URL
+[params.footer]
+copyright = true
+topText = []
+bottomText = [
+  "Crafted with care by ARTAN"
+]
 
-  # Prefix of link to the git commit detail page. GitInfo must be enabled.
-  # gitUrl = "https://github.com/username/repository/commit/"
+[[params.social]]
+name = "twitter"
+url = "https://twitter.com/"
 
-  # Toggling this option needs to rebuild SCSS, requires Hugo extended version
-  justifyContent = false  # Set "text-align: justify" to `.content`.
+[[params.social]]
+name = "email"
+url = "mailto:you@artan.live"
 
-  relatedPosts = false  # Add a related content section to all single posts page
+[[params.social]]
+name = "github"
+url = "https://github.com/"
 
-  code_copy_button = true # Turn on/off the code-copy-button for code-fields
-  
-  # Add custom css
-  # customCSS = ["css/foo.css", "css/bar.css"]
+[[params.social]]
+name = "linkedin"
+url = "https://www.linkedin.com/"
 
-  # Social Icons
-  # Check https://github.com/Track3/hermit#social-icons for more info.
-  [[params.social]]
-    name = "twitter"
-    url = "https://twitter.com/"
+# =========================================
+# Languages – minimalistic and fully compatible
+# =========================================
+[languages]
 
-  [[params.social]]
-    name = "instagram"
-    url = "https://instagram.com/"
+  [languages.en]
+  languageName = "English"
+  weight = 1
+  title = "ARTAN"
+  subtitle = "Music, Books & Projects"
+    [languages.en.params]
+    dateformShort = "Jan 2, 2025"
 
-  [[params.social]]
-    name = "github"
-    url = "https://github.com/"
+  [languages.fa]
+  languageName = "فارسی"
+  weight = 2
+  title = "ARTAN"
+  subtitle = "موسیقی، کتاب و پروژه‌ها"
+    [languages.fa.params]
+    dateformShort = "2 Jan 2025"
 
+  [languages.de]
+  languageName = "Deutsch"
+  weight = 3
+  title = "ARTAN"
+  subtitle = "Musik, Bücher & Projekte"
+    [languages.de.params]
+    dateformShort = "02. Jan 2025"
+
+# =========================================
+# Menu – streamlined for all content sections
+# =========================================
 [menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
 
   [[menu.main]]
-    name = "Posts"
-    url = "posts/"
-    weight = 10
+    identifier = "books"
+    name = "Books"
+    url = "/books/"
+    weight = 2
 
   [[menu.main]]
+    identifier = "music"
+    name = "Music"
+    url = "/music/"
+    weight = 3
+
+  [[menu.main]]
+    identifier = "projects"
+    name = "Projects"
+    url = "/projects/"
+    weight = 4
+
+  [[menu.main]]
+    identifier = "gallery"
+    name = "Gallery"
+    url = "/gallery/"
+    weight = 5
+
+  [[menu.main]]
+    identifier = "about"
     name = "About"
-    url = "about-hugo/"
-    weight = 20
+    url = "/about/"
+    weight = 6
+
+  [[menu.main]]
+    identifier = "contact"
+    name = "Contact"
+    url = "/contact/"
+    weight = 7

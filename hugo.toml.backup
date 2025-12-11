@@ -3,19 +3,18 @@
 # Fully aligned, multilingual, functional, advanced
 # =========================================
 
-baseURL = "https://artan.live"
+baseURL = "https://artan.live/"
 title = "ARTAN"
-languageCode = "en-us"
 theme = "hermit"
+defaultContentLanguage = "en"
+enableRobotsTXT = true
 canonifyURLs = true
 googleAnalytics = ""
-disqusShortname = "artandavoodi"
 
-# Build
+# Build options
 buildDrafts = false
 buildFuture = false
 buildExpired = false
-enableRobotsTXT = true
 enableGitInfo = false
 enableEmoji = true
 
@@ -48,17 +47,16 @@ pagerSize = 20
 # Global params
 # =========================================
 [params]
-dateformShort = "Dec 11, 2025"
-dateformNum = "2025-12-11"
-dateformNumTime = "2025-12-11 15:00"
-dateform = "Dec 11, 2025"
-description = "ARTAN — Music, Books, Projects & Art"
+description = "ARTAN — Music, Books, Projects, Art & Consciousness"
 enableGlobalLanguageMenu = true
-enableReadingTime = true
+showReadingTime = true
 disableReadOtherPosts = false
 justifyContent = false
 relatedPosts = false
 code_copy_button = true
+dateform = "2006-01-02"
+dateformShort = "Jan 2, 2025"
+dateformNumTime = "2006-01-02 15:04"
 disqusShortname = "artandavoodi"
 
 [params.author]
@@ -67,17 +65,19 @@ name = "ARTAN"
 [params.footer]
 copyright = true
 topText = []
-bottomText = [
-  "Made with &#10084; by ARTAN"
-]
+bottomText = ["Made with &#10084; by ARTAN"]
 
 [[params.social]]
 name = "twitter"
 url = "https://twitter.com/"
 
 [[params.social]]
-name = "email"
-url = "mailto:you@artan.live"
+name = "instagram"
+url = "https://instagram.com/"
+
+[[params.social]]
+name = "youtube"
+url = "https://youtube.com/"
 
 [[params.social]]
 name = "github"
@@ -86,6 +86,10 @@ url = "https://github.com/"
 [[params.social]]
 name = "linkedin"
 url = "https://www.linkedin.com/"
+
+[[params.social]]
+name = "email"
+url = "mailto:you@artan.live"
 
 # =========================================
 # Languages – fully compatible with Hermit
@@ -98,7 +102,9 @@ url = "https://www.linkedin.com/"
   title = "ARTAN"
   subtitle = "ARTAN — Music, Books & Projects"
     [languages.en.params]
-    dateformShort = "Dec 11, 2025"
+    dateform = "2006-01-02"
+    dateformShort = "Jan 2, 2025"
+    dateformNumTime = "2006-01-02 15:04"
 
   [languages.fa]
   languageName = "فارسی"
@@ -106,7 +112,9 @@ url = "https://www.linkedin.com/"
   title = "ARTAN"
   subtitle = "آرتان — موسیقی، کتاب و پروژه‌ها"
     [languages.fa.params]
-    dateformShort = "11 Dec 2025"
+    dateform = "2006-01-02"
+    dateformShort = "2 Jan 2025"
+    dateformNumTime = "2006-01-02 15:04"
 
   [languages.de]
   languageName = "Deutsch"
@@ -114,74 +122,77 @@ url = "https://www.linkedin.com/"
   title = "ARTAN"
   subtitle = "ARTAN — Musik, Bücher & Projekte"
     [languages.de.params]
-    dateformShort = "11. Dez 2025"
+    dateform = "2006-01-02"
+    dateformShort = "02. Jan 2025"
+    dateformNumTime = "2006-01-02 15:04"
 
 # =========================================
-# Menu – fully structured for projects, books, music, gallery
+# Menu – fully structured for current content folders
 # =========================================
 [menu]
-  [[menu.main]]
-    identifier = "home"
-    name = "Home"
-    url = "/"
-    weight = 1
 
   [[menu.main]]
-    identifier = "books"
-    name = "Books"
-    url = "/books/"
-    weight = 2
+  identifier = "home"
+  name = "Home"
+  url = "/"
+  weight = 1
 
   [[menu.main]]
-    identifier = "music"
-    name = "Music"
-    url = "/music/"
-    weight = 3
+  identifier = "books"
+  name = "Books"
+  url = "/books/"
+  weight = 2
 
   [[menu.main]]
-    identifier = "projects"
-    name = "Projects"
-    url = "/projects/"
-    weight = 4
+  identifier = "music"
+  name = "Music"
+  url = "/music/"
+  weight = 3
 
   [[menu.main]]
-    identifier = "gallery"
-    name = "Gallery"
-    url = "/gallery/"
-    weight = 5
+  identifier = "projects"
+  name = "Projects"
+  url = "/projects/"
+  weight = 4
 
   [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
-    weight = 6
+  identifier = "gallery"
+  name = "Gallery"
+  url = "/gallery/"
+  weight = 5
 
   [[menu.main]]
-    identifier = "contact"
-    name = "Contact"
-    url = "/contact/"
-    weight = 7
+  identifier = "podcast"
+  name = "Podcast"
+  url = "/podcast/"
+  weight = 6
 
   [[menu.main]]
-    identifier = "podcast"
-    name = "Podcast"
-    url = "/podcast/"
-    weight = 8
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 7
 
   [[menu.main]]
-    identifier = "events"
-    name = "Events"
-    url = "/events/"
-    weight = 9
+  identifier = "contact"
+  name = "Contact"
+  url = "/contact/"
+  weight = 8
 
   [[menu.main]]
-    identifier = "tour"
-    name = "Tour"
-    url = "/tour/"
-    weight = 10
+  identifier = "events"
+  name = "Events"
+  url = "/events/"
+  weight = 9
 
   [[menu.main]]
-    identifier = "products"
-    name = "Products"
-    url = "/products/"
-    weight = 11
+  identifier = "tour"
+  name = "Tour"
+  url = "/tour/"
+  weight = 10
+
+  [[menu.main]]
+  identifier = "products"
+  name = "Products"
+  url = "/products/"
+  weight = 11
