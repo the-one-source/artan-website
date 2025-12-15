@@ -1,0 +1,54 @@
+
+
+# =========================================
+# ARTAN – Central Design Configuration
+# Single source of truth for colors, fonts, spacing, logos, buttons, and theme
+# =========================================
+
+[colors]
+primary = "#666440"               # Your favorite accent color
+backgroundLight = "#FFFFFF"
+backgroundDark = "#000000"
+textLight = "#000000"
+textDark = "#FFFFFF"
+neutralLight = "#EDEBE2"
+neutralDark = "#1A1A16"
+accentLight = "#888875"
+accentDark = "#444430"
+
+[fonts]
+primary = "Inter, sans-serif"
+secondary = "Roboto, sans-serif"
+baseSize = "16px"
+lineHeight = "1.5"
+headingWeight = "600"
+
+[spacing]
+small = "8px"
+medium = "16px"
+large = "32px"
+sectionPadding = "64px"
+
+[logo]
+mainLight = "/assets/images/logo-light.svg"
+mainDark = "/assets/images/logo-dark.svg"
+favicon = "/assets/images/favicon.svg"
+
+[buttons]
+borderRadius = "4px"
+hoverEffect = "scale(1.05)"
+transitionDuration = "0.3s"
+colorPrimary = "#666440"
+textColorLight = "#FFFFFF"
+textColorDark = "#000000"
+
+[theme]
+defaultMode = "dark"                 # "light" or "dark"
+enableDarkModeToggle = true
+smoothTransition = true
+
+[homepage]
+temporaryMessage = "Something extraordinary is coming"
+backgroundColor = "#000000"
+textColor = "#FFFFFF"
+logoPath = "/assets/images/logo-light.svg"

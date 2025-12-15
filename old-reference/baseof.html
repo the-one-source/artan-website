@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{.Site.LanguageCode}}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{- with .Site.Params.themeColor }}
+    <meta name="theme-color" content="{{.}}">
+    <meta name="msapplication-TileColor" content="{{.}}">
+    {{- end }}
+    {{- partial "structured-data.html" . }}
+    <title>{{ .Title }}</title>
+
+    {{/* ARTAN design system SCSS */}}
+    {{ $styles := resources.Get "css/design.scss" | resources.ToCSS | resources.Minify | resources.Fingerprint }}
+    <link rel="stylesheet" href="{{ $styles.Permalink }}" crossorigin="anonymous">
+
+    {{- block "head" . -}}{{- end }}
+    {{- range .Site.Params.customCSS }}
+    <link rel="stylesheet" href="{{ . | absURL }}">
+    {{- end }}
+    {{- if templates.Exists "partials/extra-head.html" -}}
+    {{ partial "extra-head.html" . }}
+    {{- end }}
+</head>
+
+<body id="page">
+    {{ block "header" . -}}{{ end -}}
+    {{ block "main" . -}}{{ end -}}
+    {{ block "footer" . -}}{{ end }}
+
+    {{/* ARTAN darkmode.js */}}
+    <script src="{{ "js/darkmode.js" | relURL }}"></script>
+
+    {{- if templates.Exists "partials/extra-foot.html" -}}
+    {{ partial "extra-foot.html" . }}
+    {{- end }}
+</body>
+
+</html>
