@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 announcementEl.textContent = primaryText.substring(0, index + 1);
                 index++;
                 if (index <= primaryText.length) {
-                    setTimeout(typeLoop, 30); // Faster typing
+                    setTimeout(typeLoop, 10); // Faster typing
                 } else {
                     // Pause before backward deletion
                     setTimeout(() => {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 announcementEl.textContent = primaryText.substring(0, index - 1);
                 index--;
                 if (index > 0) {
-                    setTimeout(typeLoop, 10);
+                    setTimeout(typeLoop, 5);
                 } else {
                     // Show secondary text after deletion
                     announcementEl.style.fontWeight = "400";
