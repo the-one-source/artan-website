@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Create button for secondary text
             const btn = document.createElement("button");
             btn.className = "enter-button";
-            btn.textContent = secondaryText;
+            btn.innerHTML = `<span>${secondaryText}</span>`;
 
             announcementEl.appendChild(btn);
 
@@ -143,4 +143,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
         typeLoop();
     }
+
+    /* Smooth custom cursor movement */
+    const customCursor = document.querySelector('.custom-cursor');
+    if (customCursor) {
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+        const speed = 0.15; // lower = slower, smoother follow
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * speed;
+            cursorY += (mouseY - cursorY) * speed;
+            customCursor.style.top = `${cursorY}px`;
+            customCursor.style.left = `${cursorX}px`;
+            requestAnimationFrame(animateCursor);
+        }
+
+        animateCursor();
+    }
+
+    /* Hide custom cursor on hover over all clickable or interactive elements */
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target;
+        const interactive = target.closest('button, a, input, select, textarea, label, [role="button"], [onclick], .enter-button');
+        if (customCursor) {
+            if (interactive) {
+                customCursor.style.opacity = '0';
+            } else {
+                customCursor.style.opacity = '1';
+            }
+        }
+    });
 });

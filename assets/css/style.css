@@ -522,14 +522,61 @@ body.dark-mode .site-footer {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 0.5rem; /* spacing below announcement text */
+    position: relative;
+    overflow: hidden;
 }
 
 .enter-button:hover {
-    transform: scale(1.05);
     background-color: var(--text-color);
     color: var(--bg-color);
 }
 
 .enter-button:active {
     transform: scale(0.95);
+}
+
+/* Keyframes for jump animation */
+@keyframes text-jump {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-3px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-1.5px); }
+    100% { transform: translateY(0); }
+}
+
+
+/* ENTER button text ghost flicker effect on hover - corrected */
+.enter-button span {
+    display: inline-block;
+}
+
+.enter-button:hover span {
+    animation: text-flicker 0.3s ease-in-out forwards;
+}
+
+@keyframes text-flicker {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 1; } /* ensure text is fully visible at end */
+}
+
+/* Custom minimalistic circular cursor */
+body {
+    cursor: none; /* hide default cursor */
+}
+
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px; /* small minimalistic size */
+    height: 12px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    background-color: var(--text-color); /* white in dark mode, black in light mode */
+    transform: translate(-50%, -50%);
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
