@@ -397,23 +397,26 @@ body > div {
     animation: typing 4s steps(30, end) infinite;
 }
 
-/* Announcement container styling for fixed width, fixed height, and responsive margins */
+/* Announcement container styling for fixed height and adaptive width */
 #announcement {
-    max-width: 90%;         /* prevents text from touching edges */
-    margin: 0.75rem auto;   /* vertical spacing + horizontal centering */
-    height: 3rem;           /* fixed height for stable display */
+    width: 100%;               /* adaptive width for all screen sizes */
+    max-width: 90%;            /* prevent text from touching screen edges */
+    margin: 0.75rem auto;      /* vertical spacing + horizontal centering */
+    height: 6rem;              /* fixed vertical height for 2 paragraphs */
     display: flex;
+    flex-direction: column;    /* allow multiple lines/paragraphs */
     align-items: center;
     justify-content: center;
     text-align: center;
-    box-sizing: border-box; /* include padding in width */
+    box-sizing: border-box;    /* include padding in width */
     word-wrap: break-word;
-    overflow: hidden;       /* prevent content overflow */
+    overflow-wrap: break-word;
+    overflow: hidden;          /* prevent content overflow */
     transition: height 0.2s;
 }
 
 @media (min-width: 768px) {
     #announcement {
-        max-width: 640px; /* standard width for tablet/desktop */
+        max-width: 640px;      /* standard width for tablet/desktop */
     }
 }
