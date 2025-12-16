@@ -343,3 +343,28 @@ body > div {
         transition: none;
     }
 }
+
+/* Footer Separator Line (Apple-inspired) */
+.footer-separator {
+    width: 90%;           /* leave space on monitor edges like Apple */
+    max-width: 1200px;    /* optional max width for large screens */
+    height: 1px;
+    border: none;
+    margin: 3rem auto 1.5rem auto; /* more space above, less below */
+    background-color: var(--color-primary3);
+    opacity: 0.6;
+    display: block;
+}
+
+/* Footer precise left/right alignment (Apple-inspired) */
+.footer-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;           /* matches footer-separator width */
+    max-width: 1200px;    /* ensures it scales nicely on large screens */
+    margin: 0 auto;
+    padding: 0;           /* removed horizontal padding for flush alignment */
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+}
