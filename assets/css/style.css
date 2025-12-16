@@ -368,3 +368,32 @@ body > div {
     color: var(--text-secondary-color);
     font-size: 0.9rem;
 }
+
+/* Additive: Loading animation for homepage main message */
+.loading-text {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    vertical-align: bottom;
+    width: auto;
+    min-width: 1ch;       /* keeps space when empty */
+    min-height: 1em;      /* keeps container height */
+    white-space: nowrap;   /* prevent line breaks */
+    letter-spacing: 0.02em; 
+    font-weight: 600; 
+    font-size: 1.8rem; 
+    opacity: 1;
+    color: var(--text-color); /* respects dark/light mode */
+}
+
+/* Typing effect keyframes */
+@keyframes typing {
+    0% { width: 0; }
+    70% { width: 100%; }
+    100% { width: 100%; }
+}
+
+.loading-text.typing {
+    animation: typing 4s steps(30, end) infinite;
+}
+

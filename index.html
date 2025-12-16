@@ -49,8 +49,8 @@
     <!-- Announcement / Message -->
     <div style="margin-top:2.5rem; display:flex; flex-direction:column; gap:0.1rem; max-width:640px;">
 
-        <p style="font-size:2rem; font-weight:600; letter-spacing:0.02em;">
-            The website is under construction
+        <p id="typewriter" class="loading-text" style="font-size:1.8rem; font-weight:600; letter-spacing:0.02em; text-align:center; margin:0.75rem auto 0 auto; min-height:2.5rem; display:inline-block; width:100%;">
+            <!-- text will be typed here -->
         </p>
 
         <p style="font-size:1.5rem; font-weight:400; opacity:0.85;">
@@ -111,6 +111,41 @@ document.addEventListener("DOMContentLoaded", () => {
         const systemTheme = e.matches ? "dark" : "light";
         if (!savedTheme) applyTheme(systemTheme);
     });
+
+    // Typewriter effect for #typewriter
+    const typewriterEl = document.getElementById("typewriter");
+    const text = "The website is under construction";
+    let index = 0;
+    let isDeleting = false;
+    let pauseTimeout;
+
+    function type() {
+        if (!isDeleting) {
+            typewriterEl.innerHTML = text.substring(0, index + 1);
+            index++;
+            if (index === text.length) {
+                // Pause for 5 seconds before deleting
+                pauseTimeout = setTimeout(() => {
+                    isDeleting = true;
+                    type();
+                }, 5000);
+                return;
+            }
+            setTimeout(type, 100);
+        } else {
+            typewriterEl.innerHTML = text.substring(0, index - 1);
+            index--;
+            if (index === 0) {
+                isDeleting = false;
+                setTimeout(type, 200);
+            } else {
+                setTimeout(type, 50);
+            }
+        }
+    }
+
+    type();
+
 });
 </script>
 <!-- Footer -->

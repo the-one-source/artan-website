@@ -95,3 +95,54 @@ if (header) {
     if (mobileMenuVisible) toggleMobileMenu();
   }, 250));
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const textElement = document.getElementById("typewriter");
+    if (!textElement) return;
+
+    const text = "The website is under construction";
+    const typingSpeed = 200;      // ms per character typing
+    const deletingSpeed = 50;     // ms per character deleting
+    const pauseAfterTyping = 5000; // 5s pause at full text
+
+    // Prepare container
+    const span = document.createElement("span");
+    textElement.innerHTML = "";
+    textElement.appendChild(span);
+
+    textElement.style.display = "inline-block";
+    textElement.style.minWidth = "300px"; // maintain container width
+    textElement.style.whiteSpace = "nowrap";
+    textElement.style.textAlign = "center"; // text centered
+
+    let index = 0;
+    let isDeleting = false;
+
+    function type() {
+        span.textContent = text.substring(0, index);
+
+        if (!isDeleting) {
+            index++;
+            if (index > text.length) {
+                // Wait at full text, then start deleting
+                setTimeout(() => {
+                    isDeleting = true;
+                    type();
+                }, pauseAfterTyping);
+                return;
+            }
+            setTimeout(type, typingSpeed);
+        } else {
+            index--;
+            if (index < 0) {
+                // Restart typing after deletion
+                isDeleting = false;
+                setTimeout(type, typingSpeed);
+                return;
+            }
+            setTimeout(type, deletingSpeed);
+        }
+    }
+
+    type();
+});
