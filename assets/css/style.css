@@ -402,7 +402,7 @@ body > div {
     width: 100%;               /* adaptive width for all screen sizes */
     max-width: 90%;            /* prevent text from touching screen edges */
     margin: 0.75rem auto;      /* vertical spacing + horizontal centering */
-    height: 6rem;              /* fixed vertical height for 2 paragraphs */
+    height: 10rem;              /* fixed vertical height for 2 paragraphs */
     display: flex;
     flex-direction: column;    /* allow multiple lines/paragraphs */
     align-items: center;

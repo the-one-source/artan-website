@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         announcementEl.textContent = "";
         announcementEl.style.fontWeight = "600";
         announcementEl.style.fontSize = "1.8rem";
+        announcementEl.style.display = "inline-block";
 
         let index = 0;
         let deleting = false;
@@ -89,24 +90,49 @@ document.addEventListener("DOMContentLoaded", () => {
                 announcementEl.textContent = primaryText.substring(0, index + 1);
                 index++;
                 if (index <= primaryText.length) {
-                    setTimeout(typeLoop, 10); // Faster typing
+                    setTimeout(typeLoop, 80); // typing speed
                 } else {
                     // Pause before backward deletion
                     setTimeout(() => {
                         deleting = true;
                         typeLoop();
-                    }, 4000); // Longer pause (4s)
+                    }, 4000); // longer pause
                 }
             } else {
                 announcementEl.textContent = primaryText.substring(0, index - 1);
                 index--;
                 if (index > 0) {
-                    setTimeout(typeLoop, 5);
+                    setTimeout(typeLoop, 20); // deletion speed
                 } else {
-                    // Show secondary text after deletion
+                    // Show secondary text with scale animation
                     announcementEl.style.fontWeight = "400";
                     announcementEl.style.fontSize = "1.5rem";
+                    announcementEl.style.opacity = "0";
                     announcementEl.textContent = secondaryText;
+
+                    announcementEl.style.display = "inline-block";
+
+                    function animateSecondary() {
+                        // initial scale
+                        let scale = 0.1;
+                        
+                        function step() {
+                            // variable speed: slower for first half, faster for second half
+                            let speed = scale < 0.5 ? 0.005 : 0.002; 
+                            scale += speed;
+                            if (scale <= 1) {
+                                announcementEl.style.transform = `scale(${scale})`;
+                                announcementEl.style.opacity = scale;
+                                requestAnimationFrame(step);
+                            } else {
+                                announcementEl.style.transform = `scale(1)`;
+                                announcementEl.style.opacity = 1;
+                            }
+                        }
+                        
+                        step();
+                    }
+                    animateSecondary();
                 }
             }
         }
