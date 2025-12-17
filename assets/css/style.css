@@ -601,34 +601,50 @@ body {
     }
 }
 
-@media (max-width: 480px) {
-    #announcement {
-        font-size: 1.2rem;
-        height: 7rem;
-    }
-
-    #announcement.secondary {
-        font-size: 1rem;
-    }
-
-    .enter-button {
-        padding: 0.25rem 0.8rem;
-        font-size: 0.85rem;
-    }
-
-    #announcement + .site-essence {
-        font-size: 0.8rem;
-    }
-}
-
-/* Disable custom cursor on touch devices and adjust Enter button for mobile */
+/* Mobile / touch device adjustments */
 @media (hover: none) and (pointer: coarse), (max-width: 768px) {
+    /* Disable custom cursor on touch devices */
     .custom-cursor {
         display: none !important;
     }
 
+    /* Adjust Enter button for touch screens */
     .enter-button {
+        font-size: 1.25rem;    /* larger for easier tapping */
+        padding: 0.6rem 2rem;  /* increased padding for touch */
+    }
+
+    #announcement {
+        font-size: 1.5rem;
+        height: 8rem;
+    }
+
+    #announcement.secondary {
+        font-size: 1.3rem;
+    }
+
+    #announcement + .site-essence {
+        font-size: 1rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    #announcement {
+        font-size: 1.3rem;
+        height: 7rem;
+    }
+
+    #announcement.secondary {
         font-size: 1.1rem;
-        padding: 0.5rem 1.8rem;
+    }
+
+    .enter-button {
+        font-size: 1.15rem;
+        padding: 0.5rem 1.5rem;
+    }
+
+    #announcement + .site-essence {
+        font-size: 0.9rem;
     }
 }
