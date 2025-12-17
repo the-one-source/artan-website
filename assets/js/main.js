@@ -214,10 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    /*
     window.__TRANSLATION_BOOTSTRAP__ = function () {
         /**
          * Global localization system: region vs language
-         */
+         *
         const LANGUAGE_STORAGE_KEY = "artan_language";
         const REGION_STORAGE_KEY = "artan_region";
 
@@ -280,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /**
          * Country overlay interactivity
-         */
+         *
         const countryOverlay = document.getElementById("country-overlay");
         const countrySelectorButton = document.getElementById("country-selector");
         const countryOverlayClose = document.getElementById("country-overlay-close");
@@ -365,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
         /**
          * Language toggle (EN) – additive, non-destructive
          * Language overrides region language when active
-         */
+         *
         const languageToggle = document.getElementById("language-toggle");
 
         if (languageToggle) {
@@ -394,4 +395,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     if (window.__TRANSLATION_BOOTSTRAP__) window.__TRANSLATION_BOOTSTRAP__();
+    */
 });
