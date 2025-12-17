@@ -580,3 +580,43 @@ body {
     transform: translate(-50%, -50%);
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
+/* Responsive adjustments for mobile devices */
+@media (max-width: 768px) {
+    #announcement {
+        font-size: 1.4rem; /* smaller primary text for mobile */
+        height: 8rem;      /* adjust vertical height */
+    }
+
+    #announcement.secondary {
+        font-size: 1.2rem; /* scale down secondary text on mobile */
+    }
+
+    .enter-button {
+        padding: 0.3rem 1rem; /* smaller button padding */
+        font-size: 0.9rem;    /* smaller font size */
+    }
+
+    #announcement + .site-essence {
+        font-size: 0.9rem;    /* slightly smaller subtext */
+    }
+}
+
+@media (max-width: 480px) {
+    #announcement {
+        font-size: 1.2rem;
+        height: 7rem;
+    }
+
+    #announcement.secondary {
+        font-size: 1rem;
+    }
+
+    .enter-button {
+        padding: 0.25rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    #announcement + .site-essence {
+        font-size: 0.8rem;
+    }
+}
