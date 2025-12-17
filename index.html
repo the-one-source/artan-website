@@ -87,6 +87,7 @@
     </script>
     <script src="assets/js/darkmode.js" defer></script>
     <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/translation.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -116,7 +117,7 @@
     </div>
 
     <!-- Site Name -->
-    <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+    <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;" data-i18n-key="site_name">
         Artan
     </h1>
 
@@ -125,10 +126,11 @@
         <p id="announcement" 
            data-primary="WEBSITE UNDER CONSTRUCTION"
            data-secondary="ENTER"
+           data-i18n-key="announcement_primary"
            <!-- Dynamic text will appear here -->
-        </p>
+        ></p>
 
-        <p class="site-essence">
+        <p class="site-essence" data-i18n-key="site_essence">
             SOUND • VISUAL • CONSCIOUSNESS
         </p>
     </div>
