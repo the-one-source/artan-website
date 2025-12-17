@@ -1,6 +1,6 @@
 /**
- * Translation and Region Management - Fully Fixed Professional Version
- * Real-time translation, IP detection, EN toggle override, caching
+ * Translation and Region Management - Apple.com inspired professional setup
+ * Fully IP-detecting, real-time translation, EN toggle override, caching
  */
 
 window.ARTAN_TRANSLATION = (function () {
@@ -24,13 +24,13 @@ window.ARTAN_TRANSLATION = (function () {
         Canada: "en"
     };
 
-    let currentLanguage = "en";
-    let currentRegion = "United States";
-    const translationCache = new Map();
+    let currentLanguage = "en"; // default English
+    let currentRegion = "United States"; // default region
+    const translationCache = new Map(); // in-memory cache
 
-    // Free real-time translation
+    // Real-time translation function (free, browser-based Google Translate API)
     const translateText = async (text, targetLang) => {
-        if (targetLang === "en") return text;
+        if (targetLang === "en") return text; // EN override
         const cacheKey = `${text}_${targetLang}`;
         if (translationCache.has(cacheKey)) return translationCache.get(cacheKey);
         try {
@@ -41,11 +41,11 @@ window.ARTAN_TRANSLATION = (function () {
             translationCache.set(cacheKey, translated);
             return translated;
         } catch {
-            return text;
+            return text; // fallback English
         }
     };
 
-    // Detect IP every page load
+    // Detect IP and determine region/language
     const detectIP = async () => {
         try {
             const response = await fetch("https://ipapi.co/json/");
@@ -61,39 +61,32 @@ window.ARTAN_TRANSLATION = (function () {
             currentRegion = "United States";
             currentLanguage = "en";
         }
-        localStorage.setItem(REGION_STORAGE_KEY, currentRegion);
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
     };
 
-    // Apply language dynamically to all [data-i18n-key]
+    // Apply language dynamically to all [data-i18n-key] elements
     const applyLanguage = async (lang) => {
         currentLanguage = lang;
         localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
         const nodes = document.querySelectorAll("[data-i18n-key]");
         for (const el of nodes) {
-            // Store original text if not already stored
-            if (!el.dataset.originalText) el.dataset.originalText = el.textContent;
-            const originalText = el.dataset.originalText;
-
-            // EN override shows original English text
-            if (lang === "en") {
-                el.textContent = originalText;
-            } else {
-                el.textContent = await translateText(originalText, lang);
-            }
+            const originalText = el.dataset.originalText || el.textContent;
+            if (!el.dataset.originalText) el.dataset.originalText = originalText; // store original
+            el.textContent = await translateText(originalText, lang);
         }
     };
 
-    // Apply region-specific logic (currency, etc.)
+    // Apply region-specific logic (e.g., currency)
     const applyRegion = (region) => {
         currentRegion = region;
         localStorage.setItem(REGION_STORAGE_KEY, region);
-        document.querySelectorAll("[data-region-currency]").forEach(el => {
-            if (window.CURRENCY && window.CURRENCY[region]) el.textContent = window.CURRENCY[region];
+        document.querySelectorAll("[data-region-currency]").forEach((el) => {
+            if (window.CURRENCY && window.CURRENCY[region]) {
+                el.textContent = window.CURRENCY[region];
+            }
         });
     };
 
-    // Country overlay
+    // Country overlay interactions
     const initCountryOverlay = () => {
         const overlay = document.getElementById("country-overlay");
         const selector = document.getElementById("country-selector");
@@ -110,15 +103,11 @@ window.ARTAN_TRANSLATION = (function () {
             setTimeout(() => overlay.classList.add("visible"), 20);
         });
 
-        options.forEach(btn => {
-            btn.addEventListener("click", async e => {
+        options.forEach((btn) => {
+            btn.addEventListener("click", async (e) => {
                 const country = e.currentTarget.dataset.country;
                 if (country) {
                     const regionLang = REGION_LANGUAGE_MAP[country] || "en";
-                    currentRegion = country;
-                    currentLanguage = regionLang;
-                    localStorage.setItem(REGION_STORAGE_KEY, currentRegion);
-                    localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
                     applyRegion(country);
                     await applyLanguage(regionLang);
                     document.getElementById("current-country").textContent = country;
@@ -129,7 +118,7 @@ window.ARTAN_TRANSLATION = (function () {
         });
     };
 
-    // EN toggle
+    // EN toggle override
     const initLanguageToggle = () => {
         const toggle = document.getElementById("language-toggle");
         if (!toggle) return;
@@ -155,7 +144,6 @@ window.ARTAN_TRANSLATION = (function () {
         updateToggle();
     };
 
-    // Initialize system
     const init = async () => {
         await detectIP();
         await applyLanguage(currentLanguage);

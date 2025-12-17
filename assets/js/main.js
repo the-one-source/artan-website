@@ -214,11 +214,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    /*
     window.__TRANSLATION_BOOTSTRAP__ = function () {
         /**
          * Global localization system: region vs language
-         *
+         */
         const LANGUAGE_STORAGE_KEY = "artan_language";
         const REGION_STORAGE_KEY = "artan_region";
 
@@ -243,11 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
             "United States": "en",
             Canada: "en"
         };
-
-        currentRegion = localStorage.getItem(REGION_STORAGE_KEY) || storedCountry || "Germany";
-        currentLanguage = REGION_LANGUAGE_MAP[currentRegion] || "en";
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
-        localStorage.setItem(REGION_STORAGE_KEY, currentRegion);
 
         // Function to apply language globally
         const applyLanguage = (lang) => {
@@ -277,11 +271,12 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         // Initialize stored language and region
-        // Removed duplicate applyLanguage and applyRegion calls here
+        applyLanguage(currentLanguage);
+        applyRegion(currentRegion);
 
         /**
          * Country overlay interactivity
-         *
+         */
         const countryOverlay = document.getElementById("country-overlay");
         const countrySelectorButton = document.getElementById("country-selector");
         const countryOverlayClose = document.getElementById("country-overlay-close");
@@ -337,9 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Update region for services
                     applyRegion(selectedCountry);
 
-                    // Use region language for country selection
-                    const regionLang = REGION_LANGUAGE_MAP[selectedCountry] || "en";
-                    applyLanguage(regionLang); // This automatically updates all [data-i18n-key] elements
+                    // Language remains as currentLanguage (manual selection)
+                    applyLanguage(currentLanguage);
 
                     // Update footer display
                     setCountry(selectedCountry);
@@ -366,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
         /**
          * Language toggle (EN) – additive, non-destructive
          * Language overrides region language when active
-         *
+         */
         const languageToggle = document.getElementById("language-toggle");
 
         if (languageToggle) {
@@ -395,5 +389,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     if (window.__TRANSLATION_BOOTSTRAP__) window.__TRANSLATION_BOOTSTRAP__();
-    */
 });
