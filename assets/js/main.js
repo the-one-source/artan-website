@@ -74,9 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Announcement container typewriter
     const announcementEl = document.getElementById("announcement");
     if (announcementEl) {
-        const primaryText = announcementEl.dataset.primary;
-        const secondaryText = announcementEl.dataset.secondary;
+        const primaryKey = announcementEl.dataset.primaryKey;
+        const secondaryKey = announcementEl.dataset.secondaryKey;
 
+        let primaryText = primaryKey && window.I18N ? window.I18N[primaryKey][currentLanguage] : announcementEl.dataset.primary;
+        let secondaryText = secondaryKey && window.I18N ? window.I18N[secondaryKey][currentLanguage] : announcementEl.dataset.secondary;
+
+        announcementEl.dataset.animated = "true";
         announcementEl.textContent = "";
         announcementEl.style.fontWeight = "600";
         announcementEl.style.fontSize = "1.8rem";
@@ -84,50 +88,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let index = 0;
         let deleting = false;
+        let currentPrimaryText = primaryText;
+        let btn; // secondary button reference
 
         function typeLoop() {
+            const updatedText = primaryKey && window.I18N ? window.I18N[primaryKey][currentLanguage] : announcementEl.dataset.primary;
+            if (updatedText !== currentPrimaryText) {
+                currentPrimaryText = updatedText;
+                index = 0;
+                deleting = false;
+            }
+
             if (!deleting) {
-                announcementEl.textContent = primaryText.substring(0, index + 1);
+                announcementEl.textContent = currentPrimaryText.substring(0, index + 1);
                 index++;
-                if (index <= primaryText.length) {
-                    setTimeout(typeLoop, 100); // typing speed
+                if (index <= currentPrimaryText.length) {
+                    setTimeout(typeLoop, 100);
                 } else {
-                    // Pause before backward deletion
                     setTimeout(() => {
                         deleting = true;
                         typeLoop();
-                    }, 4000); // longer pause
+                    }, 4000);
                 }
             } else {
-                announcementEl.textContent = primaryText.substring(0, index - 1);
+                announcementEl.textContent = currentPrimaryText.substring(0, index - 1);
                 index--;
                 if (index > 0) {
-                    setTimeout(typeLoop, 50); // deletion speed
+                    setTimeout(typeLoop, 50);
                 } else {
-                    // Show secondary text as button with scale animation
                     showSecondaryButton();
                 }
             }
         }
 
         function showSecondaryButton() {
-            // Clear container
+            secondaryText = secondaryKey && window.I18N ? window.I18N[secondaryKey][currentLanguage] : announcementEl.dataset.secondary;
             announcementEl.textContent = "";
-
-            // Create button for secondary text
-            const btn = document.createElement("button");
-            btn.className = "enter-button";
+            if (!btn) {
+                btn = document.createElement("button");
+                btn.className = "enter-button";
+                announcementEl.appendChild(btn);
+            }
             btn.innerHTML = `<span>${secondaryText}</span>`;
-
-            announcementEl.appendChild(btn);
-
-            // initial scale and opacity
-            let scale = 0.3;  // adjusted from 0.05 to match previous animation size
             btn.style.opacity = 0;
+            let scale = 0.3;
             btn.style.transform = `scale(${scale})`;
 
             function step() {
-                let speed = scale < 0.5 ? 0.01 : 0.015; // adjusted for smoother/faster scaling
+                const speed = scale < 0.5 ? 0.01 : 0.015;
                 scale += speed;
                 if (scale <= 1) {
                     btn.style.transform = `scale(${scale})`;
@@ -357,36 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        /**
-         * Language toggle (EN) – additive, non-destructive
-         * Language overrides region language when active
-         */
-        const languageToggle = document.getElementById("language-toggle");
-
-        if (languageToggle) {
-            const updateLanguageState = () => {
-                const isActive = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en";
-                languageToggle.classList.toggle("active", isActive);
-            };
-
-            languageToggle.addEventListener("click", () => {
-                const isActive = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en";
-
-                if (isActive) {
-                    const regionLang = REGION_LANGUAGE_MAP[currentRegion] || "en";
-                    localStorage.setItem(LANGUAGE_STORAGE_KEY, regionLang);
-                    applyLanguage(regionLang);
-                } else {
-                    // Activate English override
-                    localStorage.setItem(LANGUAGE_STORAGE_KEY, "en");
-                    applyLanguage("en");
-                }
-
-                updateLanguageState();
-            });
-
-            updateLanguageState();
-        }
     };
     if (window.__TRANSLATION_BOOTSTRAP__) window.__TRANSLATION_BOOTSTRAP__();
 });

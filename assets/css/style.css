@@ -908,7 +908,7 @@ body {
     user-select: none;
 }
 
-/* Debug highlight for translatable elements */
+/* Debug highlight for translatable elements - removed visibility */
 [data-i18n-key] {
-    outline: 1px dashed red !important;
+    outline: none !important;
 }

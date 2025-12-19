@@ -71,7 +71,16 @@ window.ARTAN_TRANSLATION = (function () {
         for (const el of nodes) {
             const originalText = el.dataset.originalText || el.textContent;
             if (!el.dataset.originalText) el.dataset.originalText = originalText; // store original
-            el.textContent = await translateText(originalText, lang);
+
+            if (el.dataset.animated === "true") {
+                // Defer translation until animation completes
+                el.addEventListener("animationend", async function handler() {
+                    el.removeEventListener("animationend", handler);
+                    el.textContent = await translateText(originalText, lang);
+                });
+            } else {
+                el.textContent = await translateText(originalText, lang);
+            }
         }
     };
 
@@ -124,20 +133,24 @@ window.ARTAN_TRANSLATION = (function () {
         if (!toggle) return;
 
         const updateToggle = () => {
-            const isActive = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en";
+            const storedLang = localStorage.getItem(LANGUAGE_STORAGE_KEY) || currentLanguage;
+            const isActive = storedLang === "en";
             toggle.classList.toggle("active", isActive);
         };
 
         toggle.addEventListener("click", async () => {
-            const isActive = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en";
-            if (isActive) {
-                const regionLang = REGION_LANGUAGE_MAP[currentRegion] || "en";
-                localStorage.setItem(LANGUAGE_STORAGE_KEY, regionLang);
-                await applyLanguage(regionLang);
-            } else {
-                localStorage.setItem(LANGUAGE_STORAGE_KEY, "en");
-                await applyLanguage("en");
-            }
+            // Immediately determine current state
+            const storedLang = localStorage.getItem(LANGUAGE_STORAGE_KEY) || currentLanguage;
+            const isActive = storedLang === "en";
+
+            // Update localStorage first to reflect desired language
+            const targetLang = isActive ? (REGION_LANGUAGE_MAP[currentRegion] || "en") : "en";
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, targetLang);
+
+            // Apply language asynchronously without awaiting to prevent UI freeze
+            applyLanguage(targetLang);
+
+            // Update toggle appearance immediately
             updateToggle();
         });
 
