@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/menu.css">
     <meta name="description" content="Artan's visionary creative world.">
     <meta name="keywords" content="Artan, MONAD, LAW, LOVE, YOU, سکون, Solum, Single Name, Music, Albums, Singles, Books, Sound, Visual, Consciousness, Spotify, Apple Music, X, Instagram, TikTok">
 
@@ -94,22 +95,27 @@
 </head>
 <body style="margin:0; background-color:#000; color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; text-align:center; font-family: 'Manrope', sans-serif;">
 
+<!-- Header Controls: Menu Button + Theme Toggle -->
+<header id="header-controls" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 1000; padding: 0; box-sizing: border-box;">
+    <!-- Global Menu Button -->
+    <div id="menu-button-container">
+        <button id="menu-button" aria-label="Open menu">
+            <span class="line line-top"></span>
+            <span class="line line-bottom"></span>
+        </button>
+    </div>
+
     <!-- Theme Toggle -->
-    <button id="theme-toggle"
-            aria-label="Toggle dark and light mode"
-            style="
-                position: absolute;
-                top: 24px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-                border: none;
-                background-color: #ffffff;
-                cursor: pointer;
-            ">
+    <button id="theme-toggle" aria-label="Toggle dark and light mode" style="width: 14px; height: 14px; border-radius: 50%; border: none; background-color: #ffffff; cursor: pointer;">
     </button>
+</header>
+
+<!-- Menu Overlay -->
+<div id="menu-overlay" class="menu-overlay hidden">
+    <div class="menu-overlay-inner">
+        <!-- Menu content will live here -->
+    </div>
+</div>
 
     <!-- Logo -->
     <div class="logo-container" style="margin-bottom:2rem; display:flex; justify-content:center; align-items:center;">
