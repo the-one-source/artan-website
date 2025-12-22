@@ -226,37 +226,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initMenu({ onOpen, onClose } = {}) {
     const menuButton = document.getElementById('menu-button');
-    if (!menuButton) return;
-
-    const topLine = menuButton.querySelector('.line-top');
-    const bottomLine = menuButton.querySelector('.line-bottom');
-
     const menuOverlay = document.getElementById('menu-overlay');
-    const menuCloseBtn = document.getElementById('menu-overlay-close');
-    if (!menuOverlay) return;
+
+    if (!menuButton || !menuOverlay) return;
+
+    let isOpen = false;
+    let isAnimating = false;
 
     function openMenu() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        isOpen = true;
         menuButton.classList.add('menu-open');
-        menuOverlay.classList.remove('hidden');
         menuOverlay.classList.add('active');
+        document.body.classList.add('menu-active');
+
         if (typeof onOpen === 'function') onOpen();
+
+        requestAnimationFrame(() => {
+            isAnimating = false;
+        });
     }
 
     function closeMenu() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        isOpen = false;
         menuButton.classList.remove('menu-open');
         menuOverlay.classList.remove('active');
-        menuOverlay.classList.add('hidden');
+        document.body.classList.remove('menu-active');
+
         if (typeof onClose === 'function') onClose();
+
+        requestAnimationFrame(() => {
+            isAnimating = false;
+        });
     }
 
-    menuButton.addEventListener('click', () => {
-        const isOpen = menuButton.classList.contains('menu-open');
+    menuButton.addEventListener('click', (e) => {
+        menuButton.blur();
+        e.stopPropagation();
         isOpen ? closeMenu() : openMenu();
     });
 
-    if (menuCloseBtn) {
-        menuCloseBtn.addEventListener('click', closeMenu);
-    }
+    // Optional: close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isOpen) {
+            closeMenu();
+        }
+    });
 }
 
 /* expose safely to classic scripts */
@@ -275,4 +295,14 @@ window.initMenu = initMenu;
             }
         });
     }
+
+document.addEventListener('countryOverlayOpen', () => {
+    const header = document.getElementById('header-controls');
+    if (header) header.style.display = 'none';
+});
+
+document.addEventListener('countryOverlayClose', () => {
+    const header = document.getElementById('header-controls');
+    if (header) header.style.display = '';
+});
 });

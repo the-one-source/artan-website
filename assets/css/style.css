@@ -152,6 +152,12 @@ body.light-mode .theme-toggle { background-color: var(--color-black); }
   body, .theme-toggle { transition: none !important; }
 }
 
+.theme-toggle {
+  background-color: var(--text-color);
+  box-shadow: none;
+  border: none;
+}
+
 /* =================== Announcement =================== */
 #announcement {
   width: 100%; max-width: 90%; margin: 1rem auto; height: 10rem;
@@ -352,21 +358,24 @@ html, body, body * { cursor: none !important; }
   html, body, body * { cursor: auto !important; }
 }
 
-/* =================== Menu Overlay (Visual Behavior) =================== */
+/* =================== MENU OVERLAY (UNIFIED & FIXED) =================== */
+
+/* Overlay root */
 #menu-overlay {
   position: fixed;
   inset: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  overflow-y: auto;
+  align-items: center;
+
   z-index: 99999;
 
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease;
 }
 
 #menu-overlay.active {
@@ -374,12 +383,8 @@ html, body, body * { cursor: none !important; }
   pointer-events: all;
 }
 
-#menu-overlay.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
 
-/* Inner container to mirror country overlay motion */
+/* Overlay inner — content breathes in */
 .menu-overlay-inner {
   width: 100%;
   min-height: 100vh;
@@ -390,22 +395,112 @@ html, body, body * { cursor: none !important; }
 
   padding: 0 1.5rem;
 
-  transform: translateY(100%) scale(0.95);
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
 }
 
 #menu-overlay.active .menu-overlay-inner {
-  transform: translateY(0) scale(1);
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* =================== Menu Button → Global X Language =================== */
-#menu-button.menu-open .line-top,
-#menu-button.menu-open .line-bottom {
+/* =================== HEADER CONTROLS (IMMUTABLE) =================== */
+
+#header-controls {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  z-index: 100001;
+  pointer-events: all;
+}
+
+#header-controls {
+  isolation: isolate;
+}
+
+/* =================== MENU BUTTON CONTAINER =================== */
+
+#menu-button-container {
+  width: 60px;
+  height: 60px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  order: 1;
+}
+
+/* =================== MENU BUTTON =================== */
+
+#menu-button {
+  width: 35px;
+  height: 35px;
+
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transform-origin: center;
+  transition: transform 0.25s ease;
+  will-change: transform;
+}
+
+/* Lines */
+#menu-button .line {
+  width: 55%;
+  height: 1.2px;
+  margin: 3px 0;
+
+  background-color: var(--text-color);
+
+  transform-origin: center;
+  transition: transform 0.4s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+/* Hover pulse (closed state) */
+#menu-button:not(.menu-open):hover {
+  animation: menu-hover-pulse 0.35s forwards;
+}
+
+@keyframes menu-hover-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.85); }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* =================== MENU OPEN → X =================== */
+
+#menu-button.menu-open {
+  position: relative;
+  transform: none !important;
+}
+
+#menu-button.menu-open .line {
   position: absolute;
   top: 50%;
   left: 50%;
   margin: 0;
-  width: 55%;
+  transform-origin: center;
 }
 
 #menu-button.menu-open .line-top {
@@ -422,133 +517,31 @@ html, body, body * { cursor: none !important; }
   background-color: var(--color-primary7);
 }
 
-/* Keep menu button fixed and unmoving */
-#menu-button-container {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100001;
-}
-
-/* =================== Menu Lines Transition Language =================== */
-#menu-button .line {
-  display: block;
-  width: 55%;
-  height: 1.2px;
-  background-color: var(--text-color);
-  margin: 3px 0;
-  transform-origin: center;
-  transition: transform 0.4s ease, background-color 0.3s ease;
-}
-
-/* =========================
-   Header Controls (Layout)
-   ========================= */
-#header-controls {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  z-index: 100001;
-}
-
-#menu-button-container {
-  order: 1;
-}
+/* =================== THEME TOGGLE =================== */
 
 .theme-toggle {
   order: 2;
   position: static;
   transform: none;
+
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+
+  background-color: var(--text-color);
+  border: none;
+  box-shadow: none;
+
+  cursor: pointer;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
-/* =========================
-   Menu Button Container
-   ========================= */
-#menu-button-container {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 16px;
-    z-index: 100001;
+.theme-toggle:hover {
+  transform: scale(1.15);
+  opacity: 0.9;
 }
 
-/* =========================
-   Menu Button
-   ========================= */
-#menu-button {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.25s ease;
-}
-
-/* =========================
-   Hover Animation (RESTORED)
-   ========================= */
-#menu-button:not(.menu-open):hover {
-    animation: menu-hover-pulse 0.35s forwards;
-}
-
-@keyframes menu-hover-pulse {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(0.85); }
-    70%  { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-/* =========================
-   Menu Open → X
-   ========================= */
-#menu-button.menu-open .line-top {
-    transform: rotate(45deg);
-}
-
-#menu-button.menu-open .line-bottom {
-    transform: rotate(-45deg);
-}
-
-/* Hover when open → single red line */
-#menu-button.menu-open:hover .line-top,
-#menu-button.menu-open:hover .line-bottom {
-    transform: rotate(0deg);
-    background-color: var(--color-primary7);
-}
-
-/* =========================
-   Menu Overlay (Container)
-   ========================= */
-#menu-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: var(--bg-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-}
-
-/* Remove menu title and divider */
-.menu-overlay-title,
-#menu-overlay hr.footer-separator {
-  display: none !important;
-}
-
-/* =================== Modern Menu Content =================== */
+/* =================== MENU CONTENT =================== */
 
 .menu-nav {
   width: 100%;
@@ -562,12 +555,32 @@ html, body, body * { cursor: none !important; }
   margin: 0;
 
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 3rem;
 }
 
+/* Sequential reveal */
+.menu-list li {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+#menu-overlay.active .menu-list li {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#menu-overlay.active .menu-list li:nth-child(1) { transition-delay: 0.12s; }
+#menu-overlay.active .menu-list li:nth-child(2) { transition-delay: 0.18s; }
+#menu-overlay.active .menu-list li:nth-child(3) { transition-delay: 0.24s; }
+#menu-overlay.active .menu-list li:nth-child(4) { transition-delay: 0.30s; }
+#menu-overlay.active .menu-list li:nth-child(5) { transition-delay: 0.36s; }
+
+/* Menu links */
 .menu-link {
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 300;
@@ -586,29 +599,12 @@ html, body, body * { cursor: none !important; }
 }
 
 .menu-link:hover {
-  transform: scale(1.28);
+  transform: scale(1.38);
   letter-spacing: 0.12em;
   color: var(--color-primary1);
-  opacity: 1;
 }
 
-/* Ensure X inherits exact menu button position */
-#menu-overlay-close {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100002;
-}
-
-/* Remove underline from menu links, even on hover */
-.menu-link,
-.menu-link:hover {
-  text-decoration: none !important;
-}
-
-
-/* Touch devices stay calm */
+/* Touch devices */
 @media (hover: none) {
   .menu-link:hover {
     transform: none;
@@ -616,19 +612,69 @@ html, body, body * { cursor: none !important; }
   }
 }
 
-@media (max-width: 480px) {
-  .menu-list {
-    gap: 1.6rem;
-  }
-
-  .menu-link {
-    font-size: 1.6rem;
-    letter-spacing: 0.1em;
-  }
-}
+/* Responsive */
 @media (max-width: 768px) {
   .menu-list {
     flex-direction: column;
     gap: 1.6rem;
   }
+}
+
+@media (max-width: 480px) {
+  .menu-link {
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+.menu-link,
+.menu-link:hover,
+.menu-link:focus,
+.menu-link:active {
+  text-decoration: none !important;
+}
+
+/* =================== FINAL MENU SAFETY OVERRIDES =================== */
+
+/* Kill any underline reintroduced by global link styles */
+#menu-overlay a,
+#menu-overlay a:hover,
+#menu-overlay a:focus,
+#menu-overlay a:active,
+.menu-link,
+.menu-link:hover,
+.menu-link:focus,
+.menu-link:active {
+  text-decoration: none !important;
+}
+
+/* Ensure menu button is always visible and clickable above overlay */
+#header-controls,
+#menu-button-container,
+#menu-button {
+  z-index: 100001 !important;
+  pointer-events: all !important;
+}
+
+/* Prevent overlay from hiding header controls */
+#menu-overlay {
+  z-index: 99999 !important;
+}
+
+/* Stabilize X rendering — prevent disappearance */
+#menu-button.menu-open {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Prevent layout shift when overlay opens */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* === Menu Button Final Positional Lock === */
+#menu-button,
+#menu-button * {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
