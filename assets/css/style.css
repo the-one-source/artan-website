@@ -147,7 +147,7 @@ body.dark-mode .site-footer { color: var(--text-color); background-color: transp
 }
 body.dark-mode .theme-toggle { background-color: var(--color-white); }
 body.light-mode .theme-toggle { background-color: var(--color-black); }
-.theme-toggle:hover { transform: translateX(-50%) scale(1.15); opacity: 0.9; }
+.theme-toggle:hover { transform: scale(1.15); opacity: 0.9;}
 @media (prefers-reduced-motion: reduce) {
   body, .theme-toggle { transition: none !important; }
 }
@@ -261,9 +261,16 @@ body.light-mode .theme-toggle { background-color: var(--color-black); }
 .country-region hr.footer-separator {
   width: 100%; max-width: 960px; margin: 0.5rem 0 1rem 0;
 }
-.overlay-header-container {
-  display: flex; justify-content: space-between; align-items: center;
-  width: 100%; margin: 0; padding: 0;
+/* Menu overlay header should not affect layout */
+#menu-overlay .overlay-header-container {
+  display: contents;
+}
+
+/* Restore country overlay header layout */
+.country-overlay .overlay-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .overlay-header-container .country-overlay-title {
   margin: 0; padding: 0; line-height: 1.2; font-size: 1.4rem; font-weight: 300;
@@ -343,4 +350,285 @@ html, body, body * { cursor: none !important; }
 @media (hover: none) and (pointer: coarse), (max-width: 768px) {
   .custom-cursor { display: none !important; }
   html, body, body * { cursor: auto !important; }
+}
+
+/* =================== Menu Overlay (Visual Behavior) =================== */
+#menu-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  z-index: 99999;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#menu-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#menu-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Inner container to mirror country overlay motion */
+.menu-overlay-inner {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0 1.5rem;
+
+  transform: translateY(100%) scale(0.95);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#menu-overlay.active .menu-overlay-inner {
+  transform: translateY(0) scale(1);
+}
+
+/* =================== Menu Button → Global X Language =================== */
+#menu-button.menu-open .line-top,
+#menu-button.menu-open .line-bottom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  width: 55%;
+}
+
+#menu-button.menu-open .line-top {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+#menu-button.menu-open .line-bottom {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+#menu-button.menu-open:hover .line-top,
+#menu-button.menu-open:hover .line-bottom {
+  transform: translate(-50%, -50%) rotate(0deg);
+  background-color: var(--color-primary7);
+}
+
+/* Keep menu button fixed and unmoving */
+#menu-button-container {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100001;
+}
+
+/* =================== Menu Lines Transition Language =================== */
+#menu-button .line {
+  display: block;
+  width: 55%;
+  height: 1.2px;
+  background-color: var(--text-color);
+  margin: 3px 0;
+  transform-origin: center;
+  transition: transform 0.4s ease, background-color 0.3s ease;
+}
+
+/* =========================
+   Header Controls (Layout)
+   ========================= */
+#header-controls {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 100001;
+}
+
+#menu-button-container {
+  order: 1;
+}
+
+.theme-toggle {
+  order: 2;
+  position: static;
+  transform: none;
+}
+
+/* =========================
+   Menu Button Container
+   ========================= */
+#menu-button-container {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    z-index: 100001;
+}
+
+/* =========================
+   Menu Button
+   ========================= */
+#menu-button {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.25s ease;
+}
+
+/* =========================
+   Hover Animation (RESTORED)
+   ========================= */
+#menu-button:not(.menu-open):hover {
+    animation: menu-hover-pulse 0.35s forwards;
+}
+
+@keyframes menu-hover-pulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.85); }
+    70%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* =========================
+   Menu Open → X
+   ========================= */
+#menu-button.menu-open .line-top {
+    transform: rotate(45deg);
+}
+
+#menu-button.menu-open .line-bottom {
+    transform: rotate(-45deg);
+}
+
+/* Hover when open → single red line */
+#menu-button.menu-open:hover .line-top,
+#menu-button.menu-open:hover .line-bottom {
+    transform: rotate(0deg);
+    background-color: var(--color-primary7);
+}
+
+/* =========================
+   Menu Overlay (Container)
+   ========================= */
+#menu-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+/* Remove menu title and divider */
+.menu-overlay-title,
+#menu-overlay hr.footer-separator {
+  display: none !important;
+}
+
+/* =================== Modern Menu Content =================== */
+
+.menu-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.menu-link {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--text-color);
+  text-decoration: none;
+
+  transform: scale(1);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.25s ease,
+    letter-spacing 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.menu-link:hover {
+  transform: scale(1.28);
+  letter-spacing: 0.12em;
+  color: var(--color-primary1);
+  opacity: 1;
+}
+
+/* Ensure X inherits exact menu button position */
+#menu-overlay-close {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100002;
+}
+
+/* Remove underline from menu links, even on hover */
+.menu-link,
+.menu-link:hover {
+  text-decoration: none !important;
+}
+
+
+/* Touch devices stay calm */
+@media (hover: none) {
+  .menu-link:hover {
+    transform: none;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-list {
+    gap: 1.6rem;
+  }
+
+  .menu-link {
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+  }
+}
+@media (max-width: 768px) {
+  .menu-list {
+    flex-direction: column;
+    gap: 1.6rem;
+  }
 }
