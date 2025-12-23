@@ -1,23 +1,43 @@
+/* --- Gallery Container --- */
 .gallery-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     gap: 16px;
     padding: 16px;
-    width: 100%;
-    max-width: 1200px;
+    box-sizing: border-box;
 }
 
-.gallery-container img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    object-fit: cover;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* --- Gallery Items --- */
+.gallery-item {
+    flex: 0 1 calc(45% - 16px);
+    max-width: 220px;
+    position: relative;
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.gallery-container img:hover {
+.gallery-item img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.gallery-item img:hover {
     transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(255,255,255,0.2);
+    box-shadow: 0 8px 24px rgba(255,255,255,0.3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .gallery-item { flex: 0 1 calc(48% - 16px); }
+}
+
+@media (max-width: 480px) {
+    .gallery-item { flex: 0 1 calc(80% - 16px); }
 }
