@@ -11,7 +11,6 @@ export function initMenu({ onOpen, onClose } = {}) {
     function openMenu() {
         menuButton.classList.add('menu-open');
         menuOverlay.classList.add('active');
-        document.body.classList.add('menu-open');
 
         document.dispatchEvent(new CustomEvent('menuOpen'));
 
@@ -21,7 +20,6 @@ export function initMenu({ onOpen, onClose } = {}) {
     function closeMenu() {
         menuButton.classList.remove('menu-open');
         menuOverlay.classList.remove('active');
-        document.body.classList.remove('menu-open');
 
         document.dispatchEvent(new CustomEvent('menuClose'));
 

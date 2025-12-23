@@ -129,11 +129,15 @@ window.ARTAN_TRANSLATION = (function () {
 
         if (closeBtn) closeBtn.addEventListener("click", () => {
             overlay.classList.remove("visible");
-            setTimeout(() => overlay.classList.add("hidden"), 400);
+            setTimeout(() => {
+                overlay.classList.add("hidden");
+                document.dispatchEvent(new CustomEvent("countryOverlayClose"));
+            }, 400);
         });
 
         if (selector && overlay) selector.addEventListener("click", () => {
             overlay.classList.remove("hidden");
+            document.dispatchEvent(new CustomEvent("countryOverlayOpen"));
             setTimeout(() => overlay.classList.add("visible"), 20);
         });
 
@@ -189,7 +193,10 @@ window.ARTAN_TRANSLATION = (function () {
                         currentCountryEl.textContent = nativeName;
                     }
                     overlay.classList.remove("visible");
-                    setTimeout(() => overlay.classList.add("hidden"), 400);
+                    setTimeout(() => {
+                        overlay.classList.add("hidden");
+                        document.dispatchEvent(new CustomEvent("countryOverlayClose"));
+                    }, 400);
                 }
             });
         });

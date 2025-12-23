@@ -266,7 +266,6 @@ function initMenu({ onOpen, onClose } = {}) {
     }
 
     menuButton.addEventListener('click', (e) => {
-        menuButton.blur();
         e.stopPropagation();
         isOpen ? closeMenu() : openMenu();
     });
@@ -305,4 +304,63 @@ document.addEventListener('countryOverlayClose', () => {
     const header = document.getElementById('header-controls');
     if (header) header.style.display = '';
 });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const streamOverlay = document.getElementById("stream-overlay");
+    const closeStreamBtn = document.getElementById("close-stream");
+    const streamButtons = document.querySelectorAll(".stream-btn");
+
+    if (!streamOverlay || !closeStreamBtn || streamButtons.length === 0) return;
+
+    let isAnimating = false;
+
+    function openStream() {
+        if (isAnimating) return;
+        isAnimating = true;
+        streamOverlay.classList.add("visible");
+        document.body.classList.add("overlay-active"); // mimic menu behavior
+        document.body.style.overflow = "hidden";
+        requestAnimationFrame(() => { isAnimating = false; });
+    }
+
+    function closeStream() {
+        if (isAnimating) return;
+        isAnimating = true;
+        streamOverlay.classList.remove("visible");
+        document.body.classList.remove("overlay-active");
+        document.body.style.overflow = "";
+        requestAnimationFrame(() => { isAnimating = false; });
+    }
+
+    streamButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openStream();
+        });
+    });
+
+    closeStreamBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeStream();
+    });
+
+    // Optional: close overlay with Escape key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && streamOverlay.classList.contains("visible")) {
+            closeStream();
+        }
+    });
 });
