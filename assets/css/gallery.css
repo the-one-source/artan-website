@@ -57,3 +57,24 @@
     height: auto;
     display: block; /* ensures proper centering */
 }
+
+/* Responsive adjustments for logo */
+@media (max-width: 768px) {
+    .logo-container {
+        margin: 1.5rem 0;
+    }
+    .logo-container img {
+        width: 280px;
+        max-width: 70%;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-container {
+        margin: 1rem 0;
+    }
+    .logo-container img {
+        width: 220px;
+        max-width: 90%;
+    }
+}
