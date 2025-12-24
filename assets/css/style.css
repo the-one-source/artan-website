@@ -160,19 +160,79 @@ body.light-mode .theme-toggle { background-color: var(--color-black); }
 
 /* =================== Announcement =================== */
 #announcement {
-  width: 100%; max-width: 90%; margin: 1rem auto; height: 10rem;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; box-sizing: border-box;
-  word-wrap: break-word; overflow-wrap: break-word; overflow: hidden;
-  transition: height 0.2s;
-  font-size: 1.8rem; font-weight: 600; letter-spacing: 0.02em;
+  max-width: 90%;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
+
 #announcement.secondary {
   font-size: 1.5rem; font-weight: 400; text-transform: uppercase; letter-spacing: 0.05em;
 }
 #announcement + .site-essence {
   font-size: 1rem; letter-spacing: 0.16em; font-weight: 400;
   text-transform: uppercase; margin-top: 0.5rem; opacity: 0.7;
+}
+
+/* ===============================
+   Central Stage (Announcement → Enter)
+   Future-proof, no layout jump
+================================ */
+
+.stage-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    min-height: 6rem; /* fixed spatial promise */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Shared center for both layers */
+.stage-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: opacity, transform;
+}
+
+/* Announcement visible by default */
+.stage-layer--announcement {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Enter hidden initially */
+.stage-layer--enter {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+}
+
+/* When announcement completes */
+.stage-container.show-enter .stage-layer--announcement {
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+}
+
+.stage-container.show-enter .stage-layer--enter {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Mobile harmony */
+@media (max-width: 640px) {
+    .stage-container {
+        min-height: 5.5rem;
+    }
 }
 
 /* =================== ENTER Button =================== */

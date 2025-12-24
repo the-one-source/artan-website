@@ -136,25 +136,22 @@
         Artan
     </h1>
 
-    <!-- Announcement (isolated, typing-only) -->
-    <div id="announcement-container"
-         style="margin-top:2.5rem; max-width:640px; min-height:3.5rem;">
-        <p id="announcement"
-           data-i18n-key="announcement.message"
-           data-primary="WEBSITE UNDER CONSTRUCTION">
-        </p>
-    </div>
+    <div class="stage-container" id="stage">
+        <div class="stage-layer stage-layer--announcement">
+            <p id="announcement"
+               data-i18n-key="announcement.message"
+               data-primary="WEBSITE UNDER CONSTRUCTION">
+            </p>
+        </div>
 
-    <!-- Enter Button (isolated, revealed after announcement) -->
-    <div id="enter-container"
-         style="margin-top:0.5rem; min-height:2.5rem;">
-        <button id="enter-button"
-                class="enter-button"
-                data-i18n-key="action.enter"
-                aria-label="Enter site"
-                style="opacity:0; pointer-events:none;">
-            ENTER
-        </button>
+        <div class="stage-layer stage-layer--enter">
+            <button id="enter-button"
+                    class="enter-button"
+                    data-i18n-key="action.enter"
+                    aria-label="Enter site">
+                ENTER
+            </button>
+        </div>
     </div>
 
     <!-- Essence -->

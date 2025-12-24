@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const enterButton = document.getElementById("enter-button");
     const enterContainer = document.getElementById("enter-container");
     if (announcementEl) {
-        const primaryKey = announcementEl.dataset.primaryKey;
+        const primaryKey = announcementEl.dataset.i18nKey;
 
         let primaryText = announcementEl.dataset.primary || "";
 
@@ -66,7 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
         window.__UPDATE_ANNOUNCEMENT_LANGUAGE__ = function (lang) {
             if (primaryKey && window.I18N && window.I18N[primaryKey] && window.I18N[primaryKey][lang]) {
                 currentPrimaryText = window.I18N[primaryKey][lang];
+                index = 0;
+                deleting = false;
+                announcementEl.textContent = "";
             }
+
             if (enterButton && enterButton.dataset.i18nKey && window.I18N && window.I18N[enterButton.dataset.i18nKey]) {
                 const translated = window.I18N[enterButton.dataset.i18nKey][lang];
                 if (translated) {
@@ -101,26 +105,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function revealEnterButton() {
-            announcementEl.textContent = "";
+            announcementEl.style.visibility = "hidden";
+            announcementEl.style.position = "absolute";
+            announcementEl.style.left = "50%";
+            announcementEl.style.top = "50%";
+            announcementEl.style.transform = "translate(-50%, -50%)";
+
             if (!enterButton) return;
 
+            enterButton.style.position = "absolute";
+            enterButton.style.left = "50%";
+            enterButton.style.top = "50%";
+            enterButton.style.transform = "translate(-50%, -50%) scale(0.6)";
             enterButton.style.opacity = "0";
             enterButton.style.pointerEvents = "none";
-            let scale = 0.6;
-            enterButton.style.transform = `scale(${scale})`;
 
-            requestAnimationFrame(function step() {
-                scale += 0.02;
-                if (scale < 1) {
-                    enterButton.style.transform = `scale(${scale})`;
-                    enterButton.style.opacity = scale;
-                    requestAnimationFrame(step);
-                } else {
-                    enterButton.style.transform = "scale(1)";
-                    enterButton.style.opacity = "1";
-                    enterButton.style.pointerEvents = "auto";
-                }
-            });
+            setTimeout(() => {
+                enterButton.style.transition = "opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)";
+                enterButton.style.opacity = "1";
+                enterButton.style.transform = "translate(-50%, -50%) scale(1)";
+                enterButton.style.pointerEvents = "auto";
+            }, 120);
         }
 
         typeLoop();
