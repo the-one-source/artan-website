@@ -235,6 +235,63 @@ body.light-mode .theme-toggle { background-color: var(--color-black); }
     }
 }
 
+/* ===============================
+   Central Circle — Spatial Anchor
+   Never collapses, never jumps
+================================ */
+
+.stage-circle {
+    position: relative;
+    width: min(72vw, 420px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+      radial-gradient(
+        circle at center,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.04) 40%,
+        rgba(255,255,255,0.015) 60%,
+        rgba(255,255,255,0.0) 72%
+      );
+
+    filter: blur(0);
+    transition: background 1.2s ease;
+}
+
+/* Gentle atmospheric pulse */
+.stage-circle::after {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(255,255,255,0.05),
+        transparent 70%
+    );
+    opacity: 0.6;
+    animation: circle-breathe 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes circle-breathe {
+    0%   { opacity: 0.35; transform: scale(0.96); }
+    50%  { opacity: 0.65; transform: scale(1.02); }
+    100% { opacity: 0.35; transform: scale(0.96); }
+}
+
+/* Mobile harmony */
+@media (max-width: 640px) {
+    .stage-circle {
+        width: min(82vw, 360px);
+    }
+}
+
 /* =================== ENTER Button =================== */
 .enter-button {
   display: inline-block; background-color: transparent;

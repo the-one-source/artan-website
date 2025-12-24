@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Announcement container typewriter
     const announcementEl = document.getElementById("announcement");
     const enterButton = document.getElementById("enter-button");
+    const stageContainer = announcementEl ? announcementEl.closest('.stage-container') : null;
     const enterContainer = document.getElementById("enter-container");
     if (announcementEl) {
         const primaryKey = announcementEl.dataset.i18nKey;
@@ -58,6 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
         announcementEl.style.fontSize = "1.8rem";
         announcementEl.style.display = "inline-block";
 
+        if (enterButton) {
+            enterButton.style.opacity = "0";
+            enterButton.style.pointerEvents = "none";
+        }
+
         let index = 0;
         let deleting = false;
         let currentPrimaryText = primaryText;
@@ -69,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 index = 0;
                 deleting = false;
                 announcementEl.textContent = "";
+                announcementEl.style.opacity = "1";
             }
 
             if (enterButton && enterButton.dataset.i18nKey && window.I18N && window.I18N[enterButton.dataset.i18nKey]) {
@@ -105,27 +112,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function revealEnterButton() {
-            announcementEl.style.visibility = "hidden";
-            announcementEl.style.position = "absolute";
-            announcementEl.style.left = "50%";
-            announcementEl.style.top = "50%";
-            announcementEl.style.transform = "translate(-50%, -50%)";
+            document.dispatchEvent(new CustomEvent("announcementFinished"));
+
+            if (stageContainer) {
+                stageContainer.classList.add("stage-enter-visible");
+            }
+
+            announcementEl.style.opacity = "0";
+            announcementEl.style.pointerEvents = "none";
 
             if (!enterButton) return;
 
-            enterButton.style.position = "absolute";
-            enterButton.style.left = "50%";
-            enterButton.style.top = "50%";
-            enterButton.style.transform = "translate(-50%, -50%) scale(0.6)";
             enterButton.style.opacity = "0";
-            enterButton.style.pointerEvents = "none";
+            enterButton.style.transform = "scale(0.6)";
+            enterButton.style.pointerEvents = "auto";
+            if (stageContainer) {
+                stageContainer.classList.add("stage--enter-active");
+            }
 
-            setTimeout(() => {
-                enterButton.style.transition = "opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)";
+            requestAnimationFrame(() => {
+                enterButton.style.transition = "opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)";
                 enterButton.style.opacity = "1";
-                enterButton.style.transform = "translate(-50%, -50%) scale(1)";
-                enterButton.style.pointerEvents = "auto";
-            }, 120);
+                enterButton.style.transform = "scale(1)";
+            });
         }
 
         typeLoop();

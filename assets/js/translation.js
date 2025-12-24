@@ -100,14 +100,7 @@ window.ARTAN_TRANSLATION = (function () {
                 el.removeAttribute("dir");
             }
 
-            if (el.dataset.animated === "true") {
-                el.addEventListener("animationend", async function handler() {
-                    el.removeEventListener("animationend", handler);
-                    el.textContent = await translateText(originalText, lang);
-                });
-            } else {
-                el.textContent = await translateText(originalText, lang);
-            }
+            el.textContent = await translateText(originalText, lang);
         }
 
         if (typeof window.__UPDATE_ANNOUNCEMENT_LANGUAGE__ === "function") {
@@ -123,6 +116,27 @@ window.ARTAN_TRANSLATION = (function () {
                 el.textContent = await translateText(originalText, currentLanguage);
             }
         });
+    };
+
+    // === Announcement Translation Sync (Animated-safe) ===
+    window.__UPDATE_ANNOUNCEMENT_LANGUAGE__ = async function (lang) {
+        const announcement = document.getElementById("announcement");
+        if (!announcement) return;
+
+        const sourceText =
+            announcement.dataset.originalText ||
+            announcement.dataset.primary ||
+            announcement.textContent;
+
+        if (!announcement.dataset.originalText) {
+            announcement.dataset.originalText = sourceText;
+        }
+
+        const translated = await translateText(sourceText, lang);
+
+        // Always update the animation source text BEFORE animation runs
+        announcement.dataset.primary = translated;
+        announcement.textContent = translated;
     };
 
     // Apply region-specific logic (e.g., currency)
@@ -292,4 +306,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.ARTAN_TRANSLATION && typeof window.ARTAN_TRANSLATION.init === "function") {
         window.ARTAN_TRANSLATION.init();
     }
+    document.addEventListener("announcementFinished", () => {
+        const announcement = document.getElementById("announcement");
+        const enter = document.getElementById("enter-button");
+
+        if (announcement) {
+            announcement.classList.add("hidden");
+        }
+
+        if (enter) {
+            enter.classList.add("visible");
+        }
+    });
 });
