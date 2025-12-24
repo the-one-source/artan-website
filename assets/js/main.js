@@ -45,12 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Announcement container typewriter
     const announcementEl = document.getElementById("announcement");
+    const enterButton = document.getElementById("enter-button");
+    const enterContainer = document.getElementById("enter-container");
     if (announcementEl) {
         const primaryKey = announcementEl.dataset.primaryKey;
-        const secondaryKey = announcementEl.dataset.secondaryKey;
 
         let primaryText = announcementEl.dataset.primary || "";
-        let secondaryText = announcementEl.dataset.secondary || "";
 
         announcementEl.dataset.animated = "true";
         announcementEl.textContent = "";
@@ -61,18 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
         let index = 0;
         let deleting = false;
         let currentPrimaryText = primaryText;
-        let currentSecondaryText = secondaryText;
-        let btn; // secondary button reference
 
         // Expose safe language update hook for announcement (no DOM mutation)
         window.__UPDATE_ANNOUNCEMENT_LANGUAGE__ = function (lang) {
             if (primaryKey && window.I18N && window.I18N[primaryKey] && window.I18N[primaryKey][lang]) {
                 currentPrimaryText = window.I18N[primaryKey][lang];
             }
-            if (secondaryKey && window.I18N && window.I18N[secondaryKey] && window.I18N[secondaryKey][lang]) {
-                currentSecondaryText = window.I18N[secondaryKey][lang];
-                if (btn) {
-                    btn.querySelector("span").textContent = currentSecondaryText;
+            if (enterButton && enterButton.dataset.i18nKey && window.I18N && window.I18N[enterButton.dataset.i18nKey]) {
+                const translated = window.I18N[enterButton.dataset.i18nKey][lang];
+                if (translated) {
+                    enterButton.textContent = translated;
                 }
             }
         };
@@ -97,38 +95,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (index > 0) {
                     setTimeout(typeLoop, 50);
                 } else {
-                    showSecondaryButton();
+                    revealEnterButton();
                 }
             }
         }
 
-        function showSecondaryButton() {
-            // Update secondary text with latest translation without touching DOM
-
+        function revealEnterButton() {
             announcementEl.textContent = "";
-            if (!btn) {
-                btn = document.createElement("button");
-                btn.className = "enter-button";
-                announcementEl.appendChild(btn);
-            }
-            btn.innerHTML = `<span>${currentSecondaryText}</span>`;
-            btn.style.opacity = 0;
-            let scale = 0.3;
-            btn.style.transform = `scale(${scale})`;
+            if (!enterButton) return;
 
-            function step() {
-                const speed = scale < 0.5 ? 0.01 : 0.015;
-                scale += speed;
-                if (scale <= 1) {
-                    btn.style.transform = `scale(${scale})`;
-                    btn.style.opacity = scale;
+            enterButton.style.opacity = "0";
+            enterButton.style.pointerEvents = "none";
+            let scale = 0.6;
+            enterButton.style.transform = `scale(${scale})`;
+
+            requestAnimationFrame(function step() {
+                scale += 0.02;
+                if (scale < 1) {
+                    enterButton.style.transform = `scale(${scale})`;
+                    enterButton.style.opacity = scale;
                     requestAnimationFrame(step);
                 } else {
-                    btn.style.transform = "scale(1)";
-                    btn.style.opacity = 1;
+                    enterButton.style.transform = "scale(1)";
+                    enterButton.style.opacity = "1";
+                    enterButton.style.pointerEvents = "auto";
                 }
-            }
-            step();
+            });
         }
 
         typeLoop();

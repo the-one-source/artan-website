@@ -136,30 +136,44 @@
         Artan
     </h1>
 
-    <!-- Announcement / Message -->
-    <div style="margin-top:2.5rem; display:flex; flex-direction:column; gap:0.1rem; max-width:640px; min-height:6rem;">
+    <!-- Announcement (isolated, typing-only) -->
+    <div id="announcement-container"
+         style="margin-top:2.5rem; max-width:640px; min-height:3.5rem;">
         <p id="announcement"
            data-i18n-key="announcement.message"
-           data-primary="WEBSITE UNDER CONSTRUCTION"
-           data-secondary="ENTER">
-        </p>
-        <button id="enter-button"
-                class="enter-button"
-                data-i18n-key="action.enter"
-                aria-label="Enter site">
-          ENTER
-        </button>
-        <p class="site-essence" data-i18n-key="site.essence">
-            SOUND • VISUAL • CONSCIOUSNESS
+           data-primary="WEBSITE UNDER CONSTRUCTION">
         </p>
     </div>
 
+    <!-- Enter Button (isolated, revealed after announcement) -->
+    <div id="enter-container"
+         style="margin-top:0.5rem; min-height:2.5rem;">
+        <button id="enter-button"
+                class="enter-button"
+                data-i18n-key="action.enter"
+                aria-label="Enter site"
+                style="opacity:0; pointer-events:none;">
+            ENTER
+        </button>
+    </div>
+
+    <!-- Essence -->
+    <p class="site-essence" data-i18n-key="site.essence">
+        SOUND • VISUAL • CONSCIOUSNESS
+    </p>
+
     <hr class="footer-separator">
+
     <footer class="site-footer">
         <div class="footer-flex">
-            <div class="footer-left">© 2025 ARTAN </div>
+            <div class="footer-left">© 2025 ARTAN</div>
             <div class="footer-right">
-                <button id="language-toggle" data-lang="en" aria-label="Toggle language" class="language-active">EN</button>
+                <button id="language-toggle"
+                        data-lang="en"
+                        aria-label="Toggle language"
+                        class="language-active">
+                    EN
+                </button>
                 <span class="footer-separator-dot">•</span>
                 <button id="country-selector" aria-label="Select country">
                     <span id="current-country">Germany</span>
