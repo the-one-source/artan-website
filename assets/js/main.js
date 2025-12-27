@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    /* =================== Theme Management =================== */
+
     const body = document.body;
     const toggle = document.getElementById("theme-toggle");
     const footer = document.querySelector("footer");
@@ -10,22 +12,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const lightText = "#000000";
 
     const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ?? false;
     let currentTheme = savedTheme || (prefersDark ? "dark" : "light");
 
     const applyTheme = (theme) => {
         currentTheme = theme;
+
         if (theme === "dark") {
             body.style.backgroundColor = darkBg;
             body.style.color = darkText;
-            toggle.style.backgroundColor = darkText;
+            if (toggle) toggle.style.backgroundColor = darkText;
             if (footer) footer.style.color = darkText;
         } else {
             body.style.backgroundColor = lightBg;
             body.style.color = lightText;
-            toggle.style.backgroundColor = lightText;
+            if (toggle) toggle.style.backgroundColor = lightText;
             if (footer) footer.style.color = lightText;
         }
+
         localStorage.setItem("theme", theme);
     };
 
@@ -38,13 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    window.matchMedia?.("(prefers-color-scheme: dark)")?.addEventListener("change", (e) => {
         const systemTheme = e.matches ? "dark" : "light";
         if (!savedTheme) applyTheme(systemTheme);
     });
 
-    /* Smooth custom cursor movement with global hover effect including overlay */
+    /* =================== Custom Cursor with Global Hover Effect =================== */
+
     const customCursor = document.querySelector('.custom-cursor');
+
     if (customCursor) {
         let mouseX = 0;
         let mouseY = 0;
@@ -60,157 +66,110 @@ document.addEventListener("DOMContentLoaded", () => {
         function animateCursor() {
             cursorX += (mouseX - cursorX) * speed;
             cursorY += (mouseY - cursorY) * speed;
+
             customCursor.style.top = `${cursorY}px`;
             customCursor.style.left = `${cursorX}px`;
+
             requestAnimationFrame(animateCursor);
         }
 
         animateCursor();
 
-        /* Global cursor hover effect - fully universal */
         document.addEventListener('mouseover', (e) => {
             const target = e.target;
-            const interactive = target.closest(
+            const interactive = target?.closest(
                 'button, a, input, select, textarea, label, [role="button"], [onclick], .enter-button, .logo-container, .country-option, #country-overlay-close'
             );
 
             if (customCursor) {
-                // Maintain existing behavior:
-                // On interactive elements, the cursor circle disappears
-                // On non-interactive areas, circle is visible
+                // On interactive elements, hide the cursor circle; else show it
                 customCursor.style.opacity = interactive ? '0' : '1';
             }
         });
     }
 
+    /* =================== Menu Overlay =================== */
 
-    /**
-     * Country detection (IP-based) + persistence
-     * Non-blocking, silent, Apple-like
-     */
-    const countryLabel = document.getElementById("current-country");
-    const COUNTRY_STORAGE_KEY = "artan_country";
-    const REGION_STORAGE_KEY = "artan_region";
+    function initMenu({ onOpen, onClose } = {}) {
+        const menuButton = document.getElementById('menu-button');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuItems = menuOverlay?.querySelectorAll('.menu-list li') ?? [];
 
-    // Unified function to set both country label and storage
-    const setCountry = (countryName) => {
-        if (!countryName || !countryLabel) return;
-        countryLabel.textContent = countryName;
-        localStorage.setItem(COUNTRY_STORAGE_KEY, countryName);
-        localStorage.setItem(REGION_STORAGE_KEY, countryName);
-        if (window.__UPDATE_ANNOUNCEMENT_LANGUAGE__) {
-            const lang = window.I18N_LANG_MAP && window.I18N_LANG_MAP[countryName] ? window.I18N_LANG_MAP[countryName] : 'en';
-            window.__UPDATE_ANNOUNCEMENT_LANGUAGE__(lang);
-        }
-    };
+        if (!menuButton || !menuOverlay) return;
 
-    // Detect hard refresh using sessionStorage
-    const sessionKey = "artan_session_active";
-    const isHardRefresh = !sessionStorage.getItem(sessionKey);
-    sessionStorage.setItem(sessionKey, "true");
+        let isOpen = false;
+        let isAnimating = false;
+        const CLOSE_ANIMATION_DURATION = 420; // ms — matches CSS exit rhythm
 
-    // Clear stored selections on hard refresh to fully reset
-    if (isHardRefresh) {
-        localStorage.removeItem(REGION_STORAGE_KEY);
-        localStorage.removeItem(COUNTRY_STORAGE_KEY);
-    }
+        function openMenu() {
+            if (isAnimating) return;
+            isAnimating = true;
 
-    // Retrieve stored selections
-    const storedRegion = localStorage.getItem(REGION_STORAGE_KEY);
-
-    if (storedRegion) {
-        // Normal refresh → respect stored region
-        setCountry(storedRegion);
-    } else {
-        // First visit or hard refresh → detect by IP
-        fetch("https://ipapi.co/json/")
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.country_name) {
-                    setCountry(data.country_name);
-                }
-            })
-            .catch(() => {});
-    }
-
-function initMenu({ onOpen, onClose } = {}) {
-    const menuButton = document.getElementById('menu-button');
-    const menuOverlay = document.getElementById('menu-overlay');
-    const menuItems = menuOverlay.querySelectorAll('.menu-list li');
-
-    if (!menuButton || !menuOverlay) return;
-
-    let isOpen = false;
-    let isAnimating = false;
-    const CLOSE_ANIMATION_DURATION = 420; // ms — matches CSS exit rhythm
-
-    function openMenu() {
-        if (isAnimating) return;
-        isAnimating = true;
-
-        menuButton.classList.add('menu-open');
-        menuOverlay.classList.add('active');
-        menuOverlay.classList.remove('closing');
-        menuItems.forEach((item) => {
-            item.style.transitionDelay = '';
-        });
-        document.body.classList.add('menu-active');
-
-        isOpen = true;
-        if (typeof onOpen === 'function') onOpen();
-
-        requestAnimationFrame(() => {
-            isAnimating = false;
-        });
-    }
-
-    function closeMenu() {
-        if (isAnimating) return;
-        isAnimating = true;
-
-        isOpen = false;
-
-        // Trigger graceful exit animation
-        menuOverlay.classList.add('closing');
-
-        const items = Array.from(menuItems).reverse();
-        items.forEach((item, index) => {
-            item.style.transitionDelay = `${index * 0.06}s`;
-        });
-
-        document.body.classList.remove('menu-active');
-
-        if (typeof onClose === 'function') onClose();
-
-        // Allow exit animation to fully play before hiding overlay
-        setTimeout(() => {
-            menuOverlay.classList.remove('active');
+            menuButton.classList.add('menu-open');
+            menuOverlay.classList.add('active');
             menuOverlay.classList.remove('closing');
-            menuButton.classList.remove('menu-open');
 
             menuItems.forEach((item) => {
                 item.style.transitionDelay = '';
             });
 
-            isAnimating = false;
-        }, CLOSE_ANIMATION_DURATION);
+            document.body.classList.add('menu-active');
+
+            isOpen = true;
+            if (typeof onOpen === 'function') onOpen();
+
+            requestAnimationFrame(() => {
+                isAnimating = false;
+            });
+        }
+
+        function closeMenu() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            isOpen = false;
+
+            // Trigger graceful exit animation
+            menuOverlay.classList.add('closing');
+
+            const items = Array.from(menuItems).reverse();
+            items.forEach((item, index) => {
+                item.style.transitionDelay = `${index * 0.06}s`;
+            });
+
+            document.body.classList.remove('menu-active');
+
+            if (typeof onClose === 'function') onClose();
+
+            // Allow exit animation to fully play before hiding overlay
+            setTimeout(() => {
+                menuOverlay.classList.remove('active');
+                menuOverlay.classList.remove('closing');
+                menuButton.classList.remove('menu-open');
+
+                menuItems.forEach((item) => {
+                    item.style.transitionDelay = '';
+                });
+
+                isAnimating = false;
+            }, CLOSE_ANIMATION_DURATION);
+        }
+
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isOpen ? closeMenu() : openMenu();
+        });
+
+        // Optional: close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                closeMenu();
+            }
+        });
     }
 
-    menuButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        isOpen ? closeMenu() : openMenu();
-    });
-
-    // Optional: close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && isOpen) {
-            closeMenu();
-        }
-    });
-}
-
-/* expose safely to classic scripts */
-window.initMenu = initMenu;
+    /* expose safely to classic scripts */
+    window.initMenu = initMenu;
 
     // Initialize menu with cursor-safe orchestration
     if (typeof window.initMenu === 'function') {
@@ -226,61 +185,65 @@ window.initMenu = initMenu;
         });
     }
 
-document.addEventListener('countryOverlayOpen', () => {
-    const header = document.getElementById('header-controls');
-    if (header) header.style.display = 'none';
-});
+    document.addEventListener('countryOverlayOpen', () => {
+        const header = document.getElementById('header-controls');
+        if (header) header.style.display = 'none';
+    });
 
-document.addEventListener('countryOverlayClose', () => {
-    const header = document.getElementById('header-controls');
-    if (header) header.style.display = '';
-});
-});
+    document.addEventListener('countryOverlayClose', () => {
+        const header = document.getElementById('header-controls');
+        if (header) header.style.display = '';
+    });
 
-document.addEventListener("DOMContentLoaded", () => {
+    /* =================== Stream Overlay =================== */
+
     const streamOverlay = document.getElementById("stream-overlay");
     const closeStreamBtn = document.getElementById("close-stream");
     const streamButtons = document.querySelectorAll(".stream-btn");
 
-    if (!streamOverlay || !closeStreamBtn || streamButtons.length === 0) return;
+    if (streamOverlay && closeStreamBtn && streamButtons.length > 0) {
 
-    let isAnimating = false;
+        let isAnimating = false;
 
-    function openStream() {
-        if (isAnimating) return;
-        isAnimating = true;
-        streamOverlay.classList.add("visible");
-        document.body.classList.add("overlay-active"); // mimic menu behavior
-        document.body.style.overflow = "hidden";
-        requestAnimationFrame(() => { isAnimating = false; });
-    }
+        function openStream() {
+            if (isAnimating) return;
+            isAnimating = true;
 
-    function closeStream() {
-        if (isAnimating) return;
-        isAnimating = true;
-        streamOverlay.classList.remove("visible");
-        document.body.classList.remove("overlay-active");
-        document.body.style.overflow = "";
-        requestAnimationFrame(() => { isAnimating = false; });
-    }
+            streamOverlay.classList.add("visible");
+            document.body.classList.add("overlay-active"); // mimic menu behavior
+            document.body.style.overflow = "hidden";
 
-    streamButtons.forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            openStream();
-        });
-    });
-
-    closeStreamBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        closeStream();
-    });
-
-    // Optional: close overlay with Escape key
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && streamOverlay.classList.contains("visible")) {
-            closeStream();
+            requestAnimationFrame(() => { isAnimating = false; });
         }
-    });
-});
 
+        function closeStream() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            streamOverlay.classList.remove("visible");
+            document.body.classList.remove("overlay-active");
+            document.body.style.overflow = "";
+
+            requestAnimationFrame(() => { isAnimating = false; });
+        }
+
+        streamButtons.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openStream();
+            });
+        });
+
+        closeStreamBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            closeStream();
+        });
+
+        // Optional: close overlay with Escape key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && streamOverlay.classList.contains("visible")) {
+                closeStream();
+            }
+        });
+    }
+});
