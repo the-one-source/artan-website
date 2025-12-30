@@ -157,7 +157,7 @@
       region: "United States & Canada",
       i18nKey: "region.unitedStatesCanada",
       countries: [
-        { name: "Canada", label: "Canada", languageCode: "en" },
+        { name: "Canada", label: "Canada", languageCode: "fr" },
         { name: "United States", label: "United States", languageCode: "en" }
       ]
     }
