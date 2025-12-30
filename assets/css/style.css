@@ -36,6 +36,7 @@ body.light-mode { --bg-color:var(--color-white); --text-color:var(--color-black)
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:var(--font-base); font-size:16px; line-height:var(--line-height-base); color:var(--text-color); background-color:var(--bg-color); transition:background-color 0.6s, color 0.6s; }
 .container { width:90%; max-width:1200px; margin:0 auto; }
+body.site-body { min-height: 100vh; overflow-x: hidden; }
 
 /* =================== Typography =================== */
 h1 { font-size:2.6rem; font-weight:700; letter-spacing:0.1em; margin-bottom:var(--spacing-lg); }
@@ -318,7 +319,7 @@ body.light-mode .theme-toggle { background-color:var(--color-black); }
 .stage-container { position:relative; width:100%; max-width:640px; min-height:11rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3.2rem; margin:0 auto; padding:1.5rem 0; text-align:center; }
 
 /* =================== Stage Circle =================== */
-.stage-circle { position:relative; width:min(72vw,420px); aspect-ratio:1/1; border-radius:50%; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 72%); filter:blur(0); transition:background 1.2s ease; margin:0 auto; }
+.stage-circle { position:relative; width:min(32vw, 300px, 62vh); aspect-ratio:1/1; border-radius:50%; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 72%); filter:blur(0); transition:background 1.2s ease; margin:0 auto; }
 .stage-circle::after { content:""; position:absolute; inset:-12%; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%); opacity:0.6; animation:circle-breathe 8s ease-in-out infinite; pointer-events:none; }
 @keyframes circle-breathe { 0% {opacity:0.35; transform:scale(0.96);} 50% {opacity:0.65; transform:scale(1.02);} 100% {opacity:0.35; transform:scale(0.96);} }
 @media (max-width:640px) { .stage-circle { width:min(82vw,360px); } }
@@ -544,3 +545,126 @@ main, #stage, .stage-circle { display:flex; justify-content:center; align-items:
 .stage-container { width:100%; max-width:640px; margin:0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:1.5rem; padding-bottom:1.5rem; }
 #announcement, .site-essence, .enter-button { text-align:center; margin:0 auto; }
 .stage-circle::after { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%); opacity:0.6; animation:circle-breathe 8s ease-in-out infinite; pointer-events:none; }
+
+
+/* =================== Logo Intro Animation — PinkFloyd-style =================== */
+/* CSS-only hooks. JS will toggle body + logo classes. No existing behavior is changed unless a body class is present. */
+
+:root {
+  --intro-logo-max: 420px;
+  --intro-logo-mobile-max: 360px;
+  --intro-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* While intro runs: lock scroll and hide UI layers (only when class is present) */
+body.intro-loading {
+  overflow: hidden;
+}
+
+/* During intro: hide the hero circle + stage stack entirely (logo is rendered as fixed overlay) */
+body.intro-loading .stage-circle {
+  opacity: 0;
+  background: transparent;
+}
+
+body.intro-loading .stage-circle::after {
+  opacity: 0;
+  animation: none;
+}
+
+/* Reveal the hero circle smoothly once the intro hands off */
+body.intro-reveal .stage-circle {
+  opacity: 1;
+  transition: opacity 0.9s var(--intro-ease);
+}
+
+body.intro-loading #header-controls,
+body.intro-loading .site-essence,
+body.intro-loading .site-footer,
+body.intro-loading .footer-separator,
+body.intro-loading #menu-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Stage text + CTA remain in DOM but stay silent until reveal */
+body.intro-loading #announcement,
+body.intro-loading #enter-button,
+body.intro-loading .enter-button {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+/* Reveal phase for stage text + CTA */
+body.intro-reveal #announcement,
+body.intro-reveal #enter-button,
+body.intro-reveal .enter-button {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.65s ease,
+    transform 0.85s var(--intro-ease);
+}
+
+/* Intro logo: floated, centered, above everything */
+.site-logo.intro-logo {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(62vw, var(--intro-logo-max));
+  height: auto;
+  margin: 0;
+  z-index: 300000;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.68);
+  transition:
+    opacity 0.6s ease,
+    transform 0.9s var(--intro-ease);
+  will-change: transform, opacity;
+}
+
+/* Pop-in (first beat) */
+.site-logo.intro-logo.intro-pop {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Subtle settle (second beat) */
+.site-logo.intro-logo.intro-settle {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+
+/* Docked state: JS removes `position:fixed` by swapping to this class after the move */
+.site-logo.intro-docked {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 320px;
+  margin: 0 auto 2rem auto;
+  z-index: 1;
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .site-logo.intro-logo {
+    width: min(78vw, var(--intro-logo-mobile-max));
+  }
+  .site-logo.intro-docked {
+    width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.intro-loading {
+    overflow: auto;
+  }
+  .site-logo.intro-logo,
+  body.intro-reveal #announcement,
+  body.intro-reveal #enter-button,
+  body.intro-reveal .enter-button {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
