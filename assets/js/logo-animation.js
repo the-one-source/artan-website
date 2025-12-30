@@ -1,29 +1,34 @@
 /**
- * Logo Intro Animation — PinkFloyd-style
+ * Logo Intro Animation — PinkFloyd-style (CENTER POP → REVEAL)
  *
- * What it does:
- * 1) On first load: show ONLY the logo, centered, with a subtle pop + settle.
- * 2) Logo travels back to its real layout position.
- * 3) Reveal the stage content (announcement + enter + essence).
- * 4) On ENTER click: hide stage-only intro UI (announcement + enter), reveal header/footer.
+ * Behavior:
+ * 1) New tab/session: show ONLY a centered logo overlay (no header/footer, no announcement/enter/essence).
+ * 2) Logo does a visible pop (scale up/down) while staying centered.
+ * 3) Logo overlay fades out.
+ * 4) Stage UI appears in its normal layout (logo in place + announcement + enter + essence).
+ * 5) On ENTER: hide announcement + enter, reveal header/footer. Logo remains.
  *
- * Notes:
- * - Self-contained (no dependency on main.js).
- * - Additive: only affects UI while body has intro classes.
- * - Safe on refresh: intro runs again on each load.
+ * Session rules:
+ * - Normal refresh keeps current state.
+ * - Closing the tab/new session re-runs the intro.
  */
 
 (() => {
-  const REVEAL_MS = 1400;
-  const SETTLE_MS = 520;
-  const HOLD_MS = 900;
-  const TRAVEL_MS = 1200;
+  // ===== Timing (visible, no travel) =====
+  // Total intro ≈ POP_IN + HOLD + FADE (POP_OUT overlaps) → ~5s
+  const POP_IN_MS = 1400;   // noticeable scale-up
+  const POP_OUT_MS = 900;   // settle
+  const HOLD_MS = 2400;     // linger in center
+  const FADE_MS = 1200;     // slow fade + scale-down exit
 
   const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
   const EASE_INOUT = "cubic-bezier(0.4, 0, 0.2, 1)";
 
+  // Run once per session (normal refresh keeps it done)
+  const INTRO_DONE_KEY = "artan_logo_intro_done_v4";
+  const ENTERED_KEY = "artan_site_entered_v1";
+
   const qs = (sel) => document.querySelector(sel);
-  const qsa = (sel) => Array.from(document.querySelectorAll(sel));
 
   const prefersReducedMotion = () =>
     window.matchMedia &&
@@ -51,55 +56,40 @@
     });
   };
 
-  const clearInline = (el, keys) => {
-    if (!el) return;
-    keys.forEach((k) => {
-      el.style[k] = "";
-    });
+  const raf2 = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
+
+  const onReady = (fn) => {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+      fn();
+    }
   };
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  onReady(async () => {
     const body = document.body;
     if (!body || body.hasAttribute("data-disable-logo-intro")) return;
 
     const logoEl = qs(".site-logo");
     if (!logoEl) return;
 
-    const waitForLogoReady = async () => {
-      // Ensure SVG/IMG has real dimensions before we measure.
-      try {
-        if (logoEl.tagName === "IMG") {
-          if (!logoEl.complete) {
-            await new Promise((resolve) =>
-              logoEl.addEventListener("load", resolve, { once: true })
-            );
-          }
-          if (typeof logoEl.decode === "function") {
-            await logoEl.decode().catch(() => {});
-          }
-        }
-      } catch (_) {
-        // fail open
-      }
+    // ===== Session gate =====
+    const introDone = sessionStorage.getItem(INTRO_DONE_KEY) === "1";
+    const entered = sessionStorage.getItem(ENTERED_KEY) === "1";
 
-      // One frame so layout settles.
-      await new Promise((r) => requestAnimationFrame(r));
-    };
-
-    await waitForLogoReady();
-
-    // Core stage elements
+    // ===== Core stage elements =====
     const stage = qs("#stage") || qs(".stage-container");
     const stageCircle = qs(".stage-circle");
     const announcement = qs("#announcement");
     const enterButton = qs("#enter-button");
     const essence = qs(".site-essence");
 
-    // Global chrome
+    // ===== Global chrome =====
     const headerControls = qs("#header-controls");
     const footerSeparator = qs(".footer-separator");
     const footer = qs(".site-footer");
     const menuOverlay = qs("#menu-overlay");
+    const customCursor = qs(".custom-cursor");
 
     // Persist original essence placement so we can restore on ENTER.
     const essenceOriginal = essence
@@ -125,11 +115,13 @@
       setA11yHidden(footerSeparator, true);
       setA11yHidden(footer, true);
       setA11yHidden(menuOverlay, true);
+      setA11yHidden(customCursor, true);
 
       setInline(headerControls, { opacity: "0", pointerEvents: "none" });
       setInline(footerSeparator, { opacity: "0", pointerEvents: "none" });
       setInline(footer, { opacity: "0", pointerEvents: "none" });
       setInline(menuOverlay, { opacity: "0", pointerEvents: "none" });
+      setInline(customCursor, { opacity: "0", pointerEvents: "none" });
     };
 
     const showChrome = () => {
@@ -137,9 +129,9 @@
       setA11yHidden(footerSeparator, false);
       setA11yHidden(footer, false);
       setA11yHidden(menuOverlay, false);
+      setA11yHidden(customCursor, false);
 
-      // Let CSS own final look; we only gently fade-in.
-      [headerControls, footerSeparator, footer].forEach((el) => {
+      [headerControls, footerSeparator, footer, customCursor].forEach((el) => {
         if (!el) return;
         el.style.transition = `opacity 600ms ${EASE_OUT}`;
         el.style.opacity = "1";
@@ -152,13 +144,16 @@
       }
     };
 
-    // During intro: hide stage content except logo.
+    // During intro: hide stage content (and the in-layout logo) so ONLY overlay shows.
     const hideStageContent = () => {
-      // Keep stageCircle present (for layout), but visually quiet.
       if (stageCircle) {
         stageCircle.setAttribute("aria-hidden", "true");
         stageCircle.style.pointerEvents = "none";
       }
+
+      // Hide the in-layout logo during intro overlay.
+      setA11yHidden(logoEl, true);
+      setInline(logoEl, { opacity: "0", pointerEvents: "none" });
 
       [announcement, enterButton, essence].forEach((el) => {
         if (!el) return;
@@ -170,15 +165,17 @@
         });
       });
 
-      // Ensure ENTER is not focusable while hidden.
-      if (enterButton) {
-        enterButton.tabIndex = -1;
-      }
+      if (enterButton) enterButton.tabIndex = -1;
     };
 
     const revealStageContent = () => {
-      // Keep essence inside stage until ENTER.
       mountEssenceIntoStage();
+
+      // Reveal the in-layout logo.
+      setA11yHidden(logoEl, false);
+      logoEl.style.transition = `opacity 700ms ${EASE_OUT}`;
+      logoEl.style.opacity = "1";
+      logoEl.style.pointerEvents = "";
 
       [announcement, enterButton, essence].forEach((el) => {
         if (!el) return;
@@ -192,10 +189,7 @@
         el.style.pointerEvents = "";
       });
 
-      if (enterButton) {
-        enterButton.removeAttribute("aria-hidden");
-        enterButton.tabIndex = 0;
-      }
+      if (enterButton) enterButton.tabIndex = 0;
 
       if (stageCircle) {
         stageCircle.removeAttribute("aria-hidden");
@@ -203,45 +197,18 @@
       }
     };
 
-    const cleanupIntroLogoInline = () => {
-      clearInline(logoEl, [
-        "position",
-        "top",
-        "left",
-        "transform",
-        "transformOrigin",
-        "transition",
-        "zIndex",
-        "willChange",
-        "opacity",
-      ]);
+    const hideIntroOnlyUI = () => {
+      [announcement, enterButton].forEach((el) => {
+        if (!el) return;
+        setA11yHidden(el, true);
+        setInline(el, { opacity: "0", transform: "translateY(6px)", pointerEvents: "none" });
+      });
+      if (enterButton) enterButton.tabIndex = -1;
     };
-
-    let placeholder = null;
-
-    const removePlaceholder = () => {
-      if (placeholder?.parentNode) placeholder.parentNode.removeChild(placeholder);
-      placeholder = null;
-    };
-
-    const finishIntro = once(() => {
-      body.classList.remove("intro-loading");
-      body.classList.add("intro-reveal");
-
-      // Dock back into normal flow.
-      cleanupIntroLogoInline();
-      logoEl.classList.remove("intro-logo", "intro-pop", "intro-settle");
-      logoEl.classList.add("intro-docked");
-
-      removePlaceholder();
-
-      // Reveal stage content (still no header/footer).
-      revealStageContent();
-    });
 
     const enterSite = once(() => {
-      body.classList.remove("intro-loading");
-      body.classList.remove("intro-reveal");
+      sessionStorage.setItem(ENTERED_KEY, "1");
+      body.classList.remove("intro-loading", "intro-reveal");
       body.classList.add("site-entered");
 
       // Hide intro-only elements.
@@ -253,17 +220,13 @@
         el.style.pointerEvents = "none";
         setA11yHidden(el, true);
       });
+      if (enterButton) enterButton.tabIndex = -1;
 
-      // Restore essence to its original location (if that is your normal layout).
+      // Essence returns to footer flow on enter.
       restoreEssenceToOriginal();
 
-      // Reveal chrome.
+      // Show global chrome.
       showChrome();
-
-      // Remove ENTER from tab order.
-      if (enterButton) {
-        enterButton.tabIndex = -1;
-      }
     });
 
     if (enterButton) {
@@ -273,8 +236,34 @@
       });
     }
 
-    // Reduced motion: no travel; just reveal stage content.
-    if (prefersReducedMotion()) {
+    // ===== Restore state on refresh (before any animation) =====
+    if (entered) {
+      body.classList.remove("intro-loading", "intro-reveal");
+      body.classList.add("site-entered");
+
+      // Ensure intro-only UI is hidden
+      hideIntroOnlyUI();
+
+      // Ensure logo is visible
+      setA11yHidden(logoEl, false);
+      setInline(logoEl, { opacity: "1", pointerEvents: "" });
+
+      // Put essence back to its original home and show chrome
+      restoreEssenceToOriginal();
+      showChrome();
+
+      // Ensure stage remains interactive
+      if (stageCircle) {
+        stageCircle.removeAttribute("aria-hidden");
+        stageCircle.style.pointerEvents = "";
+      }
+
+      return;
+    }
+
+    if (introDone) {
+      // Stage revealed, but user hasn't entered yet (keep chrome hidden)
+      body.classList.remove("intro-loading", "site-entered");
       body.classList.add("intro-reveal");
       hideChrome();
       hideStageContent();
@@ -282,80 +271,124 @@
       return;
     }
 
+    // Reduced motion: skip overlay pop; reveal stage content only.
+    if (prefersReducedMotion()) {
+      sessionStorage.setItem(INTRO_DONE_KEY, "1");
+      hideChrome();
+      hideStageContent();
+      body.classList.add("intro-reveal");
+      revealStageContent();
+      return;
+    }
+
+    // Ensure logo is decoded before building overlay.
+    try {
+      if (logoEl.tagName === "IMG") {
+        if (!logoEl.complete) {
+          await new Promise((resolve) =>
+            logoEl.addEventListener("load", resolve, { once: true })
+          );
+        }
+        if (typeof logoEl.decode === "function") {
+          await logoEl.decode().catch(() => {});
+        }
+      }
+    } catch (_) {
+      // fail open
+    }
+
+    await new Promise((r) => requestAnimationFrame(r));
+
+    // Mark intro as done for this session once we begin.
+    sessionStorage.setItem(INTRO_DONE_KEY, "1");
+
     // Start intro.
     body.classList.add("intro-loading");
     hideChrome();
     hideStageContent();
 
-    // Placeholder keeps layout stable while logo is fixed.
-    const rect = logoEl.getBoundingClientRect();
-    placeholder = document.createElement("div");
-    placeholder.style.width = `${rect.width}px`;
-    placeholder.style.height = `${rect.height}px`;
-    placeholder.style.pointerEvents = "none";
-    placeholder.style.display = "inline-block";
-    placeholder.style.verticalAlign = "middle";
-    logoEl.parentNode?.insertBefore(placeholder, logoEl.nextSibling);
-
-    const getTargetCenter = () => {
-      const r = placeholder.getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-    };
-
-    // Intro look.
-    logoEl.classList.add("intro-logo");
-
-    // Pin logo to viewport center.
-    setInline(logoEl, {
+    // Build centered overlay logo (clone) so the real logo never "travels" and never shifts left.
+    const overlay = document.createElement("div");
+    overlay.setAttribute("data-logo-intro-overlay", "true");
+    overlay.setAttribute("aria-hidden", "true");
+    setInline(overlay, {
       position: "fixed",
-      top: "50%",
-      left: "50%",
-      transformOrigin: "center",
-      transform: "translate(-50%, -50%) scale(0.52)",
-      opacity: "0",
-      zIndex: "300000",
-      willChange: "transform, top, left, opacity",
+      inset: "0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      direction: "ltr",
+      background: "transparent",
+      zIndex: "2147483000",
+      pointerEvents: "none",
+      opacity: "1",
     });
 
-    requestAnimationFrame(() => {
-      // Pop-in.
-      logoEl.classList.add("intro-pop");
-      logoEl.style.transition = [
-        `opacity 600ms ease`,
-        `transform ${REVEAL_MS}ms ${EASE_OUT}`,
-      ].join(", ");
-      logoEl.style.opacity = "1";
-      logoEl.style.transform = "translate(-50%, -50%) scale(1.08)";
+    const overlayLogo = logoEl.cloneNode(true);
+    overlayLogo.removeAttribute("id");
 
-      // Settle.
+    // Strip any layout/positioning classes from the in-layout logo.
+    // Keep only our intro class so CSS from `.site-logo` cannot shift the overlay logo.
+    overlayLogo.className = "intro-logo";
+    overlayLogo.removeAttribute("style");
+
+    setInline(overlayLogo, {
+      display: "block",
+      position: "relative",
+      left: "0",
+      top: "0",
+      margin: "0 auto",
+      padding: "0",
+      width: "auto",
+      height: "auto",
+      maxWidth: "min(72vw, 460px)",
+      transformOrigin: "50% 50%",
+      transform: "translate3d(0,0,0) scale(0.5)",
+      opacity: "1",
+      willChange: "transform, opacity",
+      pointerEvents: "none",
+      translate: "0 0",
+    });
+
+    overlay.appendChild(overlayLogo);
+    document.body.appendChild(overlay);
+
+    const finishIntro = once(() => {
+      body.classList.remove("intro-loading");
+      body.classList.add("intro-reveal");
+
+      // Remove overlay
+      if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+
+      // Reveal stage content (still no header/footer)
+      revealStageContent();
+    });
+
+    raf2(() => {
+      // Pop up
+      overlayLogo.style.transition = `transform ${POP_IN_MS}ms ${EASE_OUT}`;
+      overlayLogo.style.transform = "translate3d(0,0,0) scale(1.03)";
+
+      // Settle
       window.setTimeout(() => {
-        logoEl.classList.add("intro-settle");
-        logoEl.style.transition = `transform ${SETTLE_MS}ms ${EASE_INOUT}`;
-        logoEl.style.transform = "translate(-50%, -50%) scale(1.0)";
-      }, Math.max(0, REVEAL_MS - 260));
+        overlayLogo.style.transition = `transform ${POP_OUT_MS}ms ${EASE_INOUT}`;
+        overlayLogo.style.transform = "translate3d(0,0,0) scale(1.0)";
+      }, Math.max(0, POP_IN_MS - 120));
 
-      // Travel back.
+      // Hold, then fade away overlay
       window.setTimeout(() => {
-        const target = getTargetCenter();
+        overlay.style.transition = `opacity ${FADE_MS}ms ${EASE_OUT}`;
+        overlayLogo.style.transition = `transform ${FADE_MS}ms ${EASE_OUT}, opacity ${FADE_MS}ms ${EASE_OUT}`;
 
-        logoEl.style.transition = [
-          `top ${TRAVEL_MS}ms ${EASE_OUT}`,
-          `left ${TRAVEL_MS}ms ${EASE_OUT}`,
-          `transform ${TRAVEL_MS}ms ${EASE_OUT}`,
-        ].join(", ");
+        overlay.style.opacity = "0";
+        overlayLogo.style.opacity = "0";
+        overlayLogo.style.transform = "translate3d(0,0,0) scale(0.15)";
 
-        logoEl.style.top = `${target.y}px`;
-        logoEl.style.left = `${target.x}px`;
-        logoEl.style.transform = "translate(-50%, -50%) scale(1)";
-
-        window.setTimeout(finishIntro, TRAVEL_MS + 50);
-      }, REVEAL_MS + HOLD_MS);
+        window.setTimeout(finishIntro, FADE_MS + 40);
+      }, POP_IN_MS + HOLD_MS);
 
       // Safety: never get stuck.
-      window.setTimeout(
-        finishIntro,
-        REVEAL_MS + HOLD_MS + TRAVEL_MS + 1400
-      );
+      window.setTimeout(finishIntro, POP_IN_MS + HOLD_MS + FADE_MS + 1400);
     });
 
     // BFCache safety.
@@ -367,7 +400,7 @@
       { once: true }
     );
 
-    // Escape exits intro (still keeps intro content revealed, but no chrome).
+    // Escape exits intro.
     window.addEventListener(
       "keydown",
       (e) => {
@@ -375,19 +408,5 @@
       },
       { once: true }
     );
-
-    // Optional: if user scrolls, do not break intro.
-    window.addEventListener(
-      "scroll",
-      () => {
-        // Keep it stable; no-op.
-      },
-      { passive: true }
-    );
-
-    // Ensure only one "enter" handler exists.
-    qsa("#enter-button").forEach((btn) => {
-      if (btn !== enterButton) btn.setAttribute("aria-hidden", "true");
-    });
   });
 })();

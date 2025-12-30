@@ -319,10 +319,10 @@ body.light-mode .theme-toggle { background-color:var(--color-black); }
 .stage-container { position:relative; width:100%; max-width:640px; min-height:11rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3.2rem; margin:0 auto; padding:1.5rem 0; text-align:center; }
 
 /* =================== Stage Circle =================== */
-.stage-circle { position:relative; width:min(32vw, 300px, 62vh); aspect-ratio:1/1; border-radius:50%; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 72%); filter:blur(0); transition:background 1.2s ease; margin:0 auto; }
+.stage-circle { position:relative; width:min(28vw, 260px, 52vh); aspect-ratio:1/1; border-radius:50%; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.015) 60%, rgba(255,255,255,0) 72%); filter:blur(0); transition:background 1.2s ease; margin:0 auto; }
 .stage-circle::after { content:""; position:absolute; inset:-12%; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%); opacity:0.6; animation:circle-breathe 8s ease-in-out infinite; pointer-events:none; }
 @keyframes circle-breathe { 0% {opacity:0.35; transform:scale(0.96);} 50% {opacity:0.65; transform:scale(1.02);} 100% {opacity:0.35; transform:scale(0.96);} }
-@media (max-width:640px) { .stage-circle { width:min(82vw,360px); } }
+@media (max-width:640px) { .stage-circle { width:min(74vw,320px); } }
 
 /* =================== Enter Button =================== */
 .enter-button { position:relative; display:inline-flex; align-items:center; justify-content:center; padding:0.55rem 1.9rem; background:transparent; color:var(--text-color); font-size:0.95rem; font-weight:300; letter-spacing:0.14em; text-transform:uppercase; border:1px solid rgba(255,255,255,0.35); border-radius:999px; cursor:pointer; overflow:hidden; transition:border-color 0.6s ease, opacity 0.6s ease; animation:enter-breathe 6s ease-in-out infinite; margin:0 auto; }
@@ -553,7 +553,12 @@ main, #stage, .stage-circle { display:flex; justify-content:center; align-items:
 :root {
   --intro-logo-max: 420px;
   --intro-logo-mobile-max: 360px;
+
+  /* Motion tuning (JS timings should match these for a ~5s intro) */
   --intro-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --intro-pop-duration: 1.6s;
+  --intro-settle-duration: 1.9s;
+  --intro-fade-duration: 1.5s;
 }
 
 /* While intro runs: lock scroll and hide UI layers (only when class is present) */
@@ -611,16 +616,24 @@ body.intro-reveal .enter-button {
   position: fixed;
   left: 50%;
   top: 50%;
+  right: auto;
+  bottom: auto;
+  display: block;
   width: min(62vw, var(--intro-logo-max));
   height: auto;
-  margin: 0;
+  margin: 0 !important;
   z-index: 300000;
+
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.68);
+
+  /* Transitions are driven by class swaps from JS */
   transition:
-    opacity 0.6s ease,
-    transform 0.9s var(--intro-ease);
+    opacity var(--intro-pop-duration) ease,
+    transform var(--intro-settle-duration) var(--intro-ease);
+
   will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 /* Pop-in (first beat) */
@@ -632,6 +645,22 @@ body.intro-reveal .enter-button {
 /* Subtle settle (second beat) */
 .site-logo.intro-logo.intro-settle {
   transform: translate(-50%, -50%) scale(0.94);
+}
+
+/* Fade-out + slow scale-down (final beat) */
+.site-logo.intro-logo.intro-fade {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.30);
+  transition:
+    opacity var(--intro-fade-duration) ease,
+    transform var(--intro-fade-duration) var(--intro-ease);
+}
+
+/* Safety: ensure true center in all writing directions */
+html[dir="rtl"] .site-logo.intro-logo,
+body[dir="rtl"] .site-logo.intro-logo {
+  left: 50% !important;
+  right: auto !important;
 }
 
 /* Docked state: JS removes `position:fixed` by swapping to this class after the move */
@@ -660,6 +689,7 @@ body.intro-reveal .enter-button {
     overflow: auto;
   }
   .site-logo.intro-logo,
+  .site-logo.intro-logo.intro-fade,
   body.intro-reveal #announcement,
   body.intro-reveal #enter-button,
   body.intro-reveal .enter-button {
