@@ -43,42 +43,127 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* =================== Custom Cursor =================== */
+  /* =================== Custom Cursor (RTL-safe + re-init on language/dir change) =================== */
 
-  const customCursor = document.querySelector(".custom-cursor");
+  let cursorRAF = null;
 
-  if (customCursor) {
+  function ensureCursorNode() {
+    let node = document.querySelector(".custom-cursor");
+    if (!node) {
+      node = document.createElement("div");
+      node.className = "custom-cursor";
+      document.body.appendChild(node);
+    }
+    return node;
+  }
+
+  function stopCursorLoop() {
+    if (cursorRAF) cancelAnimationFrame(cursorRAF);
+    cursorRAF = null;
+  }
+
+  function initCustomCursor() {
+    stopCursorLoop();
+
+    const customCursor = ensureCursorNode();
+    if (!customCursor) return;
+
+    customCursor.style.display = "";
+    customCursor.style.opacity = "1";
+    customCursor.style.transform = "translate(-50%, -50%) scale(1)";
+
     let mouseX = 0;
     let mouseY = 0;
     let cursorX = 0;
     let cursorY = 0;
     const speed = 0.15;
 
-    document.addEventListener("mousemove", (e) => {
+    const onMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-    });
 
-    function animateCursor() {
+      // Hard-restore in case RTL/dir switches leave it invisible
+      if (customCursor.style.display === "none") customCursor.style.display = "";
+      if (customCursor.style.opacity === "0") customCursor.style.opacity = "1";
+    };
+
+    document.addEventListener("mousemove", onMove, { passive: true });
+
+    const animateCursor = () => {
       cursorX += (mouseX - cursorX) * speed;
       cursorY += (mouseY - cursorY) * speed;
       customCursor.style.left = cursorX + "px";
       customCursor.style.top = cursorY + "px";
-      requestAnimationFrame(animateCursor);
-    }
+      cursorRAF = requestAnimationFrame(animateCursor);
+    };
 
     animateCursor();
 
-    document.addEventListener("mouseover", (e) => {
-      const target = e.target;
-      const interactive =
-        target &&
-        target.closest(
-          "button, a, input, select, textarea, [role='button'], .enter-button, .logo-container, .country-option, #country-overlay-close"
-        );
-      customCursor.style.opacity = interactive ? "0" : "1";
-    });
+    // Pointer-based interaction feedback (RTL-safe)
+    document.addEventListener(
+      "pointerover",
+      (e) => {
+        const target = e.target;
+        const interactive =
+          target &&
+          target.closest(
+            "button, a, input, select, textarea, [role='button'], .enter-button, .logo-container, .country-option, #country-overlay-close, #country-selector, #language-toggle, #language-dropdown"
+          );
+
+        if (interactive) {
+          customCursor.style.transform = "translate(-50%, -50%) scale(0.4)";
+          customCursor.style.opacity = "0.35";
+        }
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      "pointerout",
+      () => {
+        customCursor.style.transform = "translate(-50%, -50%) scale(1)";
+        customCursor.style.opacity = "1";
+      },
+      { passive: true }
+    );
   }
+
+  initCustomCursor();
+
+  // Re-init cursor when language / direction changes (RTL flips)
+  const reinitCursor = () => {
+    // next paint: let other scripts finish updating DOM/dir
+    requestAnimationFrame(() => initCustomCursor());
+  };
+
+  // Custom events (if your locale system dispatches any)
+  window.addEventListener("languagechange", reinitCursor);
+  window.addEventListener("artan:languageChanged", reinitCursor);
+  window.addEventListener("artan:dirChanged", reinitCursor);
+
+  // Mutation observer: catches dir/lang/class flips on html/body
+  const mo = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (
+        m.type === "attributes" &&
+        (m.attributeName === "dir" ||
+          m.attributeName === "lang" ||
+          m.attributeName === "class")
+      ) {
+        reinitCursor();
+        break;
+      }
+    }
+  });
+
+  mo.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["dir", "lang", "class"],
+  });
+  mo.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["dir", "lang", "class"],
+  });
 
   /* =================== Menu Overlay =================== */
 
@@ -133,23 +218,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.initMenu = initMenu;
   initMenu();
-
-  /* =================== Country Overlay Events =================== */
-
-  document.addEventListener("countryOverlayOpen", () => {
-    const header = document.getElementById("header-controls");
-    if (header) header.style.display = "none";
-  });
-
-  document.addEventListener("countryOverlayClose", () => {
-    const header = document.getElementById("header-controls");
-    if (header) header.style.display = "";
-  });
-
-  /* =================== Locale Trigger Safety =================== */
-
-  const localeTriggers = document.querySelectorAll("[data-locale-trigger]");
-  localeTriggers.forEach((el) => {
-    el.addEventListener("click", (e) => e.stopPropagation());
-  });
 });
