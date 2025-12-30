@@ -80,14 +80,12 @@
 
 <!-- =================== Header Controls =================== -->
 <header id="header-controls" class="site-header">
-  <div class="blur-overlay"></div>
-  <div class="inner-container">
     <button id="menu-button" aria-label="Open menu">
-      <span class="line line-top"></span>
-      <span class="line line-bottom"></span>
+        <span class="line line-top"></span>
+        <span class="line line-bottom"></span>
     </button>
+
     <button id="theme-toggle" aria-label="Toggle dark and light mode" class="theme-toggle"></button>
-  </div>
 </header>
 
 <!-- =================== Menu Overlay =================== -->
@@ -108,11 +106,9 @@
 </div>
 
 <!-- =================== Hidden Site Name =================== -->
-
 <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Artan</h1>
 
 <!-- =================== Landing / Stage Circle =================== -->
-
 <div class="stage-circle">
     <div class="stage-container" id="stage">
         <div class="stage-stack">
@@ -132,11 +128,9 @@
 </div>
 
 <!-- =================== Site Essence =================== -->
-
 <p class="site-essence" data-i18n-key="site.essence">SOUND • VISUAL • CONSCIOUSNESS</p>
 
 <!-- =================== Footer =================== -->
-
 <hr class="footer-separator">
 
 <footer class="site-footer">
@@ -146,7 +140,7 @@
         <div class="footer-locale">
             <div class="locale-item">
                 <button id="language-toggle" class="locale-button" aria-label="Select language" data-locale-trigger="language">
-                    <span id="current-language">DE</span>
+                    <span id="current-language">—</span>
                 </button>
                 <div id="language-dropdown" class="language-dropdown" aria-hidden="true"></div>
             </div>
@@ -155,7 +149,7 @@
 
             <div class="locale-item">
                 <button id="country-selector" class="locale-button" aria-label="Select country" data-locale-trigger="country">
-                    <span id="current-country">Deutschland</span>
+                    <span id="current-country">—</span>
                 </button>
             </div>
         </div>
@@ -163,13 +157,12 @@
 </footer>
 
 <!-- =================== Custom Cursor =================== -->
-
 <div class="custom-cursor"></div>
 
 <!-- =================== Country/Region Overlay =================== -->
-
 <div id="country-overlay" class="country-overlay">
     <div class="country-overlay-inner">
+        <!-- Overlay Header -->
         <div class="overlay-header-container">
             <h2 class="country-overlay-title" data-i18n-key="overlay.chooseRegion">Choose your country or region</h2>
             <button id="country-overlay-close" class="global-close-button" aria-label="Close country selector">
@@ -178,12 +171,13 @@
             </button>
         </div>
         <hr class="footer-separator">
+
+        <!-- Country Regions will be dynamically injected here by countries.js -->
         <div id="country-regions"></div>
     </div>
 </div>
 
 <!-- =================== Scripts =================== -->
-
 <script src="assets/js/countries.js" defer></script>
 <script src="assets/js/translation.js" defer></script>
 <script src="assets/js/country-language.js" defer></script>

@@ -170,7 +170,7 @@
     const container = document.getElementById('country-regions');
     if (!container) return;
 
-    COUNTRIES_DATA.forEach(region => {
+    COUNTRIES_DATA.forEach((region, index) => {
       const regionEl = document.createElement('div');
       regionEl.className = 'country-region';
       regionEl.dataset.region = region.region;
@@ -197,9 +197,11 @@
       regionEl.appendChild(title);
       regionEl.appendChild(list);
 
-      const hr = document.createElement('hr');
-      hr.className = 'footer-separator';
-      regionEl.appendChild(hr);
+      if (index < COUNTRIES_DATA.length - 1) {
+        const hr = document.createElement('hr');
+        hr.className = 'footer-separator';
+        regionEl.appendChild(hr);
+      }
 
       container.appendChild(regionEl);
     });

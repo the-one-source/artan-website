@@ -57,20 +57,116 @@ a:hover { color:var(--link-hover-color); text-decoration:underline; }
 .mb-xl { margin-bottom:var(--spacing-xl); }
 
 /* =================== Header =================== */
-.site-header { position:relative; width:100%; padding-top:3.2rem; padding-bottom:1.6rem; background:transparent; z-index:10; }
-.site-header h1 { font-size:2rem; font-weight:700; margin-bottom:0.5rem; }
-.main-nav ul { list-style:none; display:flex; gap:2rem; margin:0; padding:0; }
-.main-nav a { text-decoration:none; color:#fff; font-weight:500; transition:color 0.18s; }
-.main-nav a:hover { color:var(--link-hover-color); }
+.site-header {
+  position: relative;
+  width: 100%;
+  padding-top: 3.2rem;
+  padding-bottom: 1.6rem;
+  background: transparent;
+  z-index: 10;
+}
 
-/* =================== Header Controls: Professional Blur =================== */
-#header-controls { position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:100001; pointer-events:all; isolation:isolate; width:100%; max-width:1200px; margin:0; padding:0; border-radius:12px; border-top-left-radius:0; border-top-right-radius:0; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0; }
-#header-controls .blur-overlay { position:absolute; top:0; left:0; width:100%; height:100%; backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); pointer-events:none; z-index:1; }
-body.light-mode #header-controls .blur-overlay { backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); }
-#header-controls .inner-container { width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:0.9rem 1.5rem; z-index:2; }
-body.dark-mode #header-controls .inner-container { background:rgba(0,0,0,0.3); }
-body.light-mode #header-controls .inner-container { background:rgba(255,255,255,0.3); }
-#header-controls::after { content:''; display:block; width:90%; max-width:1200px; height:1px; background-color:var(--color-primary3); opacity:0.6; margin:0 auto; border:none; }
+.site-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: color 0.18s;
+}
+
+.main-nav a:hover {
+  color: var(--link-hover-color);
+}
+
+/* =================== Header Ribbon (Compatibility: id-only) =================== */
+/* If the `site-header` class gets removed from the header element, the ribbon must still render. */
+#header-controls {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 90%;
+  max-width: 1200px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+
+  background: transparent;
+  z-index: 100001;
+  pointer-events: all;
+}
+
+#header-controls::before {
+  display: block;
+  align-self: stretch;
+  flex: 1 1 auto;
+
+  content: "";
+  height: 100%;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent calc(50% - 0.5px),
+      rgba(153, 153, 153, 0.6) calc(50% - 0.5px),
+      rgba(153, 153, 153, 0.6) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    rgba(0, 0, 0, 0.18);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  pointer-events: none;
+}
+
+body.light-mode #header-controls::before {
+  background:
+    linear-gradient(
+      to bottom,
+      transparent calc(50% - 0.5px),
+      rgba(153, 153, 153, 0.6) calc(50% - 0.5px),
+      rgba(153, 153, 153, 0.6) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    rgba(255, 255, 255, 0.18);
+}
+
+#header-controls #menu-button,
+#header-controls #menu-button-container,
+#header-controls .theme-toggle,
+#header-controls #theme-toggle {
+  position: relative;
+  z-index: 2;
+}
+
+#header-controls #theme-toggle,
+#header-controls .theme-toggle { order: 1; }
+
+#header-controls #menu-button,
+#header-controls #menu-button-container { order: 2; }
+
+@media (max-width: 768px) {
+  #header-controls { height: 60px; }
+}
+
 
 /* =================== Sections =================== */
 section { padding:6rem 0; }
