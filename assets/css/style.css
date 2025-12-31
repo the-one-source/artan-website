@@ -571,6 +571,318 @@ body[dir="rtl"] .custom-cursor {
 @media (max-width:480px) { .menu-link { font-size:1.6rem; letter-spacing:0.1em; } }
 body.menu-open { overflow:hidden; }
 
+/* =================== Menu Overlay — RealEstateAbbey-inspired Layout =================== */
+/* Additive upgrade: supports the new index.html structure while keeping legacy selectors working. */
+
+/* MENU LOGO SIZE FIX (prevents oversized logo inside menu overlay rails) */
+#menu-overlay .site-logo,
+#menu-overlay .menu-logo,
+#menu-overlay .menu-rail-left .site-logo,
+#menu-overlay .menu-left-rail .site-logo,
+#menu-overlay .menu-left .site-logo {
+  width: 96px;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  display: block;
+}
+
+/* If the menu logo is an inline SVG, keep it constrained */
+#menu-overlay svg.site-logo,
+#menu-overlay .menu-logo svg,
+#menu-overlay .menu-rail-left svg,
+#menu-overlay .menu-left-rail svg,
+#menu-overlay .menu-left svg {
+  width: 96px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Layout primitives (work even if some wrappers are missing) */
+#menu-overlay .menu-overlay-inner {
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* If the new wrappers exist, use them */
+#menu-overlay .menu-shell,
+#menu-overlay .menu-layout,
+#menu-overlay .menu-columns {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0;
+}
+
+/* Left rail (logo + controls + icons) */
+#menu-overlay .menu-rail-left,
+#menu-overlay .menu-left-rail,
+#menu-overlay .menu-left {
+  width: 220px;
+  min-width: 220px;
+  padding: 3.2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Vertical separator line (left) */
+#menu-overlay .menu-rail-left::after,
+#menu-overlay .menu-left-rail::after,
+#menu-overlay .menu-left::after {
+  content: "";
+  position: absolute;
+  top: 2.6rem;
+  bottom: 2.6rem;
+  right: 0;
+  width: 1px;
+  background: rgba(153, 153, 153, 0.45);
+}
+
+/* Center rail (menu list) */
+#menu-overlay .menu-rail-center,
+#menu-overlay .menu-center-rail,
+#menu-overlay .menu-center {
+  flex: 1;
+  padding: 3.2rem 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Vertical separator line (center/right) */
+#menu-overlay .menu-rail-center::after,
+#menu-overlay .menu-center-rail::after,
+#menu-overlay .menu-center::after {
+  content: "";
+  position: absolute;
+  top: 2.6rem;
+  bottom: 2.6rem;
+  right: 0;
+  width: 1px;
+  background: rgba(153, 153, 153, 0.45);
+}
+
+/* Right preview panel */
+#menu-overlay .menu-preview,
+#menu-overlay .menu-right,
+#menu-overlay .menu-rail-right {
+  width: 420px;
+  min-width: 340px;
+  padding: 3.2rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+/* Background wash (optional): menu.js can set a CSS var per item */
+#menu-overlay {
+  background:
+    radial-gradient(1200px 600px at 15% 40%, rgba(145, 124, 111, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 70% 55%, rgba(80, 68, 22, 0.18), transparent 62%),
+    var(--bg-color);
+}
+
+#menu-overlay[data-accent] {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 30%, rgba(0,0,0,0.0) 100%),
+    var(--bg-color);
+}
+
+#menu-overlay {
+  --menu-accent-a: rgba(145, 124, 111, 0.18);
+  --menu-accent-b: rgba(80, 68, 22, 0.18);
+}
+
+#menu-overlay .menu-overlay-inner,
+#menu-overlay .menu-shell,
+#menu-overlay .menu-layout,
+#menu-overlay .menu-columns {
+  background:
+    linear-gradient(90deg, var(--menu-accent-a) 0%, transparent 48%, var(--menu-accent-b) 100%);
+}
+
+/* Menu list -> vertical stack, RealEstateAbbey-like */
+#menu-overlay .menu-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#menu-overlay .menu-list {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Each item: row with a vertical separator feel */
+#menu-overlay .menu-list li {
+  width: 100%;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid rgba(153, 153, 153, 0.35);
+  transform: translateY(0);
+}
+
+#menu-overlay .menu-list li:last-child {
+  border-bottom: none;
+}
+
+/* Link styling: bigger, calmer, luxury */
+#menu-overlay .menu-link {
+  width: 100%;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.2rem;
+
+  font-size: clamp(1.35rem, 3.2vw, 2.1rem);
+  font-weight: 300;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+
+  padding: 0.15rem 0;
+  color: var(--text-color);
+  opacity: 0.88;
+
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease,
+    color 0.25s ease;
+}
+
+/* Hover: enlarge, lift, and make siblings feel pushed */
+#menu-overlay .menu-list li:hover .menu-link {
+  transform: translateX(10px) translateY(-2px) scale(1.06);
+  opacity: 1;
+  color: var(--color-primary1);
+}
+
+#menu-overlay .menu-list:hover li:not(:hover) .menu-link {
+  transform: translateX(-6px);
+  opacity: 0.62;
+}
+
+/* Optional right-side label inside link (if index.html provides a span) */
+#menu-overlay .menu-link .menu-label,
+#menu-overlay .menu-link .menu-sub,
+#menu-overlay .menu-link .menu-right-label {
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  opacity: 0.70;
+  text-transform: uppercase;
+}
+
+#menu-overlay .menu-list li:hover .menu-link .menu-label,
+#menu-overlay .menu-list li:hover .menu-link .menu-sub,
+#menu-overlay .menu-list li:hover .menu-link .menu-right-label {
+  opacity: 0.95;
+}
+
+/* Preview typography */
+#menu-overlay .menu-preview-title,
+#menu-overlay .menu-preview h3 {
+  font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-color);
+  opacity: 0.92;
+  margin: 0;
+}
+
+#menu-overlay .menu-preview-desc,
+#menu-overlay .menu-preview p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary-color);
+  margin: 0;
+  max-width: 34ch;
+}
+
+/* Minimal icon row on left rail */
+#menu-overlay .menu-rail-icons,
+#menu-overlay .menu-icons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#menu-overlay .menu-icon-btn,
+#menu-overlay .menu-icons button,
+#menu-overlay .menu-icons a {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(153, 153, 153, 0.45);
+  background: transparent;
+  color: var(--text-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease, border-color 0.25s ease;
+}
+
+#menu-overlay .menu-icon-btn:hover,
+#menu-overlay .menu-icons button:hover,
+#menu-overlay .menu-icons a:hover {
+  transform: translateY(-2px) scale(1.06);
+  opacity: 1;
+  border-color: rgba(145, 124, 111, 0.75);
+}
+
+/* Mobile: collapse preview, keep the menu stack strong */
+@media (max-width: 900px) {
+  #menu-overlay .menu-preview,
+  #menu-overlay .menu-right,
+  #menu-overlay .menu-rail-right {
+    display: none;
+  }
+  #menu-overlay .menu-rail-left,
+  #menu-overlay .menu-left-rail,
+  #menu-overlay .menu-left {
+    width: 160px;
+    min-width: 160px;
+  }
+  #menu-overlay .menu-list {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 680px) {
+  #menu-overlay .menu-rail-left,
+  #menu-overlay .menu-left-rail,
+  #menu-overlay .menu-left {
+    display: none;
+  }
+  #menu-overlay .menu-rail-center::after,
+  #menu-overlay .menu-center-rail::after,
+  #menu-overlay .menu-center::after {
+    display: none;
+  }
+  #menu-overlay .menu-rail-center,
+  #menu-overlay .menu-center-rail,
+  #menu-overlay .menu-center {
+    padding: 2.6rem 1.5rem;
+  }
+  #menu-overlay .menu-link {
+    font-size: clamp(1.25rem, 6vw, 1.75rem);
+  }
+}
+
 /* =================== Clickable Text Motion =================== */
 a:not(.enter-button), .menu-link, .country-option { display:inline-block; transform:translateY(0); transition:transform 0.45s cubic-bezier(0.22,1,0.36,1), color 0.25s ease; }
 a:not(.enter-button):hover, .menu-link:hover, .country-option:hover { transform:translateY(-5px); }

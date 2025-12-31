@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/menu.css">
     <meta name="description" content="Artan's visionary creative world.">
     <meta name="keywords" content="Artan, MONAD, LAW, LOVE, YOU, سکون, Solum, Single Name, Music, Albums, Singles, Books, Sound, Visual, Consciousness, Spotify, Apple Music, X, Instagram, TikTok">
     <link rel="canonical" href="https://artan.live/">
@@ -87,23 +88,67 @@
 </header>
 
 <!-- =================== Menu Overlay =================== -->
-<div id="menu-overlay" class="menu-overlay">
+<div id="menu-overlay" class="menu-overlay" aria-hidden="true">
     <div class="menu-overlay-inner">
-        <!-- Overlay Controls (Theme Toggle lives only inside the open menu) -->
-        <div class="menu-overlay-controls" aria-hidden="true">
-            <button id="theme-toggle" aria-label="Toggle dark and light mode" class="theme-toggle"></button>
-        </div>
-        <nav class="menu-nav">
+
+        <!-- Left Rail (controls + small logo) -->
+        <aside class="menu-rail" aria-label="Menu controls">
+            <div class="menu-rail-top">
+                <img src="assets/images/logo.svg" alt="Artan" class="menu-rail-logo">
+            </div>
+
+            <div class="menu-rail-mid">
+                <!-- Theme Toggle (lives only inside the open menu) -->
+                <button id="theme-toggle" aria-label="Toggle dark and light mode" class="theme-toggle"></button>
+            </div>
+
+            <div class="menu-rail-bottom">
+                <button class="menu-rail-icon" aria-label="Profile" data-menu-icon="profile"></button>
+                <button class="menu-rail-icon" aria-label="Connect" data-menu-icon="connect"></button>
+            </div>
+        </aside>
+
+        <!-- Vertical Separator -->
+        <div class="menu-vline" aria-hidden="true"></div>
+
+        <!-- Center Stack (menu items) -->
+        <nav class="menu-nav" aria-label="Primary">
             <ul class="menu-list">
-                <li><a href="#" class="menu-link" data-i18n-key="menu.music">Music</a></li>
-                <li><a href="#" class="menu-link" data-i18n-key="menu.books">Books</a></li>
-                <li><a href="#" class="menu-link" data-i18n-key="menu.events">Events</a></li>
-                <li><a href="#" class="menu-link" data-i18n-key="menu.products">Products</a></li>
-                <li><a href="pages/projects/awareness/index.html" class="menu-link" data-i18n-key="menu.projects">Projects Demo</a></li>
-                <li><a href="pages/gallery/index.html" class="menu-link" data-i18n-key="menu.gallery">Gallery Demo</a></li>
-                <li><a href="profile.html" class="menu-link" data-i18n-key="menu.profile">Profile</a></li>
+                <li>
+                    <a href="#" class="menu-link" data-i18n-key="menu.music" data-preview-title="Music" data-preview-sub="SOUND — releases, albums, singles.">Music</a>
+                </li>
+                <li>
+                    <a href="#" class="menu-link" data-i18n-key="menu.books" data-preview-title="Books" data-preview-sub="MONAD — LAW — LOVE — YOU.">Books</a>
+                </li>
+                <li>
+                    <a href="#" class="menu-link" data-i18n-key="menu.events" data-preview-title="Events" data-preview-sub="Appearances, premieres, gatherings.">Events</a>
+                </li>
+                <li>
+                    <a href="#" class="menu-link" data-i18n-key="menu.products" data-preview-title="Products" data-preview-sub="Objects, editions, artifacts.">Products</a>
+                </li>
+                <li>
+                    <a href="pages/projects/awareness/index.html" class="menu-link" data-i18n-key="menu.projects" data-preview-title="Projects" data-preview-sub="Experiments, systems, worlds.">Projects Demo</a>
+                </li>
+                <li>
+                    <a href="pages/gallery/index.html" class="menu-link" data-i18n-key="menu.gallery" data-preview-title="Gallery" data-preview-sub="Visual memory, motion, stillness.">Gallery Demo</a>
+                </li>
+                <li>
+                    <a href="profile.html" class="menu-link" data-i18n-key="menu.profile" data-preview-title="Profile" data-preview-sub="Account, identity, settings.">Profile</a>
+                </li>
             </ul>
         </nav>
+
+        <!-- Vertical Separator -->
+        <div class="menu-vline" aria-hidden="true"></div>
+
+        <!-- Right Preview Panel -->
+        <section class="menu-preview" aria-label="Preview">
+            <div class="menu-preview-inner">
+                <p id="menu-preview-title" class="menu-preview-title">Music</p>
+                <p id="menu-preview-sub" class="menu-preview-sub">SOUND — releases, albums, singles.</p>
+            </div>
+        </section>
+
     </div>
 </div>
 
