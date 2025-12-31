@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/menu.css">
     <meta name="description" content="Artan's visionary creative world.">
-    <meta name="keywords" content="Artan, MONAD, LAW, LOVE, YOU, سکون, Solum, Single Name, Music, Albums, Singles, Books, Sound, Visual, Consciousness, Spotify, Apple Music, X, Instagram, TikTok">
+    <meta name="keywords" content="Artan, Davoodi, MONAD, LAW, LOVE, YOU, سکون, Solum, Music, Albums, Singles, Books, Sound, Visual, Consciousness, Spotify, Apple Music, X, Instagram, TikTok">
     <link rel="canonical" href="https://artan.live/">
 
     <!-- =================== Open Graph =================== -->
@@ -68,9 +68,6 @@
     }
     </script>
 
-    <!-- =================== Scripts =================== -->
-    <script src="assets/js/darkmode.js" defer></script>
-
     <!-- =================== Fonts =================== -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +76,9 @@
 
 <body class="site-body">
 
+<!-- =================== Custom Cursor =================== -->
+<div class="custom-cursor"></div>
+
 <!-- =================== Header Controls =================== -->
 <header id="header-controls" class="site-header">
     <button id="menu-button" aria-label="Open menu">
@@ -86,71 +86,6 @@
         <span class="line line-bottom"></span>
     </button>
 </header>
-
-<!-- =================== Menu Overlay =================== -->
-<div id="menu-overlay" class="menu-overlay" aria-hidden="true">
-    <div class="menu-overlay-inner">
-
-        <!-- Left Rail (controls + small logo) -->
-        <aside class="menu-rail" aria-label="Menu controls">
-            <div class="menu-rail-top">
-                <img src="assets/images/logo.svg" alt="Artan" class="menu-rail-logo">
-            </div>
-
-            <div class="menu-rail-mid">
-                <!-- Theme Toggle (lives only inside the open menu) -->
-                <button id="theme-toggle" aria-label="Toggle dark and light mode" class="theme-toggle"></button>
-            </div>
-
-            <div class="menu-rail-bottom">
-                <button class="menu-rail-icon" aria-label="Profile" data-menu-icon="profile"></button>
-                <button class="menu-rail-icon" aria-label="Connect" data-menu-icon="connect"></button>
-            </div>
-        </aside>
-
-        <!-- Vertical Separator -->
-        <div class="menu-vline" aria-hidden="true"></div>
-
-        <!-- Center Stack (menu items) -->
-        <nav class="menu-nav" aria-label="Primary">
-            <ul class="menu-list">
-                <li>
-                    <a href="#" class="menu-link" data-i18n-key="menu.music" data-preview-title="Music" data-preview-sub="SOUND — releases, albums, singles.">Music</a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link" data-i18n-key="menu.books" data-preview-title="Books" data-preview-sub="MONAD — LAW — LOVE — YOU.">Books</a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link" data-i18n-key="menu.events" data-preview-title="Events" data-preview-sub="Appearances, premieres, gatherings.">Events</a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link" data-i18n-key="menu.products" data-preview-title="Products" data-preview-sub="Objects, editions, artifacts.">Products</a>
-                </li>
-                <li>
-                    <a href="pages/projects/awareness/index.html" class="menu-link" data-i18n-key="menu.projects" data-preview-title="Projects" data-preview-sub="Experiments, systems, worlds.">Projects Demo</a>
-                </li>
-                <li>
-                    <a href="pages/gallery/index.html" class="menu-link" data-i18n-key="menu.gallery" data-preview-title="Gallery" data-preview-sub="Visual memory, motion, stillness.">Gallery Demo</a>
-                </li>
-                <li>
-                    <a href="profile.html" class="menu-link" data-i18n-key="menu.profile" data-preview-title="Profile" data-preview-sub="Account, identity, settings.">Profile</a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Vertical Separator -->
-        <div class="menu-vline" aria-hidden="true"></div>
-
-        <!-- Right Preview Panel -->
-        <section class="menu-preview" aria-label="Preview">
-            <div class="menu-preview-inner">
-                <p id="menu-preview-title" class="menu-preview-title">Music</p>
-                <p id="menu-preview-sub" class="menu-preview-sub">SOUND — releases, albums, singles.</p>
-            </div>
-        </section>
-
-    </div>
-</div>
 
 <!-- =================== Hidden Site Name =================== -->
 <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Artan</h1>
@@ -203,9 +138,6 @@
     </div>
 </footer>
 
-<!-- =================== Custom Cursor =================== -->
-<div class="custom-cursor"></div>
-
 <!-- =================== Country/Region Overlay =================== -->
 <div id="country-overlay" class="country-overlay">
     <div class="country-overlay-inner">
@@ -224,11 +156,102 @@
     </div>
 </div>
 
+<!-- =================== Menu Overlay =================== -->
+<div id="menu-overlay" class="menu-overlay" aria-hidden="true">
+  <div class="menu-overlay-inner">
+
+    <!-- Left Rail (controls) -->
+    <aside class="menu-rail" aria-label="Menu controls">
+      <div class="menu-rail-top">
+        <button id="menu-pack-toggle" class="menu-rail-icon" aria-label="Toggle social / music" type="button">
+          <img src="assets/icons/utilities/hover-to-social-media-and-music.svg" alt="" aria-hidden="true">
+        </button>
+      </div>
+
+      <div class="menu-rail-mid">
+        <button id="theme-toggle" class="menu-rail-icon theme-toggle" aria-label="Toggle dark and light mode" type="button"></button>
+      </div>
+
+      <div class="menu-rail-bottom">
+        <a class="menu-rail-icon" aria-label="Profile" href="profile.html">
+          <img src="assets/icons/utilities/profile.svg" alt="" aria-hidden="true">
+        </a>
+        <a class="menu-rail-icon" aria-label="Email" href="#" data-contact="email">
+          <img src="assets/icons/utilities/email-me.svg" alt="" aria-hidden="true">
+        </a>
+      </div>
+    </aside>
+
+    <!-- Vertical Separator -->
+    <div class="menu-vline" aria-hidden="true"></div>
+
+    <!-- Center Stack (typo logo + hover description) -->
+    <section class="menu-center" aria-label="Menu preview">
+      <div class="menu-center-top">
+        <img src="assets/icons/artan-logos/logo-typo.svg" alt="ARTAN" class="menu-typo-logo">
+      </div>
+
+      <div class="menu-center-bottom">
+        <div class="menu-preview" aria-label="Preview">
+          <h3 id="menu-preview-title" class="menu-preview-title">Music</h3>
+          <p id="menu-preview-sub" class="menu-preview-sub">SOUND — releases, albums, singles.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vertical Separator -->
+    <div class="menu-vline" aria-hidden="true"></div>
+
+    <!-- Right Menu (vertical readable labels) -->
+    <nav class="menu-nav" aria-label="Primary">
+      <ul class="menu-list">
+        <li><a href="#" class="menu-link" data-i18n-key="menu.music" data-preview-title="Music" data-preview-sub="SOUND — releases, albums, singles.">Music</a></li>
+        <li><a href="#" class="menu-link" data-i18n-key="menu.books" data-preview-title="Books" data-preview-sub="MONAD — LAW — LOVE — YOU.">Books</a></li>
+        <li><a href="#" class="menu-link" data-i18n-key="menu.events" data-preview-title="Events" data-preview-sub="Appearances, premieres, gatherings.">Events</a></li>
+        <li><a href="#" class="menu-link" data-i18n-key="menu.products" data-preview-title="Products" data-preview-sub="Objects, editions, artifacts.">Products</a></li>
+        <li><a href="pages/projects/awareness/index.html" class="menu-link" data-i18n-key="menu.projects" data-preview-title="Projects" data-preview-sub="Experiments, systems, worlds.">Projects Demo</a></li>
+        <li><a href="pages/gallery/index.html" class="menu-link" data-i18n-key="menu.gallery" data-preview-title="Gallery" data-preview-sub="Visual memory, motion, stillness.">Gallery Demo</a></li>
+      </ul>
+    </nav>
+
+    <!-- Packs (social/music + plain logo). Positioned by CSS (left-bottom). -->
+    <aside class="menu-packs" aria-label="Links">
+      <div class="menu-packs-top">
+
+        <!-- Social Pack -->
+        <div id="menu-pack-social" class="menu-pack" data-pack="social" aria-label="Social">
+          <a class="menu-pack-icon" aria-label="YouTube" href="#" data-social="youtube"><img src="assets/icons/brands/youtube.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="Instagram" href="https://www.instagram.com/artandavoodi/" data-social="instagram"><img src="assets/icons/brands/instagram.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="TikTok" href="https://www.tiktok.com/@artan.davoodi" data-social="tiktok"><img src="assets/icons/brands/tiktok.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="X" href="https://x.com/artandavoodi" data-social="x"><img src="assets/icons/brands/x.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="GitHub" href="#" data-social="github"><img src="assets/icons/brands/github.svg" alt="" aria-hidden="true"></a>
+        </div>
+
+        <!-- Music Stream Pack -->
+        <div id="menu-pack-music" class="menu-pack" data-pack="music" aria-label="Music platforms">
+          <a class="menu-pack-icon" aria-label="Apple Music" href="https://music.apple.com/de/artist/artan/1855183543?l=en-GB" data-stream="apple-music"><img src="assets/icons/brands/apple-music.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="Spotify" href="https://open.spotify.com/artist/4MSdNxckTdTdVQFWtB2OFR" data-stream="spotify"><img src="assets/icons/brands/spotify.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="YouTube Music" href="#" data-stream="youtube-music"><img src="assets/icons/brands/youtube-music.svg" alt="" aria-hidden="true"></a>
+          <a class="menu-pack-icon" aria-label="SoundCloud" href="#" data-stream="soundcloud"><img src="assets/icons/brands/soundcloud.svg" alt="" aria-hidden="true"></a>
+        </div>
+
+      </div>
+
+      <div class="menu-packs-bottom">
+        <img src="assets/icons/artan-logos/logo-plain.svg" alt="Artan" class="menu-plain-logo">
+      </div>
+    </aside>
+
+  </div>
+</div>
+
 <!-- =================== Scripts =================== -->
+<script src="assets/js/darkmode.js" defer></script>
 <script src="assets/js/countries.js" defer></script>
 <script src="assets/js/translation.js" defer></script>
 <script src="assets/js/country-language.js" defer></script>
 <script src="assets/js/logo-animation.js" defer></script>
+<script src="assets/js/menu.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 
 </body>
