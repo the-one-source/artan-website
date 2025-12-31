@@ -20,6 +20,7 @@
     COUNTRY_CODE: 'artan_country_code',
     COUNTRY_LABEL: 'artan_country_label',
     LANGUAGE: 'artan_language',
+    LANGUAGES: 'artan_languages',
     SESSION: 'artan_session',
     COUNTRY_CACHE: 'artan_country_cache_v1'
   };
@@ -35,7 +36,7 @@
     heb: 'he', hin: 'hi', hrv: 'hr', hun: 'hu', ind: 'id', ita: 'it', jpn: 'ja',
     kaz: 'kk', kor: 'ko', lav: 'lv', lit: 'lt', msa: 'ms', nld: 'nl', nor: 'no',
     pol: 'pl', por: 'pt', ron: 'ro', rus: 'ru', slk: 'sk', slv: 'sl', spa: 'es',
-    srp: 'sr', swe: 'sv', tam: 'ta', tel: 'te', tha: 'th', tur: 'tr', ukr: 'uk',
+    srp: 'sr', swe: 'sv', tam: 'ta', afr: 'af', tel: 'te', tha: 'th', tur: 'tr', ukr: 'uk',
     urd: 'ur', vie: 'vi', zho: 'zh'
   };
 
@@ -43,6 +44,8 @@
     const raw = String(code || '').trim();
     if (!raw) return DEFAULT_LANGUAGE;
     let c = raw.split('-')[0].toLowerCase();
+    // Norway variants sometimes appear as "nno" / "nob" / "nn" / "nb"; treat as "no".
+    if (c === 'nno' || c === 'nob' || c === 'nn' || c === 'nb') c = 'no';
     if (c.length === 3 && ISO639_3_TO_1[c]) c = ISO639_3_TO_1[c];
     if (!c || c.length < 2) return DEFAULT_LANGUAGE;
     return c;
@@ -70,7 +73,39 @@
   const state = {
     countryCode: null,
     countryLabel: null,
-    language: DEFAULT_LANGUAGE
+    language: DEFAULT_LANGUAGE,
+    languages: null
+  };
+
+  const getStoredLanguages = () => {
+    try {
+      const raw = getLS(STORAGE.LANGUAGES);
+      const arr = raw ? JSON.parse(raw) : null;
+      return Array.isArray(arr) ? arr.map(normalizeLang).filter(Boolean) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const setStoredLanguages = (langs) => {
+    try {
+      const arr = Array.isArray(langs) ? langs.map(normalizeLang).filter(Boolean) : null;
+      state.languages = (arr && arr.length) ? Array.from(new Set(arr)) : null;
+      setLS(STORAGE.LANGUAGES, JSON.stringify(state.languages || []));
+    } catch {
+      state.languages = null;
+    }
+  };
+
+  const parseDatasetLanguages = (btn) => {
+    if (!btn) return null;
+    const raw = btn.getAttribute('data-languages') || btn.getAttribute('data-langs') || '';
+    if (!raw.trim()) return null;
+    const arr = raw
+      .split(',')
+      .map(s => normalizeLang(s))
+      .filter(Boolean);
+    return arr.length ? Array.from(new Set(arr)) : null;
   };
 
   // Expose read-only state for debugging without coupling.
@@ -119,7 +154,7 @@
     state.language = DEFAULT_LANGUAGE;
     setLS(STORAGE.LANGUAGE, DEFAULT_LANGUAGE);
     setLabels();
-    buildLanguageDropdown(DEFAULT_LANGUAGE);
+    buildLanguageDropdown(DEFAULT_LANGUAGE, state.languages);
     applyTranslationNow(DEFAULT_LANGUAGE);
   };
 
@@ -197,7 +232,7 @@
 
   let languageDocCloserBound = false;
 
-  const buildLanguageDropdown = (primaryLang) => {
+  const buildLanguageDropdown = (primaryLang, availableLangs) => {
     const dd = qs('#language-dropdown');
     const toggle = qs('#language-toggle');
     if (!dd || !toggle) return;
@@ -206,8 +241,12 @@
     dd.setAttribute('aria-hidden', 'true');
     dd.classList.remove('visible');
 
+    const base = Array.isArray(availableLangs) && availableLangs.length
+      ? availableLangs.map(normalizeLang)
+      : [normalizeLang(primaryLang)];
+
     const langs = Array.from(new Set([
-      normalizeLang(primaryLang),
+      ...base,
       DEFAULT_LANGUAGE
     ].filter(Boolean)));
 
@@ -230,6 +269,8 @@
           setLS(STORAGE.COUNTRY_LABEL, state.countryLabel);
           setLabels();
         }
+        // Rebuild dropdown with current stored languages.
+        buildLanguageDropdown(state.language, state.languages);
       });
       dd.appendChild(btn);
     });
@@ -357,6 +398,7 @@
 
       const selectedName = btn.getAttribute('data-country') || btn.getAttribute('data-name') || btn.textContent || '';
       const selectedLabel = btn.textContent || selectedName;
+      const datasetLangs = parseDatasetLanguages(btn);
 
       let code = attrCode ? String(attrCode).toUpperCase() : null;
       let lang = attrLang ? normalizeLang(attrLang) : null;
@@ -371,6 +413,13 @@
       state.language = normalizeLang(lang || DEFAULT_LANGUAGE);
       state.countryLabel = nativeCountryName(state.countryCode, state.language) || selectedLabel;
 
+      // Prefer explicit country language sets (e.g. Canada: en,fr).
+      if (datasetLangs && datasetLangs.length) {
+        setStoredLanguages(datasetLangs);
+      } else {
+        setStoredLanguages([state.language]);
+      }
+
       setLS(STORAGE.COUNTRY_CODE, state.countryCode);
       setLS(STORAGE.COUNTRY_LABEL, state.countryLabel);
       setLS(STORAGE.LANGUAGE, state.language);
@@ -378,7 +427,7 @@
       closeCountryOverlay();
       closeLanguageDropdown();
       setLabels();
-      buildLanguageDropdown(state.language);
+      buildLanguageDropdown(state.language, state.languages);
       applyTranslation(state.language);
     }, { passive: true });
   };
@@ -397,6 +446,7 @@
       state.countryCode = code;
       state.language = lang;
       state.countryLabel = nativeCountryName(code, lang);
+      setStoredLanguages([lang]);
 
       setLS(STORAGE.COUNTRY_CODE, code);
       setLS(STORAGE.COUNTRY_LABEL, state.countryLabel);
@@ -407,6 +457,7 @@
       state.countryCode = (getLS(STORAGE.COUNTRY_CODE) || DEFAULT_COUNTRY_CODE).toUpperCase();
       state.language = normalizeLang(getLS(STORAGE.LANGUAGE) || DEFAULT_LANGUAGE);
       state.countryLabel = getLS(STORAGE.COUNTRY_LABEL) || nativeCountryName(state.countryCode, state.language);
+      state.languages = getStoredLanguages();
     }
 
     bindFooterTriggers();
@@ -414,7 +465,7 @@
     bindCountrySelection();
 
     setLabels();
-    buildLanguageDropdown(state.language);
+    buildLanguageDropdown(state.language, state.languages);
     applyTranslation(state.language);
   }
 

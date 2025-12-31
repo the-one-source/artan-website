@@ -103,7 +103,7 @@
         { name: "Montenegro", label: "Crna Gora", languageCode: "sr" },
         { name: "Netherlands", label: "Nederland", languageCode: "nl" },
         { name: "North Macedonia", label: "Северна Македонија", languageCode: "mk" },
-        { name: "Norway", label: "Norge", languageCode: "no" },
+        { name: "Norway", label: "Norge", languageCode: "nb", languages: ["nb", "nn", "en"] },
         { name: "Poland", label: "Polska", languageCode: "pl" },
         { name: "Portugal", label: "Portugal", languageCode: "pt" },
         { name: "Romania", label: "România", languageCode: "ro" },
@@ -157,7 +157,7 @@
       region: "United States & Canada",
       i18nKey: "region.unitedStatesCanada",
       countries: [
-        { name: "Canada", label: "Canada", languageCode: "fr" },
+        { name: "Canada", label: "Canada", languageCode: "fr", languages: ["fr", "en"] },
         { name: "United States", label: "United States", languageCode: "en" }
       ]
     }
@@ -187,7 +187,21 @@
         const li = document.createElement('li');
         const btn = document.createElement('button');
         btn.className = 'country-option';
+
+        // Data for countrylanguage.js (single source: countries.js)
+        const native = (country.languageCode || 'en').toLowerCase();
+        const langs = Array.isArray(country.languages) && country.languages.length
+          ? country.languages.map(l => String(l).toLowerCase())
+          : [native];
+
+        // Always allow English in the dropdown
+        if (!langs.includes('en')) langs.push('en');
+
         btn.dataset.country = country.name;
+        btn.dataset.label = country.label;
+        btn.dataset.language = native;
+        btn.dataset.languages = langs.join(',');
+
         btn.textContent = country.label;
         li.appendChild(btn);
         list.appendChild(li);
@@ -212,10 +226,15 @@
       if (!btn) return;
 
       const name = btn.dataset.country || btn.textContent || '';
-      const label = btn.textContent || name;
+      const label = btn.dataset.label || btn.textContent || name;
+      const language = (btn.dataset.language || 'en').toLowerCase();
+      const languages = String(btn.dataset.languages || language || 'en')
+        .split(',')
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean);
 
       document.dispatchEvent(
-        new CustomEvent('country-selected', { detail: { name, label } })
+        new CustomEvent('country-selected', { detail: { name, label, language, languages } })
       );
     });
   });
