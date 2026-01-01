@@ -94,19 +94,23 @@
 <div class="stage-circle">
     <div class="stage-container" id="stage">
         <div class="stage-stack">
-            <div class="logo-container">
-                <img src="assets/images/logo.svg" alt="Artan Logo" class="site-logo">
-            </div>
-            <div class="stage-container">
-                <p id="announcement" data-i18n-key="announcement.message">WEBSITE UNDER CONSTRUCTION</p>
-            </div>
-            <div class="stage-container-gap">
-                <button id="enter-button" class="enter-button enter-breathe pf-text-trigger" aria-label="Enter site">
-                    <span class="pf-text" data-i18n-key="action.enter">ENTER</span>
-                </button>
-            </div>
+            <div class="stage-intro" id="stage-intro">
+                <div class="logo-container stage-fade-on-enter" id="stage-logo">
+                    <img src="assets/images/logo.svg" alt="Artan Logo" class="site-logo">
+                </div>
 
-            <p class="site-essence" data-i18n-key="site.essence">SOUND • VISUAL • CONSCIOUSNESS</p>
+                <div class="stage-container stage-fade-on-enter" id="stage-announcement">
+                    <p id="announcement" data-i18n-key="announcement.message">WEBSITE UNDER CONSTRUCTION</p>
+                </div>
+
+                <div class="stage-container-gap stage-fade-on-enter" id="stage-enter">
+                    <button id="enter-button" class="enter-button enter-breathe pf-text-trigger" aria-label="Enter site">
+                        <span class="pf-text" data-i18n-key="action.enter">ENTER</span>
+                    </button>
+                </div>
+
+                <p class="site-essence stage-fade-on-enter" id="stage-essence" data-i18n-key="site.essence">SOUND • VISUAL • CONSCIOUSNESS</p>
+            </div>
         </div>
     </div>
 </div>
@@ -121,6 +125,23 @@
     <source src="assets/video/video-1.mp4" type="video/mp4">
   </video>
 </div>
+
+<!-- =================== Home Hero (Post-Enter) =================== -->
+<section id="home-hero" class="home-hero" aria-hidden="true">
+  <div class="home-hero-video" aria-hidden="true">
+    <video class="home-hero-video-media" autoplay muted playsinline loop preload="metadata">
+      <source src="assets/video/video-4.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <div class="home-hero-overlay" aria-hidden="true"></div>
+
+  <div class="home-hero-inner">
+    <a class="home-hero-logo-link" href="index.html" aria-label="ARTAN">
+      <img class="home-hero-logo" src="assets/icons/artan-logos/logo-typo.svg" alt="ARTAN" />
+    </a>
+  </div>
+</section>
 
 <!-- =================== Home — Essence =================== -->
 <section class="home-section home-essence">

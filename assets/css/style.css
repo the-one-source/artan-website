@@ -1227,3 +1227,195 @@ main{
     gap: 0.95rem;
   }
 }
+
+/* =============================================================================
+   19.0) HERO — ON ENTER: HIDE STAGE INTRO GROUP
+   Triggered by `body.site-entered` (set by logo-animation.js).
+============================================================================= */
+
+/* Stage intro wrapper (logo + announcement + enter + essence)
+   Collapses cleanly after ENTER without requiring extra JS classes. */
+#stage-intro{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+
+  opacity:1;
+  transform:translateY(0);
+
+  /* Layout collapse (smooth + future-proof) */
+  max-height:1200px;
+  overflow:hidden;
+
+  transition:
+    opacity 900ms cubic-bezier(0.22,1,0.36,1),
+    transform 1100ms cubic-bezier(0.22,1,0.36,1),
+    max-height 1100ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* On ENTER: fade + lift + collapse */
+body.site-entered #stage-intro{
+  opacity:0;
+  transform:translateY(-10px);
+  max-height:0;
+  pointer-events:none;
+}
+
+/* Stage circle fades/collapses on ENTER (matches #stage-intro timing)
+   NOTE: selectors are intentionally broad because `.stage-circle` may not be nested
+   exactly under `#stage` depending on markup revisions.
+*/
+.stage-circle{
+  opacity:1;
+  transform:scale(1);
+  max-height:2000px;
+  overflow:hidden;
+  will-change:opacity, transform, max-height;
+  transition:
+    opacity 900ms cubic-bezier(0.22,1,0.36,1),
+    transform 1100ms cubic-bezier(0.22,1,0.36,1),
+    max-height 1100ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* On ENTER: fade + slight scale + collapse */
+body.site-entered .stage-circle{
+  opacity:0 !important;
+  transform:scale(0.985) !important;
+  max-height:0 !important;
+  pointer-events:none !important;
+}
+
+/* Hard removal after the fade (prevents lingering layout/paint in edge cases) */
+body.site-entered .stage-circle{
+  animation: stage-circle-kill 0ms linear 1200ms forwards;
+}
+
+@keyframes stage-circle-kill{
+  to{ visibility:hidden; }
+}
+
+/* Optional hard-removal hooks (if JS ever sets them) */
+body.site-entered #stage-intro[aria-hidden="true"],
+body.site-entered #stage-intro.is-hidden{
+  display:none !important;
+}
+
+/* Safety: if wrapper is not present, fall back to hiding individual pieces */
+body.site-entered #stage .site-logo,
+body.site-entered #stage #announcement,
+body.site-entered #stage .enter-button,
+body.site-entered #stage #enter-button,
+body.site-entered #stage .site-essence,
+body.site-entered #stage #announcement + .site-essence{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* =============================================================================
+   19.1) HERO — MOBILE / TABLET REFINEMENTS (CENTERED, SAFE-AREA, NO GAPS)
+============================================================================= */
+
+/* Safe-area padding for iOS notch + address bar behavior */
+#stage{
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile-first circle dial (prevents oversized circle pushing content upward) */
+@media (max-width: 820px){
+  :root{
+    --stage-circle-mobile: 520px;
+    --stage-circle-vh-cap: 86vh;
+    --stage-circle-vw-cap: 92vw;
+  }
+
+  /* Ensure true vertical centering even when browser UI expands/collapses */
+  #stage{
+    min-height: 100svh;
+  }
+
+  @supports (height: 100dvh){
+    #stage{min-height:100dvh;}
+  }
+
+  /* Keep the hero copy comfortably inside the circle */
+  #stage .stage-container{
+    max-width: min(92vw, 560px);
+    padding: 0.9rem 0;
+    gap: 0.95rem;
+  }
+
+  #stage .site-logo{
+    width: min(260px, 68vw);
+  }
+
+  #announcement{
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+
+  #announcement.secondary{
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+  }
+
+  #announcement + .site-essence,
+  #stage .site-essence{
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+  }
+
+  .enter-button{
+    font-size: 0.85rem;
+    padding: 0.5rem 1.55rem;
+  }
+}
+
+/* Make sure the background video always fills the viewport on mobile */
+@media (max-width: 820px){
+  .stage-video,
+  #stage-video,
+  #hero-video,
+  #stage .stage-video{
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100svh !important;
+  }
+
+  @supports (height: 100dvh){
+    .stage-video,
+    #stage-video,
+    #hero-video,
+    #stage .stage-video{
+      height: 100dvh !important;
+    }
+  }
+
+  .stage-video video,
+  #stage-video video,
+  #hero-video video,
+  #stage video.stage-video-media,
+  #stage video#stage-video-media,
+  #stage .stage-video-media,
+  #stage .hero-video-media,
+  #stage video{
+    height: 100svh !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  @supports (height: 100dvh){
+    .stage-video video,
+    #stage-video video,
+    #hero-video video,
+    #stage video.stage-video-media,
+    #stage video#stage-video-media,
+    #stage .stage-video-media,
+    #stage .hero-video-media,
+    #stage video{
+      height: 100dvh !important;
+    }
+  }
+}
