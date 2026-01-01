@@ -1140,7 +1140,6 @@ main{
   width:100%;
 }
 
-/* Hero stage is its own centered column stack */
 #stage{
   width:100%;
   display:flex;
@@ -1150,7 +1149,18 @@ main{
   text-align:center;
   position:relative;
   z-index:2;
+
+  /* Full-viewport vertical centering (mobile-safe) */
+  min-height:100vh;
+  min-height:100svh;
+  padding:0;
 }
+
+/* Prefer dynamic viewport units where supported (prevents iOS address-bar gaps) */
+@supports (height: 100dvh){
+  #stage{min-height:100dvh;}
+}
+
 .stage-circle{
   display:flex;
   justify-content:center;
@@ -1169,7 +1179,7 @@ main{
   text-align:center;
   gap:1.15rem;
   margin:0 auto;
-  padding:1.5rem 0;
+  padding:1.25rem 0;
 }
 #stage .site-logo{
   display:block;
@@ -1200,4 +1210,20 @@ main{
 #stage #announcement + .site-essence{
   margin:0.55rem auto 0 auto;
   text-align:center;
+}
+
+@media (max-width: 768px){
+  #stage .stage-container{
+    max-width: 560px;
+    padding: 1.1rem 0;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px){
+  #stage .stage-container{
+    max-width: 92vw;
+    padding: 1rem 0;
+    gap: 0.95rem;
+  }
 }
