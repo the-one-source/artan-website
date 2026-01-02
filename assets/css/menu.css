@@ -440,7 +440,7 @@ body.menu-open .site-header { opacity: 0 !important; pointer-events: none !impor
   color: currentColor;
 
   /* readable vertical: NOT mirrored */
-  writing-mode: vertical-rl;
+  writing-mode: vertical-lr;
   text-orientation: mixed;
 
   /* remove the flip that makes the word read the wrong way */
