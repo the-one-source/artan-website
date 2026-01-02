@@ -14,6 +14,7 @@ window.ARTAN_TRANSLATION = (() => {
   ------------------------------------------------------------ */
   let currentLang = "en";
   const cache = new Map();
+  const keyCache = new Map(); // sync lookup cache for i18n keys (including menu preview keys)
 
   /* ------------------------------------------------------------
      Language normalization
@@ -303,6 +304,7 @@ window.ARTAN_TRANSLATION = (() => {
 
     currentLang = lang;
 
+    keyCache.clear();
     const nodes = document.querySelectorAll("[data-i18n-key]");
 
     for (const el of nodes) {
@@ -343,8 +345,53 @@ window.ARTAN_TRANSLATION = (() => {
         }
       }
     }
+
+    // Additive: cache translations for menu preview keys (data-preview-*-i18n)
+    const previewNodes = document.querySelectorAll('[data-preview-title-i18n], [data-preview-sub-i18n]');
+    for (const el of previewNodes) {
+      const titleKey = (el.getAttribute('data-preview-title-i18n') || '').trim();
+      const subKey = (el.getAttribute('data-preview-sub-i18n') || '').trim();
+
+      if (titleKey) {
+        const enTitle = ((el.getAttribute('data-preview-title') || '')).trim();
+        const val = lang === 'en' ? enTitle : await translate(enTitle, lang);
+        if (val) keyCache.set(titleKey, val);
+      }
+
+      if (subKey) {
+        const enSub = ((el.getAttribute('data-preview-sub') || '')).trim();
+        const val = lang === 'en' ? enSub : await translate(enSub, lang);
+        if (val) keyCache.set(subKey, val);
+      }
+    }
   }
 
-  return { applyLanguage };
+  /* ------------------------------------------------------------
+     Public helper (sync lookup)
+     - Used by menu.js hover previews
+     - Returns translated text if available, otherwise EN baseline
+  ------------------------------------------------------------ */
+  function t(key) {
+    if (!key) return "";
+    const k = String(key).trim();
+    if (!k) return "";
+
+    // Prefer cached strings (includes menu preview keys)
+    if (keyCache.has(k)) return keyCache.get(k) || "";
+
+    // Fallback: element text already translated by applyLanguage
+    const el = document.querySelector(`[data-i18n-key="${k}"]`);
+    if (!el) return "";
+
+    const current = (el.textContent || "").trim();
+    if (current) return current;
+
+    const en = (el.dataset.i18nEn || "").trim();
+    if (en) return en;
+
+    return "";
+  }
+
+  return { applyLanguage, t };
 
 })();

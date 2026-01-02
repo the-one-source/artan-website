@@ -165,60 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
     attributeFilter: ["dir", "lang", "class"],
   });
 
-  /* =================== Menu Overlay =================== */
-
-  function initMenu() {
-    const menuButton = document.getElementById("menu-button");
-    const menuOverlay = document.getElementById("menu-overlay");
-
-    if (!menuButton || !menuOverlay) return;
-
-    let isOpen = false;
-    let isAnimating = false;
-    const CLOSE_DURATION = 420;
-
-    function openMenu() {
-      if (isAnimating) return;
-      isAnimating = true;
-
-      menuButton.classList.add("menu-open");
-      menuOverlay.classList.add("active");
-      document.body.classList.add("menu-active");
-
-      isOpen = true;
-      requestAnimationFrame(() => {
-        isAnimating = false;
-      });
-    }
-
-    function closeMenu() {
-      if (isAnimating) return;
-      isAnimating = true;
-
-      isOpen = false;
-      menuOverlay.classList.add("closing");
-      document.body.classList.remove("menu-active");
-
-      setTimeout(() => {
-        menuOverlay.classList.remove("active", "closing");
-        menuButton.classList.remove("menu-open");
-        isAnimating = false;
-      }, CLOSE_DURATION);
-    }
-
-    menuButton.addEventListener("click", (e) => {
-      e.stopPropagation();
-      isOpen ? closeMenu() : openMenu();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && isOpen) closeMenu();
-    });
-  }
-
-  window.initMenu = initMenu;
-  initMenu();
-
   /* =================== Text Hover — Letter Drift (Luxury) =================== */
 
   function initLetterHover(root = document) {
@@ -277,9 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isRTLContext(el)) return true;
       if (RTL_SCRIPT_RE.test(text)) return true;
 
-      // Don’t break vertical writing-mode (menu labels) or any rotated/vertical layout
+      // Don’t break vertical writing-mode by default.
+      // Exception: allow vertical labels inside the menu overlay to use the same global hover.
       const wm = (cs.writingMode || cs["writing-mode"] || "").toLowerCase();
-      if (wm && wm !== "horizontal-tb") return true;
+      if (wm && wm !== "horizontal-tb") {
+        if (el.closest("#menu-overlay")) return false;
+        return true;
+      }
 
       return false;
     };
@@ -352,13 +302,19 @@ document.addEventListener("DOMContentLoaded", () => {
           clearHoverTimer(el);
 
           const spans = el.querySelectorAll("span");
+          const cs = window.getComputedStyle(el);
+          const wm = (cs.writingMode || cs["writing-mode"] || "").toLowerCase();
+          const isVertical = wm && wm !== "horizontal-tb";
+          const drift = isVertical ? "translateX(-0.35em)" : "translateY(-0.35em)";
+
           spans.forEach((s) => {
-            s.style.transform = "translateY(-0.35em)";
+            s.style.transform = drift;
             s.style.opacity = "0.95";
           });
 
           // Quick impulse: return while hover remains
           const t = setTimeout(() => {
+            spans.forEach((s) => (s.style.transform = "translateX(0)"));
             spans.forEach((s) => (s.style.transform = "translateY(0)"));
             hoverTimers.delete(el);
           }, 140);
@@ -373,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
         () => {
           clearHoverTimer(el);
           el.querySelectorAll("span").forEach((s) => {
+            s.style.transform = "translateX(0)";
             s.style.transform = "translateY(0)";
             s.style.opacity = "1";
           });
