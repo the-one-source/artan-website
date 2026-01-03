@@ -251,9 +251,14 @@ body.menu-open #header-controls .theme-toggle{display:inline-flex;}
 /* =============================================================================
    07) FOOTER
 ============================================================================= */
+:root{
+  /* Footer rail gutter (responsive) */
+  --footer-gutter: clamp(18px, 4vw, 96px);
+  --footer-rail-width: calc(100% - (var(--footer-gutter) * 2));
+}
 .footer-separator{
-  width:90%;
-  max-width:1200px;
+  width: var(--footer-rail-width);
+  max-width: none;
   height:1px;
   border:none;
   margin:1.5rem auto;
@@ -273,8 +278,8 @@ body.menu-open #header-controls .theme-toggle{display:inline-flex;}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  width:90%;
-  max-width:1200px;
+  width: var(--footer-rail-width);
+  max-width: none;
   margin:0 auto 1rem auto;
   color:var(--text-secondary-color);
   font-size:0.75rem;
@@ -349,8 +354,8 @@ body.light-mode .theme-toggle{background-color:var(--color-black);}
 .theme-toggle:hover{transform:scale(1.15);opacity:0.9;}
 @media (prefers-reduced-motion:reduce){body,.theme-toggle{transition:none !important;}}
 
-/* =============================================================================
-   09) LOCALE (LANGUAGE + COUNTRY OVERLAYS)
+/* ============================================================================
+   09) LOCALE (LANGUAGE)
 ============================================================================= */
 #language-toggle{
   background:none;border:none;padding:0;margin:0;font:inherit;
@@ -420,83 +425,7 @@ body.light-mode .language-dropdown .lang-option:hover{
   background-color:rgba(0,0,0,0.05);
 }
 
-.country-overlay{
-  position:fixed;
-  inset:0;
-  background-color:var(--bg-color);
-  color:var(--text-color);
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  overflow-y:auto;
-  z-index:200000;
-  padding:4rem 1rem;
-  box-sizing:border-box;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.4s;
-}
-.country-overlay.visible,
-.country-overlay.active{opacity:1;pointer-events:all;}
-
-.country-overlay-inner{
-  max-width:960px;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  gap:1.5rem;
-  padding:0 1rem;
-  transform:translateX(100%) scale(0.9);
-  transition:transform 0.5s;
-}
-.country-overlay.visible .country-overlay-inner{transform:translateX(0) scale(1);}
-
-.country-overlay-title{font-size:1.4rem;font-weight:300;text-align:left;margin-bottom:1rem;letter-spacing:0.02em;}
-.country-region{display:flex;flex-direction:column;gap:0.75rem;}
-.region-title{font-size:1.1rem;font-weight:700;opacity:0.85;margin-bottom:0.5rem;text-align:left;letter-spacing:0.02em;}
-
-.country-overlay-inner hr.footer-separator,
-.country-region hr.footer-separator{width:100%;max-width:960px;margin:0.5rem 0 1rem 0;}
-
-.overlay-header-container{display:flex;justify-content:space-between;align-items:center;}
-.overlay-header-container .country-overlay-title{margin:0;padding:0;line-height:1.2;font-size:1.4rem;font-weight:300;text-align:left;letter-spacing:0.02em;}
-.overlay-header-container #country-overlay-close{position:relative;top:0;right:0;}
-
-.country-list{
-  list-style:none;
-  display:flex;
-  flex-wrap:wrap;
-  gap:0.5rem 2rem;
-  padding:0;
-  margin:0;
-  justify-content:flex-start;
-  align-items:flex-start;
-  align-content:flex-start;
-}
-.country-list li{flex:0 1 calc(33% - 1.33rem);min-width:150px;text-align:left;}
-
-.country-option{
-  background:none;border:none;padding:0;margin:0;font:inherit;
-  font-size:1rem;font-weight:300;line-height:inherit;color:var(--text-color);
-  cursor:pointer;transition:color 0.2s;text-align:left;
-}
-.country-option:hover{color:var(--color-primary1);}
-
-@media (max-width:1024px){.country-list li{flex:0 1 calc(50% - 1rem);}}
-@media (max-width:768px){
-  .country-overlay{padding:3rem 1rem;}
-  .country-overlay-title{font-size:1.6rem;}
-  .region-title{font-size:1rem;}
-  .country-option{font-size:0.95rem;}
-  .country-list li{flex:0 1 100%;}
-}
-@media (max-width:480px){
-  .country-overlay-title{font-size:1.4rem;}
-  .region-title{font-size:0.95rem;}
-  .country-option{font-size:0.9rem;}
-  #country-overlay-close{font-size:1.5rem;}
-  .country-list li{flex:0 1 100%;}
-}
+/* Country overlay styles live in assets/css/Country-Overlay.css (sovereign). */
 
 /* =============================================================================
    10) GLOBAL CLOSE BUTTON

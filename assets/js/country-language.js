@@ -190,16 +190,75 @@
 
   /* =================== Overlay: Country =================== */
 
+  const CO_CLOSE_DURATION = 520;
+  const CO_STAGGER_IN_START_DELAY = 180;
+  const CO_STAGGER_IN_STEP = 70;
+  const CO_STAGGER_OUT_STEP = 55;
+
+  const getCountryItems = () => Array.from(document.querySelectorAll('#country-overlay .country-item'));
+
+  const prepCountryItemsForOpen = (items) => {
+    items.forEach((el) => {
+      el.style.transitionDelay = '0ms';
+      el.style.opacity = '';
+      el.style.transform = '';
+    });
+  };
+
+  const staggerCountryIn = (items) => {
+    items.forEach((el, i) => {
+      el.style.transitionDelay = `${CO_STAGGER_IN_START_DELAY + (i * CO_STAGGER_IN_STEP)}ms`;
+    });
+  };
+
+  const staggerCountryOut = (items) => {
+    // reverse order for a calm, deliberate exit
+    items.slice().reverse().forEach((el, i) => {
+      el.style.transitionDelay = `${i * CO_STAGGER_OUT_STEP}ms`;
+    });
+  };
+
   const openCountryOverlay = () => {
     const o = qs('#country-overlay');
     if (!o) return;
-    o.classList.add('visible');
+
+    const items = getCountryItems();
+    prepCountryItemsForOpen(items);
+
+    // Ensure starting state is applied before activating
+    o.classList.remove('active', 'closing');
+    o.setAttribute('aria-hidden', 'true');
+
+    // Micro-delay to let the browser paint initial state
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        staggerCountryIn(items);
+        o.classList.add('active');
+        o.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('country-active');
+      });
+    });
   };
 
   const closeCountryOverlay = () => {
     const o = qs('#country-overlay');
     if (!o) return;
-    o.classList.remove('visible');
+
+    const items = getCountryItems();
+    staggerCountryOut(items);
+
+    o.classList.add('closing');
+    o.setAttribute('aria-hidden', 'true');
+
+    window.setTimeout(() => {
+      o.classList.remove('active', 'closing');
+      document.body.classList.remove('country-active');
+      items.forEach((el) => {
+        el.style.transitionDelay = '';
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+    }, CO_CLOSE_DURATION);
   };
 
   /* =================== Dropdown: Language =================== */

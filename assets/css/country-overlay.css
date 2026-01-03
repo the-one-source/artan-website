@@ -1,0 +1,398 @@
+/* =============================================================================
+   COUNTRY-OVERLAY.CSS — COUNTRY / LANGUAGE OVERLAY (SOVEREIGN)
+
+   Purpose:
+   - Owns ONLY the country overlay (layout + motion).
+   - Restores the original style from the former style.css section.
+   - Adds luxury open/close motion (overlay + inner + subtle stagger), no hover-jump.
+
+   Sections:
+   01) Base shell
+   02) Open / close motion
+   03) Inner layout (legacy markup support)
+   04) Headings + separators
+   05) Country list + items
+   06) Close button
+   07) Reduced motion
+   08) Responsive
+============================================================================= */
+
+:root{
+  /* Country overlay accent follows the global palette */
+  --country-accent: var(--color-primary1);
+  --country-container-max: min(1200px, 92vw);
+  --country-container-pad: clamp(14px, 2.6vw, 28px);
+}
+
+/* Overlay-local surface tokens (inherit active theme vars) */
+/* Overlay-local surface tokens (inherit active theme vars) */
+#country-overlay.country-overlay,
+.country-overlay{
+  --co-bg: var(--bg-color, #000);
+  --co-fg: var(--text-color, #fff);
+  --co-border: rgba(255,255,255,0.18);
+  --co-wash: rgba(255,255,255,0.07);
+  --co-glass: rgba(0,0,0,0.48);
+  --co-glass-strong: rgba(0,0,0,0.58);
+}
+
+@supports (color: color-mix(in srgb, #fff 50%, transparent)){
+  #country-overlay.country-overlay,
+  .country-overlay{
+    --co-border: color-mix(in srgb, var(--co-fg) 18%, transparent);
+    --co-wash: color-mix(in srgb, var(--co-fg) 7%, transparent);
+    --co-glass: color-mix(in srgb, var(--co-bg) 52%, transparent);
+    --co-glass-strong: color-mix(in srgb, var(--co-bg) 64%, transparent);
+  }
+}
+
+/* =============================================================================
+   01) BASE SHELL
+============================================================================= */
+#country-overlay.country-overlay,
+.country-overlay{
+  position: fixed;
+  inset: 0;
+  /* Glass + gradient wash (menu-overlay feel) */
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--co-glass) 88%, var(--co-wash)) 0%,
+      color-mix(in srgb, var(--co-glass-strong) 90%, var(--co-wash)) 52%,
+      color-mix(in srgb, var(--co-glass) 88%, var(--co-wash)) 100%
+    );
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  color: var(--text-color);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  overflow-y: auto;
+  z-index: 200000;
+  padding: clamp(3rem, 6vh, 5rem) clamp(0.75rem, 3vw, 2.5rem);
+  box-sizing: border-box;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  border: 0;
+
+  transition: opacity 620ms cubic-bezier(0.22,1,0.36,1), visibility 620ms cubic-bezier(0.22,1,0.36,1);
+}
+
+#country-overlay.country-overlay.visible,
+#country-overlay.country-overlay.active,
+.country-overlay.visible,
+.country-overlay.active{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* While country overlay is open, soften/hide stage circle behind it */
+body.country-open .stage-circle,
+body.country-active .stage-circle{opacity: 0 !important; filter: none !important;}
+
+/* =============================================================================
+   02) OPEN / CLOSE MOTION
+============================================================================= */
+#country-overlay .country-overlay-inner,
+.country-overlay .country-overlay-inner{
+  max-width: var(--country-container-max);
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  padding: 0 var(--country-container-pad);
+
+  opacity: 0;
+  transform: translateY(48px) scale(0.98);
+
+  transition:
+    transform 1400ms cubic-bezier(0.22,1,0.36,1),
+    opacity 900ms cubic-bezier(0.22,1,0.36,1);
+
+  will-change: transform, opacity;
+}
+
+#country-overlay.visible .country-overlay-inner,
+#country-overlay.active .country-overlay-inner,
+.country-overlay.visible .country-overlay-inner,
+.country-overlay.active .country-overlay-inner{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Optional close phase (JS may add .closing) */
+#country-overlay.closing .country-overlay-inner,
+.country-overlay.closing .country-overlay-inner{
+  opacity: 0;
+  transform: translateY(64px) scale(0.965);
+
+  transition:
+    transform 1500ms cubic-bezier(0.22,1,0.36,1),
+    opacity 1100ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* =============================================================================
+   03) INNER LAYOUT (LEGACY MARKUP SUPPORT)
+============================================================================= */
+#country-overlay .overlay-header-container,
+.country-overlay .overlay-header-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* =============================================================================
+   04) HEADINGS + SEPARATORS
+============================================================================= */
+#country-overlay .country-overlay-title,
+.country-overlay .country-overlay-title{
+  font-size: 1.4rem;
+  font-weight: 300;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+#country-overlay .country-region,
+.country-overlay .country-region{
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#country-overlay .region-title,
+.country-overlay .region-title{
+  font-size: 1.1rem;
+  font-weight: 700;
+  opacity: 0.85;
+  margin: 0 0 0.5rem;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
+
+#country-overlay .country-overlay-inner hr.footer-separator,
+#country-overlay .country-region hr.footer-separator,
+.country-overlay .country-overlay-inner hr.footer-separator,
+.country-overlay .country-region hr.footer-separator{
+  width: 100%;
+  margin: 0.5rem 0 1rem 0;
+  border: none;
+  height: 1px;
+  background-color: var(--text-secondary-color);
+  opacity: 0.35;
+}
+
+/* =============================================================================
+   05) COUNTRY LIST + ITEMS
+============================================================================= */
+#country-overlay .country-list,
+.country-overlay .country-list{
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  padding: 0;
+  margin: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+#country-overlay .country-list li,
+.country-overlay .country-list li{
+  flex: 0 1 calc(33% - 1.33rem);
+  min-width: 150px;
+  text-align: left;
+
+  /* Stagger in */
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    transform 980ms cubic-bezier(0.22,1,0.36,1),
+    opacity 720ms cubic-bezier(0.22,1,0.36,1);
+}
+
+#country-overlay.active .country-list li,
+#country-overlay.visible .country-list li,
+.country-overlay.active .country-list li,
+.country-overlay.visible .country-list li{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Subtle stagger (keeps it luxury but calm) */
+#country-overlay.active .country-list li:nth-child(1),
+#country-overlay.visible .country-list li:nth-child(1),
+.country-overlay.active .country-list li:nth-child(1),
+.country-overlay.visible .country-list li:nth-child(1){transition-delay: 100ms;}
+#country-overlay.active .country-list li:nth-child(2),
+#country-overlay.visible .country-list li:nth-child(2),
+.country-overlay.active .country-list li:nth-child(2),
+.country-overlay.visible .country-list li:nth-child(2){transition-delay: 130ms;}
+#country-overlay.active .country-list li:nth-child(3),
+#country-overlay.visible .country-list li:nth-child(3),
+.country-overlay.active .country-list li:nth-child(3),
+.country-overlay.visible .country-list li:nth-child(3){transition-delay: 160ms;}
+#country-overlay.active .country-list li:nth-child(4),
+#country-overlay.visible .country-list li:nth-child(4),
+.country-overlay.active .country-list li:nth-child(4),
+.country-overlay.visible .country-list li:nth-child(4){transition-delay: 190ms;}
+#country-overlay.active .country-list li:nth-child(5),
+#country-overlay.visible .country-list li:nth-child(5),
+.country-overlay.active .country-list li:nth-child(5),
+.country-overlay.visible .country-list li:nth-child(5){transition-delay: 220ms;}
+#country-overlay.active .country-list li:nth-child(6),
+#country-overlay.visible .country-list li:nth-child(6),
+.country-overlay.active .country-list li:nth-child(6),
+.country-overlay.visible .country-list li:nth-child(6){transition-delay: 250ms;}
+#country-overlay.active .country-list li:nth-child(7),
+#country-overlay.visible .country-list li:nth-child(7),
+.country-overlay.active .country-list li:nth-child(7),
+.country-overlay.visible .country-list li:nth-child(7){transition-delay: 280ms;}
+#country-overlay.active .country-list li:nth-child(8),
+#country-overlay.visible .country-list li:nth-child(8),
+.country-overlay.active .country-list li:nth-child(8),
+.country-overlay.visible .country-list li:nth-child(8){transition-delay: 310ms;}
+
+#country-overlay.active .country-list li:nth-child(9),
+#country-overlay.visible .country-list li:nth-child(9),
+.country-overlay.active .country-list li:nth-child(9),
+.country-overlay.visible .country-list li:nth-child(9){transition-delay: 340ms;}
+
+#country-overlay.active .country-list li:nth-child(10),
+#country-overlay.visible .country-list li:nth-child(10),
+.country-overlay.active .country-list li:nth-child(10),
+.country-overlay.visible .country-list li:nth-child(10){transition-delay: 370ms;}
+
+#country-overlay.active .country-list li:nth-child(11),
+#country-overlay.visible .country-list li:nth-child(11),
+.country-overlay.active .country-list li:nth-child(11),
+.country-overlay.visible .country-list li:nth-child(11){transition-delay: 400ms;}
+
+#country-overlay.active .country-list li:nth-child(12),
+#country-overlay.visible .country-list li:nth-child(12),
+.country-overlay.active .country-list li:nth-child(12),
+.country-overlay.visible .country-list li:nth-child(12){transition-delay: 430ms;}
+
+#country-overlay .country-option,
+.country-overlay .country-option{
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: inherit;
+  color: var(--text-color);
+
+  cursor: pointer;
+  transition: color 0.2s;
+  text-align: left;
+  transform: none !important; /* no hover jump */
+}
+
+#country-overlay .country-option:hover,
+.country-overlay .country-option:hover{
+  color: var(--color-primary1);
+}
+
+/* =============================================================================
+   06) CLOSE BUTTON (LEGACY ID)
+============================================================================= */
+#country-overlay #country-overlay-close,
+.country-overlay #country-overlay-close{
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+/* Close button (inherits global close button markup) — menu-overlay feel */
+#country-overlay .global-close-button,
+.country-overlay .global-close-button{
+  color: var(--co-fg);
+  transition: color 240ms ease, transform 240ms ease;
+}
+
+#country-overlay .global-close-button:hover,
+#country-overlay .global-close-button:focus-visible,
+.country-overlay .global-close-button:hover,
+.country-overlay .global-close-button:focus-visible{
+  color: var(--color-primary7);
+  transform: scale(1.08);
+  outline: none;
+}
+
+/* Let the X-lines ‘soften’ on hover like the menu close */
+#country-overlay .global-close-button:hover span,
+#country-overlay .global-close-button:focus-visible span,
+.country-overlay .global-close-button:hover span,
+.country-overlay .global-close-button:focus-visible span{
+  transform: rotate(0deg);
+}
+
+/* =============================================================================
+   07) REDUCED MOTION
+============================================================================= */
+@media (prefers-reduced-motion: reduce){
+  #country-overlay,
+  #country-overlay *,
+  .country-overlay,
+  .country-overlay *{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* =============================================================================
+   08) RESPONSIVE
+============================================================================= */
+@media (min-width: 1280px){
+  #country-overlay .country-list li,
+  .country-overlay .country-list li{flex: 0 1 calc(25% - 1.5rem);}
+}
+
+@media (max-width:1024px){
+  #country-overlay .country-list li,
+  .country-overlay .country-list li{flex: 0 1 calc(50% - 1rem);}
+}
+
+@media (max-width:768px){
+  #country-overlay.country-overlay,
+  .country-overlay{padding: 3rem 1rem;}
+
+  #country-overlay .country-overlay-title,
+  .country-overlay .country-overlay-title{font-size: 1.6rem;}
+
+  #country-overlay .region-title,
+  .country-overlay .region-title{font-size: 1rem;}
+
+  #country-overlay .country-option,
+  .country-overlay .country-option{font-size: 0.95rem;}
+
+  #country-overlay .country-list li,
+  .country-overlay .country-list li{flex: 0 1 100%;}
+}
+
+@media (max-width:480px){
+  #country-overlay .country-overlay-title,
+  .country-overlay .country-overlay-title{font-size: 1.4rem;}
+
+  #country-overlay .region-title,
+  .country-overlay .region-title{font-size: 0.95rem;}
+
+  #country-overlay .country-option,
+  .country-overlay .country-option{font-size: 0.9rem;}
+}

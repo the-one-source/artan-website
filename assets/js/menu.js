@@ -5,9 +5,30 @@
 
   const menuLinks = menuOverlay.querySelectorAll('.menu-link');
   const menuItems = menuOverlay.querySelectorAll('.menu-item');
+  const animatedNodes = Array.from(
+    menuOverlay.querySelectorAll('.menu-col-b-section-b .menu-item, .menu-col-b-section-b .menu-sep')
+  );
   const menuList = menuOverlay.querySelector('.menu-col-b-section-b .menu-list');
+  const menuClose = menuOverlay.querySelector('.menu-close');
+  const menuPackToggle = document.getElementById('menu-pack-toggle');
   function setActiveItem(next) {
     menuItems.forEach((it) => it.classList.toggle('is-active', it === next));
+  }
+
+  function staggerIn() {
+    animatedNodes.forEach((el, i) => {
+      el.style.transitionDelay = `${i * STAGGER_IN_STEP}ms`;
+      el.classList.add('menu-animate-in');
+      el.classList.remove('menu-animate-out');
+    });
+  }
+
+  function staggerOut() {
+    animatedNodes.slice().reverse().forEach((el, i) => {
+      el.style.transitionDelay = `${i * STAGGER_OUT_STEP}ms`;
+      el.classList.add('menu-animate-out');
+      el.classList.remove('menu-animate-in');
+    });
   }
 
   function letterify(el) {
@@ -44,6 +65,9 @@
   let isOpen = false;
   let isAnimating = false;
   const CLOSE_DURATION = 420;
+  const STAGGER_IN_START_DELAY = 220;
+  const STAGGER_IN_STEP = 95;
+  const STAGGER_OUT_STEP = 70;
 
   function openMenu() {
     if (isAnimating) return;
@@ -51,6 +75,10 @@
 
     menuButton.classList.add('menu-open');
     menuOverlay.classList.add('active');
+    menuOverlay.setAttribute('aria-hidden', 'false');
+    animatedNodes.forEach(el => { el.style.transitionDelay = ''; });
+    // Let the overlay settle in first, then bring the rail in
+    setTimeout(staggerIn, STAGGER_IN_START_DELAY);
     document.body.classList.add('menu-active');
 
     isOpen = true;
@@ -67,13 +95,20 @@
 
     isOpen = false;
     menuOverlay.classList.add('closing');
+    menuOverlay.setAttribute('aria-hidden', 'true');
+    staggerOut();
     document.body.classList.remove('menu-active');
 
     document.dispatchEvent(new CustomEvent('menuClose'));
 
     setTimeout(() => {
       menuOverlay.classList.remove('active', 'closing');
+      menuOverlay.setAttribute('aria-hidden', 'true');
       menuButton.classList.remove('menu-open');
+      animatedNodes.forEach(el => {
+        el.style.transitionDelay = '';
+        el.classList.remove('menu-animate-in', 'menu-animate-out');
+      });
       isAnimating = false;
     }, CLOSE_DURATION);
   }
@@ -81,6 +116,30 @@
   menuButton.addEventListener('click', (e) => {
     e.stopPropagation();
     isOpen ? closeMenu() : openMenu();
+  });
+
+  if (menuClose) {
+    menuClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isOpen) closeMenu();
+    });
+  }
+
+  // Prevent the pack toggle button from triggering overlay close
+  if (menuPackToggle) {
+    menuPackToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  }
+
+  // Backdrop click closes (only when clicking outside the columns)
+  menuOverlay.addEventListener('click', (e) => {
+    if (!isOpen) return;
+    if (e.target.closest('#menu-pack-toggle')) return;
+    if (e.target.closest('.menu-columns')) return;
+    closeMenu();
   });
 
   document.addEventListener('keydown', (e) => {

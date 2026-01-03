@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/menu.css">
+    <link rel="stylesheet" href="assets/css/Country-Overlay.css">
     <meta name="description" content="Artan's visionary creative world.">
     <meta name="keywords" content="Artan, Davoodi, MONAD, LAW, LOVE, YOU, سکون, Solum, Music, Albums, Singles, Books, Sound, Visual, Consciousness, Spotify, Apple Music, X, Instagram, TikTok">
     <link rel="canonical" href="https://artan.live/">
@@ -252,7 +253,6 @@
 </section>
 
 <!-- =================== Footer =================== -->
-
 <footer class="site-footer">
     <div class="footer-flex">
         <div class="footer-left">© 2026 ARTAN</div>
@@ -277,7 +277,7 @@
 </footer>
 
 <!-- =================== Country/Region Overlay =================== -->
-<div id="country-overlay" class="country-overlay">
+<div id="country-overlay" class="country-overlay" aria-hidden="true">
     <div class="country-overlay-inner">
         <!-- Overlay Header -->
         <div class="overlay-header-container">
@@ -329,24 +329,42 @@
             <!-- in-Section-A: Packs A/B -->
             <div class="menu-packs-split" aria-label="Links">
 
-              <!-- Pack A (Music) -->
+              <!-- =================== Pack A (Music) =================== -->
               <div class="menu-pack-slot" data-pack-slot="music">
                 <div id="menu-pack-music" class="menu-pack" data-pack="music" aria-label="Music platforms">
-                  <a class="menu-pack-icon" aria-label="Apple Music" href="https://music.apple.com/de/artist/artan/1855183543?l=en-GB" data-stream="apple-music"><img src="assets/icons/brands/apple-music.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="Spotify" href="https://open.spotify.com/artist/4MSdNxckTdTdVQFWtB2OFR" data-stream="spotify"><img src="assets/icons/brands/spotify.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="YouTube Music" href="https://music.youtube.com/channel/UCyFnW2eMq8zyJIDdidwVQrA?si=CsPZyLbHufQh-zmg" data-stream="youtube-music"><img src="assets/icons/brands/youtube-music.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="SoundCloud" href="https://soundcloud.com/artandavoodi" data-stream="soundcloud"><img src="assets/icons/brands/soundcloud.svg" alt="" aria-hidden="true"></a>
+                  <a class="menu-pack-icon" aria-label="Apple Music" href="https://music.apple.com/de/artist/artan/1855183543?l=en-GB" data-stream="apple-music">
+                    <img class="menu-pack-img" src="assets/icons/brands/apple-music.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="Spotify" href="https://open.spotify.com/artist/4MSdNxckTdTdVQFWtB2OFR" data-stream="spotify">
+                    <img class="menu-pack-img" src="assets/icons/brands/spotify.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="YouTube Music" href="https://music.youtube.com/channel/UCyFnW2eMq8zyJIDdidwVQrA?si=CsPZyLbHufQh-zmg" data-stream="youtube-music">
+                    <img class="menu-pack-img" src="assets/icons/brands/youtube-music.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="SoundCloud" href="https://soundcloud.com/artandavoodi" data-stream="soundcloud">
+                    <img class="menu-pack-img" src="assets/icons/brands/soundcloud.svg" alt="" aria-hidden="true">
+                  </a>
                 </div>
               </div>
 
-              <!-- Pack B (Social) -->
+              <!-- =================== Pack B (Social) =================== -->
               <div class="menu-pack-slot" data-pack-slot="social">
                 <div id="menu-pack-social" class="menu-pack" data-pack="social" aria-label="Social">
-                  <a class="menu-pack-icon" aria-label="YouTube" href="https://www.youtube.com/@artandavoodi" data-social="youtube"><img src="assets/icons/brands/youtube.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="Instagram" href="https://www.instagram.com/artandavoodi/" data-social="instagram"><img src="assets/icons/brands/instagram.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="TikTok" href="https://www.tiktok.com/@artan.davoodi" data-social="tiktok"><img src="assets/icons/brands/tiktok.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="X" href="https://x.com/artandavoodi" data-social="x"><img src="assets/icons/brands/x.svg" alt="" aria-hidden="true"></a>
-                  <a class="menu-pack-icon" aria-label="GitHub" href="https://github.com/the-one-source" data-social="github"><img src="assets/icons/brands/github.svg" alt="" aria-hidden="true"></a>
+                  <a class="menu-pack-icon" aria-label="YouTube" href="https://www.youtube.com/@artandavoodi" data-social="youtube">
+                    <img class="menu-pack-img" src="assets/icons/brands/youtube.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="Instagram" href="https://www.instagram.com/artandavoodi/" data-social="instagram">
+                    <img class="menu-pack-img" src="assets/icons/brands/instagram.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="TikTok" href="https://www.tiktok.com/@artan.davoodi" data-social="tiktok">
+                    <img class="menu-pack-img" src="assets/icons/brands/tiktok.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="X" href="https://x.com/artandavoodi" data-social="x">
+                    <img class="menu-pack-img" src="assets/icons/brands/x.svg" alt="" aria-hidden="true">
+                  </a>
+                  <a class="menu-pack-icon" aria-label="GitHub" href="https://github.com/the-one-source" data-social="github">
+                    <img class="menu-pack-img" src="assets/icons/brands/github.svg" alt="" aria-hidden="true">
+                  </a>
                 </div>
               </div>
 
