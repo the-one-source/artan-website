@@ -312,6 +312,7 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
+  justify-items: stretch; /* FIX: make both columns truly hug their sides */
   gap: 28px;
   padding: 90px 64px 90px;
 }
@@ -325,6 +326,9 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   grid-template-columns: minmax(220px, 320px) 1px 1fr;
   align-items: stretch;
+  padding-left: 0;
+  justify-self: start; /* FIX: column A sticks to left padding */
+  --menu-col-a-gutter: 46px;
 }
 
 #menu-overlay .menu-col-a-sep{
@@ -341,13 +345,16 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: start;
-  justify-items: center;
+  justify-items: end;
+  padding-left: 0;
+  padding-right: var(--menu-col-a-gutter);
 }
 
 /* Controls */
 #menu-overlay .menu-controls{
   display: grid;
   gap: 14px;
+  justify-items: center; /* keeps icon column centered within its own stack */
 }
 
 /* Shared icon button */
@@ -447,9 +454,12 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   transform: scale(1.04);
 }
 
-/* Packs split (OVERLAYED — same footprint, independent layers)
-   - Centers the footprint both vertically + horizontally inside Section A
-   - Social layer sits directly over Music layer
+/* Packs split (OVERLAYED — one centered footprint, two layers)
+   - Centering: both layers share the exact same grid cell (no drift)
+   - Smoothness: out → gap → in (no flicker)
+   - Clicks: only the visible layer is clickable
+   - JS toggles ONE state:
+     - #menu-overlay.packs-social  OR  #menu-overlay[data-pack-state="social"]
 */
 #menu-overlay .menu-packs-split{
   position: relative;
@@ -457,29 +467,22 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   place-items: center;
   padding-top: 28px;
   align-self: center;
-  justify-self: center;
+  justify-self: end;
   margin: 0;
+
+  width: fit-content;
+  min-height: 160px;
+
+  --pack-out: 360ms;
+  --pack-in: 420ms;
+  --pack-gap: 220ms;
 }
 
-/* Base slot defines the footprint; both layers are centered */
 #menu-overlay .menu-pack-slot{
-  position: relative;
+  grid-area: 1 / 1;
   display: grid;
   place-items: center;
-  justify-items: center;
-}
-
-#menu-overlay .menu-pack-slot[data-pack-slot="music"]{
-  position: relative;
-  z-index: 1;
-}
-
-#menu-overlay .menu-pack-slot[data-pack-slot="social"]{
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  z-index: 2;
+  pointer-events: none;
 }
 
 #menu-overlay .menu-pack-slot .menu-pack{
@@ -489,11 +492,88 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   align-items: center;
 }
 
+/* Force both layers to stay centered and never baseline-drop */
+#menu-overlay #menu-pack-music,
+#menu-overlay #menu-pack-social{
+  grid-area: 1 / 1;
+  display: grid !important;
+  place-items: center;
+  align-self: center;
+  justify-self: center;
+  will-change: opacity, transform;
+  transform-origin: center;
+}
+
+/* DEFAULT: MUSIC ON */
+#menu-overlay #menu-pack-music{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity var(--pack-in) var(--menu-hover-ease),
+    transform 720ms var(--menu-hover-ease),
+    visibility 0s linear;
+}
+
+#menu-overlay #menu-pack-social{
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0);
+  pointer-events: none;
+  transition:
+    opacity var(--pack-out) var(--menu-hover-ease),
+    transform 720ms var(--menu-hover-ease),
+    visibility 0s linear var(--pack-out);
+}
+
+/* SOCIAL ON: music leaves first; social arrives after gap */
+#menu-overlay.packs-social #menu-pack-music,
+#menu-overlay[data-pack-state="social"] #menu-pack-music,
+#menu-overlay .menu-wrapper.packs-social #menu-pack-music,
+#menu-overlay .menu-wrapper[data-pack-state="social"] #menu-pack-music,
+#menu-overlay .menu-pack-toggle.is-social ~ .menu-columns #menu-pack-music,
+#menu-overlay .menu-pack-toggle[aria-pressed="true"] ~ .menu-columns #menu-pack-music{
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition:
+    opacity var(--pack-out) var(--menu-hover-ease),
+    transform 720ms var(--menu-hover-ease),
+    visibility 0s linear var(--pack-out);
+}
+
+#menu-overlay.packs-social #menu-pack-social,
+#menu-overlay[data-pack-state="social"] #menu-pack-social,
+#menu-overlay .menu-wrapper.packs-social #menu-pack-social,
+#menu-overlay .menu-wrapper[data-pack-state="social"] #menu-pack-social,
+#menu-overlay .menu-pack-toggle.is-social ~ .menu-columns #menu-pack-social,
+#menu-overlay .menu-pack-toggle[aria-pressed="true"] ~ .menu-columns #menu-pack-social{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity var(--pack-in) var(--menu-hover-ease) var(--pack-gap),
+    transform 720ms var(--menu-hover-ease) var(--pack-gap),
+    visibility 0s linear;
+}
+
+/* BACK TO MUSIC: social leaves first; music returns after gap */
+#menu-overlay:not(.packs-social):not([data-pack-state="social"]) #menu-pack-music{
+  transition:
+    opacity var(--pack-in) var(--menu-hover-ease) var(--pack-gap),
+    transform 720ms var(--menu-hover-ease) var(--pack-gap),
+    visibility 0s linear;
+}
+
 /* Plain logo bottom */
 #menu-overlay .menu-plain-logo-wrap{
   display: grid;
   align-items: end;
   padding-top: 22px;
+  justify-items: center;
 }
 
 /* Column A — Section B (Typo + Essence) */
@@ -503,7 +583,7 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   grid-template-rows: auto 1fr;
   align-items: start;
   justify-items: start;
-  padding-left: 46px;
+  padding-left: var(--menu-col-a-gutter);
 }
 
 #menu-overlay .menu-typo-logo{
@@ -529,6 +609,7 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 460px);
   align-items: stretch;
+  justify-self: end; /* FIX: column B sticks to right padding */
 }
 
 /* Preview */
@@ -826,11 +907,13 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
 @media (prefers-reduced-motion: reduce){
   #menu-overlay.menu-overlay,
   #menu-overlay .menu-link,
-  #menu-overlay .menu-pack-icon{
+  #menu-overlay .menu-pack-icon,
+  #menu-overlay #menu-pack-music,
+  #menu-overlay #menu-pack-social{
     transition: none !important;
+    animation: none !important;
   }
   #menu-overlay .menu-control-icon,
-  #menu-overlay .menu-pack-icon,
   #menu-overlay .menu-pack-toggle{
     animation: none !important;
   }
@@ -864,13 +947,8 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
   #menu-overlay .menu-col-a-section-b{ padding-left: 0; }
 
   #menu-overlay .menu-packs-split{
-    position: relative;
-    display: grid;
-    place-items: center;
     padding-top: 18px;
-    align-self: center;
-    justify-self: center;
-    margin: 0;
+    min-height: 150px;
   }
 
   #menu-overlay .menu-col-b{

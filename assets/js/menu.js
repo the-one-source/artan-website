@@ -11,6 +11,211 @@
   const menuList = menuOverlay.querySelector('.menu-col-b-section-b .menu-list');
   const menuClose = menuOverlay.querySelector('.menu-close');
   const menuPackToggle = document.getElementById('menu-pack-toggle');
+
+  // ==========================
+  // Packs (Music / Social) Flip
+  // ==========================
+  const packMusic = document.getElementById('menu-pack-music');
+  const packSocial = document.getElementById('menu-pack-social');
+
+  let packMode = 'music'; // default
+  let isPackAnimating = false;
+
+  const PACK_OUT_DURATION = 520;
+  const PACK_IN_DURATION = 720;
+  const PACK_STAGGER = 70;
+
+  const getPackIcons = (packEl) =>
+    packEl ? Array.from(packEl.querySelectorAll('.menu-pack-icon')) : [];
+
+  const setPackVisibility = (packEl, visible, opts = {}) => {
+    if (!packEl) return;
+
+    // Cancel any lingering animations
+    try {
+      packEl.getAnimations?.().forEach((a) => a.cancel());
+    } catch (_) {}
+
+    const icons = getPackIcons(packEl);
+    icons.forEach((el) => {
+      try {
+        el.getAnimations?.().forEach((a) => a.cancel());
+      } catch (_) {}
+    });
+
+    // Keep layout stable (no display toggles), but ensure visibility is explicit.
+    // This prevents a CSS `visibility:hidden` / `opacity:0` state from keeping the incoming pack invisible.
+    packEl.style.opacity = visible ? '1' : '0';
+    packEl.style.visibility = visible ? 'visible' : 'hidden';
+    packEl.style.pointerEvents = visible ? 'auto' : 'none';
+
+    if (visible && !opts.preserveInline) {
+      icons.forEach((el) => {
+        el.style.transform = '';
+        el.style.visibility = '';
+        el.style.opacity = '';
+      });
+    }
+  };
+
+  const animateIconsOut = async (icons) => {
+    const reversed = icons.slice().reverse();
+    const handles = reversed.map((el, i) => {
+      const a = el.animate(
+        [
+          { opacity: 1, transform: 'translateY(0) scale(1)' },
+          { opacity: 1, transform: 'translateY(-6px) scale(1.02)', offset: 0.22 },
+          { opacity: 0, transform: 'translateY(22px) scale(0.98)' }
+        ],
+        {
+          duration: PACK_OUT_DURATION,
+          delay: i * PACK_STAGGER,
+          easing: 'cubic-bezier(0.22,1,0.36,1)',
+          fill: 'both'
+        }
+      );
+      return { el, a };
+    });
+
+    await Promise.all(handles.map(({ a }) => a.finished.catch(() => {})));
+
+    // Lock the end state in inline styles BEFORE canceling,
+    // so we never snap back (flicker) when WAAPI fill is removed.
+    handles.forEach(({ el }) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px) scale(0.98)';
+      el.style.visibility = '';
+    });
+
+    // Remove WAAPI fill effects so hover/next flips remain clean.
+    handles.forEach(({ a }) => {
+      try { a.cancel(); } catch (_) {}
+    });
+  };
+
+  const animateIconsIn = async (icons) => {
+    const handles = icons.map((el, i) => {
+      const a = el.animate(
+        [
+          { opacity: 0, transform: 'translateY(-22px) scale(0.98)' },
+          { opacity: 1, transform: 'translateY(8px) scale(1.03)', offset: 0.58 },
+          { opacity: 1, transform: 'translateY(0) scale(1)' }
+        ],
+        {
+          duration: PACK_IN_DURATION,
+          delay: i * PACK_STAGGER,
+          easing: 'cubic-bezier(0.22,1,0.36,1)',
+          fill: 'both'
+        }
+      );
+      return { el, a };
+    });
+
+    await Promise.all(handles.map(({ a }) => a.finished.catch(() => {})));
+
+    // Lock the end state BEFORE canceling to avoid snap/flicker.
+    handles.forEach(({ el }) => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0) scale(1)';
+      el.style.visibility = '';
+    });
+
+    // Remove WAAPI fill effects so hover/next flips start clean.
+    handles.forEach(({ a }) => {
+      try { a.cancel(); } catch (_) {}
+    });
+
+    // Release inline transforms so CSS owns hover again,
+    // but keep opacity clean (CSS + pack visibility will drive it).
+    icons.forEach((el) => {
+      el.style.transform = '';
+      el.style.visibility = '';
+      el.style.opacity = '';
+    });
+  };
+
+  const applyPackModeInstant = (mode) => {
+    packMode = mode === 'social' ? 'social' : 'music';
+
+    // Hard reset any in-flight inline animation state
+    [packMusic, packSocial].forEach((p) => {
+      if (!p) return;
+      p.style.transform = '';
+      p.style.transition = '';
+      const icons = getPackIcons(p);
+      icons.forEach((el) => {
+        el.style.transform = '';
+        el.style.opacity = '';
+      });
+    });
+
+    setPackVisibility(packMusic, packMode === 'music');
+    setPackVisibility(packSocial, packMode === 'social');
+  };
+
+  const flipPackModeAnimated = async () => {
+    if (isPackAnimating) return;
+    if (!packMusic || !packSocial) return;
+    isPackAnimating = true;
+
+    const fromPack = packMode === 'music' ? packMusic : packSocial;
+    const toPack = packMode === 'music' ? packSocial : packMusic;
+
+    const fromIcons = getPackIcons(fromPack);
+    const toIcons = getPackIcons(toPack);
+
+    // Prepare the incoming pack (visible but non-interactive until fully in)
+    // Preserve inline priming state for the in-animation.
+    setPackVisibility(toPack, true, { preserveInline: true });
+    // Ensure it cannot stay invisible due to CSS.
+    toPack.style.visibility = 'visible';
+    toPack.style.pointerEvents = 'none';
+
+    // Ensure the outgoing pack is interactive until it fully exits
+    fromPack.style.pointerEvents = '';
+
+    // Prime incoming icons for the in-animation
+    toIcons.forEach((el) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-22px) scale(0.98)';
+      el.style.visibility = '';
+    });
+
+    await animateIconsOut(fromIcons);
+
+    // Hide outgoing pack without removing it from layout.
+    setPackVisibility(fromPack, false);
+    fromPack.style.pointerEvents = 'none';
+
+    // Swap mode before in-animation
+    packMode = packMode === 'music' ? 'social' : 'music';
+
+    await animateIconsIn(toIcons);
+
+    // Enforce final state after in-animation.
+    setPackVisibility(toPack, true);
+    setPackVisibility(fromPack, false);
+
+    // Interaction: only the visible pack can receive pointer events.
+    toPack.style.pointerEvents = 'auto';
+    toPack.style.visibility = 'visible';
+    fromPack.style.pointerEvents = 'none';
+    fromPack.style.visibility = 'hidden';
+
+    // Cleanup any priming state so CSS hover stays pure.
+    toIcons.forEach((el) => {
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.visibility = '';
+    });
+
+    isPackAnimating = false;
+  };
+
+  const resetPacksOnOpen = () => {
+    applyPackModeInstant('music');
+  };
+
   function setActiveItem(next) {
     menuItems.forEach((it) => it.classList.toggle('is-active', it === next));
   }
@@ -77,9 +282,9 @@
     menuOverlay.classList.add('active');
     menuOverlay.setAttribute('aria-hidden', 'false');
     animatedNodes.forEach(el => { el.style.transitionDelay = ''; });
-    // Let the overlay settle in first, then bring the rail in
     setTimeout(staggerIn, STAGGER_IN_START_DELAY);
     document.body.classList.add('menu-active');
+    resetPacksOnOpen();
 
     isOpen = true;
     document.dispatchEvent(new CustomEvent('menuOpen'));
@@ -131,6 +336,12 @@
     menuPackToggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+    });
+
+    menuPackToggle.addEventListener('pointerenter', (e) => {
+      if (!isOpen) return;
+      e.stopPropagation();
+      flipPackModeAnimated();
     });
   }
 
@@ -200,17 +411,12 @@
         menuOverlay.classList.remove('has-preview');
       };
 
-      // item.addEventListener('mouseenter', onEnter);
-      // item.addEventListener('mouseleave', onLeave);
-
       item.addEventListener('click', (e) => {
-        // Allow normal link clicks to pass through
         if (e.target.closest('a')) return;
         const href = link.getAttribute('href');
         if (href) window.location.href = href;
       });
 
-      // Expose handlers for the stabilizer
       item.__onEnter = onEnter;
       item.__onLeave = onLeave;
     });
