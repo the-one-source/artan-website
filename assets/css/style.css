@@ -114,58 +114,54 @@ body.light-mode div[style*='flex-direction:column'] p{color:var(--color-black);}
    04A) CLICKABLE TEXT HOVER (GLOBAL — NO JUMP)
 ============================================================================= */
 
-a:not(.enter-button),
-.menu-link,
-.country-option,
-#language-toggle,
-#country-selector,
-.locale-button,
-.language-dropdown button,
-.language-dropdown a,
-.language-dropdown [role="menuitem"],
-.language-dropdown .language-option,
-.language-dropdown .lang-option{
+ a:not(.enter-button),
+ .country-option,
+ #language-toggle,
+ #country-selector,
+ .locale-button,
+ .language-dropdown button,
+ .language-dropdown a,
+ .language-dropdown [role="menuitem"],
+ .language-dropdown .language-option,
+ .language-dropdown .lang-option{
   display:inline-block;
   transition:color 0.25s ease;
   transform:none !important; /* never lift/translate on hover */
   text-decoration:none !important;
 }
 
-a:not(.enter-button):hover,
-.menu-link:hover,
-.country-option:hover,
-#language-toggle:hover,
-#country-selector:hover,
-.locale-button:hover,
-.language-dropdown button:hover,
-.language-dropdown a:hover,
-.language-dropdown [role="menuitem"]:hover,
-.language-dropdown .language-option:hover,
-.language-dropdown .lang-option:hover,
+ a:not(.enter-button):hover,
+ .country-option:hover,
+ #language-toggle:hover,
+ #country-selector:hover,
+ .locale-button:hover,
+ .language-dropdown button:hover,
+ .language-dropdown a:hover,
+ .language-dropdown [role="menuitem"]:hover,
+ .language-dropdown .language-option:hover,
+ .language-dropdown .lang-option:hover,
 
-a:not(.enter-button):focus-visible,
-.menu-link:focus-visible,
-.country-option:focus-visible,
-#language-toggle:focus-visible,
-#country-selector:focus-visible,
-.locale-button:focus-visible,
-.language-dropdown button:focus-visible,
-.language-dropdown a:focus-visible,
-.language-dropdown [role="menuitem"]:focus-visible,
-.language-dropdown .language-option:focus-visible,
-.language-dropdown .lang-option:focus-visible{
+ a:not(.enter-button):focus-visible,
+ .country-option:focus-visible,
+ #language-toggle:focus-visible,
+ #country-selector:focus-visible,
+ .locale-button:focus-visible,
+ .language-dropdown button:focus-visible,
+ .language-dropdown a:focus-visible,
+ .language-dropdown [role="menuitem"]:focus-visible,
+ .language-dropdown .language-option:focus-visible,
+ .language-dropdown .lang-option:focus-visible{
   transform:none !important;
   text-decoration:none !important;
 }
 
 /* Keep baseline typography intact */
 
-a,
-.menu-link,
-.country-option,
-#language-toggle,
-#country-selector,
-.locale-button{
+ a,
+ .country-option,
+ #language-toggle,
+ #country-selector,
+ .locale-button{
   letter-spacing:inherit !important;
   word-spacing:normal !important;
 }

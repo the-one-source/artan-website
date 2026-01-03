@@ -4,33 +4,38 @@
   if (!menuButton || !menuOverlay) return;
 
   const menuLinks = menuOverlay.querySelectorAll('.menu-link');
+  const menuItems = menuOverlay.querySelectorAll('.menu-item');
+  const menuList = menuOverlay.querySelector('.menu-col-b-section-b .menu-list');
+  function setActiveItem(next) {
+    menuItems.forEach((it) => it.classList.toggle('is-active', it === next));
+  }
 
   function letterify(el) {
     if (el.dataset.letterified === 'true') return;
-    const text = el.textContent;
-    el.textContent = '';
+
+    const inner = el.querySelector('.menu-link-inner');
+    if (!inner) return;
+
+    const text = inner.textContent;
+    inner.textContent = '';
+
     [...text].forEach(ch => {
       const span = document.createElement('span');
       span.textContent = ch;
       span.style.display = 'inline-block';
       span.style.transition = 'transform 220ms ease, opacity 220ms ease';
-      el.appendChild(span);
+      inner.appendChild(span);
     });
+
     el.dataset.letterified = 'true';
   }
 
   function hoverIn(el) {
-    el.querySelectorAll('span').forEach(s => {
-      s.style.transform = 'translateX(-0.35em)';
-      s.style.opacity = '0.95';
-    });
+    /* handled purely by CSS scale */
   }
 
   function hoverOut(el) {
-    el.querySelectorAll('span').forEach(s => {
-      s.style.transform = 'translateX(0)';
-      s.style.opacity = '1';
-    });
+    /* handled purely by CSS scale */
   }
 
   const previewTitle = document.getElementById('menu-preview-title');
@@ -86,8 +91,11 @@
      Hover Preview Logic
      =================== */
 
-  if ((previewTitle || previewSub) && menuLinks.length) {
-    menuLinks.forEach((link) => {
+  if ((previewTitle || previewSub) && menuItems.length) {
+    menuItems.forEach((item) => {
+      const link = item.querySelector('.menu-link');
+      if (!link) return;
+
       letterify(link);
 
       const titleKey =
@@ -109,10 +117,7 @@
         link.getAttribute('data-preview-sub') ||
         '';
 
-      link.addEventListener('mouseenter', () => hoverIn(link));
-      link.addEventListener('mouseleave', () => hoverOut(link));
-
-      link.addEventListener('mouseenter', () => {
+      const onEnter = () => {
         const t = window.ARTAN_TRANSLATION;
 
         const title = titleKey && t && typeof t.t === 'function'
@@ -130,11 +135,75 @@
           '--menu-accent',
           link.dataset.accent || 'rgba(255,255,255,0.06)'
         );
+      };
+
+      const onLeave = () => {
+        menuOverlay.classList.remove('has-preview');
+      };
+
+      // item.addEventListener('mouseenter', onEnter);
+      // item.addEventListener('mouseleave', onLeave);
+
+      item.addEventListener('click', (e) => {
+        // Allow normal link clicks to pass through
+        if (e.target.closest('a')) return;
+        const href = link.getAttribute('href');
+        if (href) window.location.href = href;
       });
 
-      link.addEventListener('mouseleave', () => {
-        menuOverlay.classList.remove('has-preview');
-      });
+      // Expose handlers for the stabilizer
+      item.__onEnter = onEnter;
+      item.__onLeave = onLeave;
     });
+  }
+
+  // =======================
+  // Hover Stabilizer (Rail)
+  // =======================
+  if (menuList && menuItems.length) {
+    let active = null;
+    let raf = 0;
+
+    const pickNearest = (x) => {
+      let best = null;
+      let bestD = Infinity;
+      menuItems.forEach((it) => {
+        const r = it.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const d = Math.abs(cx - x);
+        if (d < bestD) {
+          bestD = d;
+          best = it;
+        }
+      });
+      return best;
+    };
+
+    const activate = (it) => {
+      if (!it || it === active) return;
+
+      if (active && active.__onLeave) active.__onLeave();
+      active = it;
+      setActiveItem(active);
+      if (active.__onEnter) active.__onEnter();
+    };
+
+    const onMove = (e) => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const item = el ? el.closest('.menu-item') : null;
+        activate(item || pickNearest(e.clientX));
+      });
+    };
+
+    const onLeaveRail = () => {
+      if (active && active.__onLeave) active.__onLeave();
+      active = null;
+      setActiveItem(null);
+    };
+
+    menuList.addEventListener('pointermove', onMove);
+    menuList.addEventListener('pointerleave', onLeaveRail);
   }
 })();
