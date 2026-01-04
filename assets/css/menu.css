@@ -51,6 +51,13 @@
 
   /* Pack toggle: ensure true “edge contact” even if the SVG has internal whitespace */
   --menu-pack-toggle-nudge: -10px;
+
+  /* Harmonic spacing token (matches your sketch G1) */
+  --menu-g1: 46px;
+
+  /* Shell gutters (match site language; no clamp) */
+  --menu-gutter: var(--footer-gutter, 56px);
+  --menu-vpad: 90px;
 }
 
 @supports (color: color-mix(in srgb, #fff 50%, transparent)){
@@ -309,12 +316,16 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
 #menu-overlay .menu-columns{
   height: 100%;
   width: 100%;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: max-content 1fr;
   align-items: stretch;
-  justify-items: stretch; /* FIX: make both columns truly hug their sides */
-  gap: 28px;
-  padding: 90px 64px 90px;
+
+  /* Column A sticks left, Column B sticks right, space lives between */
+  column-gap: 0;
+
+  /* Harmonized shell: equal breathing on all edges */
+  padding: var(--menu-vpad) var(--menu-gutter);
 }
 
 /* =============================================================================
@@ -323,12 +334,18 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
 
 #menu-overlay .menu-col-a{
   height: 100%;
+
   display: grid;
-  grid-template-columns: minmax(220px, 320px) 1px 1fr;
+
+  /* Section A stays intrinsic (hug content); separator + Section B follow */
+  grid-template-columns: max-content 1px minmax(0, 1fr);
   align-items: stretch;
-  padding-left: 0;
-  justify-self: start; /* FIX: column A sticks to left padding */
-  --menu-col-a-gutter: 46px;
+
+  /* G1 on both sides of the separator (Section A ↔ line ↔ Section B) */
+  column-gap: var(--menu-g1);
+
+  /* Ensure Section A never expands and creates phantom gap */
+  justify-content: start;
 }
 
 #menu-overlay .menu-col-a-sep{
@@ -344,17 +361,24 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
+
   align-items: start;
-  justify-items: end;
-  padding-left: 0;
-  padding-right: var(--menu-col-a-gutter);
+  justify-items: center;
+
+  width: max-content;
+  justify-self: start;
+
+  /* No side padding here — separator spacing is owned by Column A (G1) */
+  padding: 0;
 }
 
 /* Controls */
 #menu-overlay .menu-controls{
   display: grid;
   gap: 14px;
-  justify-items: center; /* keeps icon column centered within its own stack */
+  justify-items: center;
+  width: max-content;
+  justify-self: center;
 }
 
 /* Shared icon button */
@@ -466,11 +490,13 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   place-items: center;
   padding-top: 28px;
-  align-self: center;
-  justify-self: end;
-  margin: 0;
 
+  align-self: center;
+  justify-self: center;
+
+  margin: 0;
   width: fit-content;
+  justify-self: center;
   min-height: 160px;
 
   --pack-out: 360ms;
@@ -573,7 +599,16 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   align-items: end;
   padding-top: 22px;
+
+  /* KEY: plain logo defines the column centerline */
   justify-items: center;
+  width: max-content;
+}
+
+#menu-overlay .menu-plain-logo-wrap,
+#menu-overlay .menu-controls,
+#menu-overlay .menu-packs-split{
+  justify-self: center;
 }
 
 /* Column A — Section B (Typo + Essence) */
@@ -581,9 +616,15 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
+
   align-items: start;
   justify-items: start;
-  padding-left: var(--menu-col-a-gutter);
+
+  /* No left padding here — separator spacing is owned by Column A (G1) */
+  padding: 0;
+
+  min-width: 0;
+  justify-self: start;
 }
 
 #menu-overlay .menu-typo-logo{
@@ -609,7 +650,7 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 460px);
   align-items: stretch;
-  justify-self: end; /* FIX: column B sticks to right padding */
+  justify-self: end;
 }
 
 /* Preview */
@@ -619,6 +660,8 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   align-items: end;
   justify-items: start;
   padding-right: 46px;
+  padding-bottom: 0;
+  margin-bottom: 0;
 
   min-width: 0;
   overflow: hidden;
@@ -632,6 +675,8 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   min-width: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 @supports selector(:has(*)){
@@ -927,6 +972,8 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
   #menu-overlay .menu-columns{
     grid-template-columns: 1fr;
     gap: 22px;
+
+    /* Mobile shell: equal breathing, fixed (no clamp) */
     padding: 84px 18px 28px;
   }
 
