@@ -758,6 +758,8 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   line-height: 1;
 
   opacity: 0;
+  /* Custom property line */
+  --menu-link-rot: 180deg;
   transform: translateY(44px) scale(1) rotate(var(--menu-link-rot));
   transition: transform 1.25s cubic-bezier(0.22,1,0.36,1), opacity 0.55s ease, color 260ms ease;
   transition-delay: inherit;
@@ -765,7 +767,60 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   pointer-events: auto;
 }
 
-#menu-overlay .menu-link-inner{ display: contents; }
+#menu-overlay .menu-link-inner{
+  display: inline-block;
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+#menu-overlay .menu-link-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  transform: rotate(180deg);
+  transform-origin: center;
+  will-change: transform, filter;
+  pointer-events: none;
+}
+
+#menu-overlay .menu-link-icon-img{
+  width: 22px;
+  height: 22px;
+  display: block;
+  background: transparent !important;
+}
+
+/* Desktop + Tablet: hide text visually, keep DOM (accessibility + previews); show icons */
+@media (min-width: 641px){
+  #menu-overlay .menu-link-inner{
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #menu-overlay .menu-link-icon{
+    opacity: 0.88;
+  }
+
+  #menu-overlay .menu-col-b-section-b .menu-item:hover .menu-link-icon,
+  #menu-overlay .menu-link:hover .menu-link-icon,
+  #menu-overlay .menu-link:focus-visible .menu-link-icon{
+    transform: rotate(180deg) scale(var(--menu-hover-scale));
+    opacity: 1;
+  }
+
+  body.dark-mode #menu-overlay .menu-link-icon-img{ filter: invert(1); }
+  body.light-mode #menu-overlay .menu-link-icon-img{ filter: none; }
+
+  #menu-overlay .menu-col-b-section-b .menu-item:hover .menu-link-icon-img,
+  #menu-overlay .menu-link:hover .menu-link-icon-img,
+  #menu-overlay .menu-link:focus-visible .menu-link-icon-img{
+    filter: var(--menu-accent-filter) !important;
+  }
+}
 
 /* Sync text with rail stagger (menu.js) */
 #menu-overlay .menu-col-b-section-b .menu-item.menu-animate-in .menu-link{
@@ -1046,4 +1101,6 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
     left: 18px;
     bottom: 18px;
   }
+  #menu-overlay .menu-link-icon{ display: none; }
+  #menu-overlay .menu-link-inner{ opacity: 1; pointer-events: auto; }
 }
