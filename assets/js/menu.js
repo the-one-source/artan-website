@@ -266,6 +266,7 @@
 
   const previewTitle = document.getElementById('menu-preview-title');
   const previewSub = document.getElementById('menu-preview-sub');
+  const previewIcon = document.getElementById('menu-preview-icon');
 
   let isOpen = false;
   let isAnimating = false;
@@ -285,6 +286,11 @@
     setTimeout(staggerIn, STAGGER_IN_START_DELAY);
     document.body.classList.add('menu-active');
     resetPacksOnOpen();
+    const firstItem = menuItems[0];
+    if (firstItem && firstItem.__onEnter) {
+      firstItem.__onEnter();
+      setActiveItem(firstItem);
+    }
 
     isOpen = true;
     document.dispatchEvent(new CustomEvent('menuOpen'));
@@ -398,7 +404,44 @@
           ? (t.t(subKey) || rawSub)
           : rawSub;
 
-        if (previewTitle) previewTitle.textContent = title;
+        if (previewIcon) {
+          const iconSrc =
+            link.dataset.previewIcon ||
+            link.getAttribute('data-preview-icon') ||
+            item.dataset.previewIcon ||
+            item.getAttribute('data-preview-icon') ||
+            '';
+
+          // Support BOTH markup styles:
+          // 1) #menu-preview-icon is a container (div/span) -> we inject an <img>
+          // 2) #menu-preview-icon is itself an <img> -> we set its src
+          const isImgEl = previewIcon.tagName && previewIcon.tagName.toLowerCase() === 'img';
+
+          if (isImgEl) {
+            if (iconSrc) {
+              previewIcon.src = iconSrc;
+              previewIcon.removeAttribute('aria-hidden');
+            } else {
+              previewIcon.removeAttribute('src');
+              previewIcon.setAttribute('aria-hidden', 'true');
+            }
+            // Ensure native SVG colors (no inherited filters)
+            previewIcon.style.filter = 'none';
+            previewIcon.style.opacity = '1';
+            previewIcon.style.transform = 'none';
+          } else {
+            previewIcon.innerHTML = iconSrc
+              ? `<img class="menu-preview-icon-img" src="${iconSrc}" alt="" />`
+              : '';
+
+            const img = previewIcon.querySelector('img.menu-preview-icon-img');
+            if (img) {
+              img.style.filter = 'none';
+              img.style.opacity = '1';
+              img.style.transform = 'none';
+            }
+          }
+        }
         if (previewSub) previewSub.textContent = sub;
         menuOverlay.classList.add('has-preview');
         menuOverlay.style.setProperty(

@@ -215,8 +215,24 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
 #menu-overlay,
 #menu-overlay *{ box-sizing: border-box; }
 
+
 #menu-overlay img,
 #menu-overlay svg{ max-width: 100%; height: auto; }
+
+/* Screen-reader only (used to keep preview titles accessible while icons are visible) */
+.sr-only,
+#menu-overlay .sr-only{
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 
 #menu-overlay .menu-typo-logo,
 #menu-overlay .menu-plain-logo{
@@ -636,6 +652,7 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   transition: transform 650ms cubic-bezier(0.22,1,0.36,1);
 }
 
+
 #menu-overlay .menu-preview-title,
 #menu-overlay .menu-preview-sub{
   min-width: 0;
@@ -644,6 +661,25 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
   margin-bottom: 0;
   padding-bottom: 0;
 }
+
+/* Preview title becomes icon-led (text remains via .sr-only in HTML) */
+#menu-overlay .menu-preview-title{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#menu-overlay .menu-preview-title img,
+#menu-overlay .menu-preview-title svg{
+  width: 44px;
+  height: 44px;
+  display: block;
+  opacity: 0.92;
+  transition: filter 260ms ease, opacity 260ms ease;
+}
+
+body.dark-mode #menu-overlay .menu-preview-title img{ filter: invert(1); }
+body.light-mode #menu-overlay .menu-preview-title img{ filter: none; }
 
 @supports selector(:has(*)){
   #menu-overlay .menu-col-b:has(.menu-col-b-section-b .menu-item:hover) .menu-col-b-section-a{
