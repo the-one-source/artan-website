@@ -20,10 +20,62 @@
   font-weight:400;
   text-transform:uppercase;
   letter-spacing:0.16em;
-  margin:0.5rem auto 0 auto;
+  margin:1.35rem auto 0 auto;
   opacity:0.7;
   text-align:center;
 }
+
+/* Hero Site Essence — match Menu Site Essence effect (exact) */
+#stage #stage-essence,
+#stage .site-essence{
+  display: inline-block;
+  will-change: transform, background-position;
+  transform: translateY(0);
+  background-repeat: no-repeat;
+  /* Always-visible fallback */
+  color: var(--text-color);
+
+  /* Same sheen logic (menu-style): long sweep + restrained glow */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    var(--text-color) 50%,
+    transparent 62%,
+    transparent 100%
+  );
+  background-size: 320% 100%;
+  background-position: 0% 50%;
+
+  text-shadow: none;
+
+  opacity: 0.78;
+  animation:
+    menu-essence-breathe 7.8s ease-in-out infinite,
+    menu-essence-sheen 9s linear infinite;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text){
+  #stage #stage-essence,
+  #stage .site-essence{
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
+@keyframes menu-essence-breathe{
+  0%{transform:translateY(6px);}
+  50%{transform:translateY(-18px);}
+  100%{transform:translateY(6px);}
+}
+
+@keyframes menu-essence-sheen{
+  0%{background-position:0% 50%;}
+  100%{background-position:320% 50%;}
+}
+
 .enter-button{
   position:relative;
   display:inline-flex;
@@ -46,7 +98,16 @@
 }
 body.light-mode .enter-button{border-color:rgba(0,0,0,0.35);}
 body.dark-mode .enter-button{border-color:rgba(255,255,255,0.35);}
-.enter-button span{position:relative;z-index:2;}
+.enter-button span{
+  position:relative;
+  z-index:2;
+  display:inline-block;
+  transition:transform 0.6s cubic-bezier(0.22,1,0.36,1), color 0.6s ease;
+}
+
+.enter-button:hover span{
+  transform:translateY(-1px);
+}
 .enter-button::before{
   content:"";
   position:absolute;
@@ -319,7 +380,7 @@ main{
 #stage #enter-button{
   display:inline-flex;
   width:fit-content;
-  margin:0.35rem auto 0;
+  margin:0.9rem auto 1.4rem;
   align-self:center;
   justify-content:center;
   text-align:center;
@@ -328,8 +389,8 @@ main{
   text-align:center;
 }
 #stage .site-essence,
-#stage #announcement + .site-essence{
-  margin:0.55rem auto 0 auto;
+#stage #stage-essence{
+  margin:1.35rem auto 0 auto;
   text-align:center;
 }
 
