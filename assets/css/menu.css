@@ -624,6 +624,96 @@ body.menu-active .stage-circle{ opacity: 0 !important; filter: none !important; 
 }
 
 /* =============================================================================
+   06A) PACKS — UNIFIED MODE (NO FLIP)
+   Trigger: menu.js hides .menu-pack-toggle inline (future-proof, no markup changes)
+============================================================================= */
+
+/* Unified mode trigger (JS also adds body.menu-packs-unified) */
+body.menu-packs-unified #menu-overlay .menu-packs-split,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns .menu-packs-split{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px; /* single spacing source */
+  min-height: 0;
+}
+
+/* Show both packs, kill transitions (markup preserved) */
+body.menu-packs-unified #menu-overlay #menu-pack-music,
+body.menu-packs-unified #menu-overlay #menu-pack-social,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-music,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-social{
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Flatten internal wrappers to prevent double-gap stacking */
+body.menu-packs-unified #menu-overlay .menu-pack-slot,
+body.menu-packs-unified #menu-overlay .menu-pack-slot .menu-pack,
+body.menu-packs-unified #menu-overlay #menu-pack-music,
+body.menu-packs-unified #menu-overlay #menu-pack-social,
+body.menu-packs-unified #menu-overlay #menu-pack-music .menu-pack,
+body.menu-packs-unified #menu-overlay #menu-pack-social .menu-pack,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns .menu-pack-slot,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns .menu-pack-slot .menu-pack,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-music,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-social,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-music .menu-pack,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns #menu-pack-social .menu-pack{
+  display: contents !important;
+}
+
+/* Ensure icons participate in ordering + consistent footprint */
+body.menu-packs-unified #menu-overlay .menu-packs-split a,
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns .menu-packs-split a{
+  display: grid;
+  place-items: center;
+}
+
+/* Hide Instagram + TikTok (markup preserved) */
+#menu-overlay a[href*="instagram.com"],
+#menu-overlay a[href*="tiktok.com"]{
+  display: none !important;
+}
+
+/* Hide SoundCloud (markup preserved) */
+#menu-overlay a[href*="soundcloud.com"],
+#menu-overlay a[href*="on.soundcloud.com"]{
+  display: none !important;
+}
+
+/* Order: Apple Music → Spotify → YouTube Music → YouTube → X → GitHub */
+body.menu-packs-unified #menu-overlay a[href*="music.apple.com"],
+body.menu-packs-unified #menu-overlay a[href*="apple.com/music"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="music.apple.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="apple.com/music"]{ order: 1; }
+
+body.menu-packs-unified #menu-overlay a[href*="open.spotify.com"],
+body.menu-packs-unified #menu-overlay a[href*="spotify.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="open.spotify.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="spotify.com"]{ order: 2; }
+
+body.menu-packs-unified #menu-overlay a[href*="music.youtube.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="music.youtube.com"]{ order: 3; }
+
+body.menu-packs-unified #menu-overlay a[href*="youtube.com"],
+body.menu-packs-unified #menu-overlay a[href*="youtu.be"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="youtube.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="youtu.be"]{ order: 4; }
+
+body.menu-packs-unified #menu-overlay a[href*="x.com"],
+body.menu-packs-unified #menu-overlay a[href*="twitter.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="x.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="twitter.com"]{ order: 5; }
+
+body.menu-packs-unified #menu-overlay a[href*="github.com"],
+#menu-overlay .menu-pack-toggle[style*="visibility: hidden"] ~ .menu-columns a[href*="github.com"]{ order: 6; }
+
+/* =============================================================================
    07) COLUMN B (PREVIEW + RAIL)
 ============================================================================= */
 

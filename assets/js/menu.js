@@ -23,6 +23,14 @@
   // ==========================
   const packMusic = document.getElementById('menu-pack-music');
   const packSocial = document.getElementById('menu-pack-social');
+  const PACK_FLIP_ENABLED = false;
+
+  // Hard-disable the flip UI immediately (even before menu opens).
+  if (!PACK_FLIP_ENABLED && menuPackToggle) {
+    menuPackToggle.style.opacity = '0';
+    menuPackToggle.style.visibility = 'hidden';
+    menuPackToggle.style.pointerEvents = 'none';
+  }
 
   let packMode = 'music'; // default
   let isPackAnimating = false;
@@ -141,6 +149,7 @@
   };
 
   const applyPackModeInstant = (mode) => {
+    if (!PACK_FLIP_ENABLED) return;
     packMode = mode === 'social' ? 'social' : 'music';
 
     // Hard reset any in-flight inline animation state
@@ -160,6 +169,7 @@
   };
 
   const flipPackModeAnimated = async () => {
+    if (!PACK_FLIP_ENABLED) return;
     if (isPackAnimating) return;
     if (!packMusic || !packSocial) return;
     isPackAnimating = true;
@@ -219,7 +229,20 @@
   };
 
   const resetPacksOnOpen = () => {
-    applyPackModeInstant('music');
+    // Unified pack line: show both, disable flip.
+    if (packMusic) setPackVisibility(packMusic, true);
+    if (packSocial) setPackVisibility(packSocial, true);
+
+    // Disable the toggle UI interaction (keep markup for future use).
+    if (menuPackToggle) {
+      menuPackToggle.style.opacity = '0';
+      menuPackToggle.style.visibility = 'hidden';
+      menuPackToggle.style.pointerEvents = 'none';
+    }
+
+    packMode = 'music';
+    isPackAnimating = false;
+    document.body.classList.add('menu-packs-unified');
   };
 
   function setActiveItem(next) {
@@ -346,11 +369,17 @@
   // Prevent the pack toggle button from triggering overlay close
   if (menuPackToggle) {
     menuPackToggle.addEventListener('click', (e) => {
+      if (!PACK_FLIP_ENABLED) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
     });
 
     menuPackToggle.addEventListener('pointerenter', (e) => {
+      if (!PACK_FLIP_ENABLED) return;
       if (!isOpen) return;
       e.stopPropagation();
       flipPackModeAnimated();
