@@ -301,6 +301,79 @@ body.light-mode [data-hero="home"]::after{
     );
 }
 
+/* Replace pseudo-matte with real DOM matte (prevents scroll-away during pinned hero sequence) */
+#home-hero::after{
+  opacity: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body.light-mode #home-hero::after{
+  opacity: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Real matte layer (DOM node) — can be pinned by JS without affecting logo/headlines */
+#home-hero .home-hero-matte{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(0,0,0,0.22) 0%,
+      rgba(0,0,0,0.48) 52%,
+      rgba(0,0,0,0.68) 100%
+    );
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.light-mode #home-hero .home-hero-matte{
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(255,255,255,0.10) 0%,
+      rgba(0,0,0,0.12) 52%,
+      rgba(0,0,0,0.22) 100%
+    );
+}
+
+/* Global matte styles (needed when JS portals .home-hero-matte to <body> during pin) */
+.home-hero-matte{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(0,0,0,0.22) 0%,
+      rgba(0,0,0,0.48) 52%,
+      rgba(0,0,0,0.68) 100%
+    );
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.light-mode .home-hero-matte{
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(255,255,255,0.10) 0%,
+      rgba(0,0,0,0.12) 52%,
+      rgba(0,0,0,0.22) 100%
+    );
+}
+
 /* Hero content sits above glass */
 #home-hero .hero-content,
 .home-hero .hero-content,
@@ -664,6 +737,7 @@ html.lang-rtl .section-comments [data-i18n-key]{
   text-align: center;
   justify-items: center;
   max-width: 74ch;
+  overflow: visible;
 }
 
 /* The reveal is driven by CSS variables set by JS:
@@ -675,11 +749,12 @@ html.lang-rtl .section-comments [data-i18n-key]{
   position: relative;
 
   font-size: 1.6rem;
-  line-height: 1.18;
+  line-height: 1.28;
   font-weight: 300;
 
   /* Base typography inherits .home-text; keep it crisp */
   letter-spacing: 0.006em;
+  padding: 0.08em 0;
 
   /* Fallback: always visible text */
   color: var(--text-color);
@@ -698,6 +773,7 @@ html.lang-rtl .section-comments [data-i18n-key]{
   background-position: calc(var(--sheen, 0) * 100%) 50%;
 
   will-change: background-position;
+  overflow: visible;
 }
 
 @supports (-webkit-background-clip: text) or (background-clip: text){
