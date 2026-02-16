@@ -727,8 +727,24 @@ html.lang-rtl .section-comments [data-i18n-key]{
    11) HOME ESSENCE — SCROLL-SCRUBBED INK REVEAL
 ============================================================================= */
 
+/* True center: neutralize rail/gutter indentation for Essence only */
+/* Kill any inherited inner/gutter padding that would offset the stage */
+.home-essence .home-inner,
+.home-essence .home-essence-inner{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.home-essence-inner{
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .home-ink-reveal{
-  width: var(--site-rail-width);
+  width: 100%;
+  max-width: 74ch;
   margin-left: auto;
   margin-right: auto;
   display: grid;
@@ -736,8 +752,8 @@ html.lang-rtl .section-comments [data-i18n-key]{
 
   text-align: center;
   justify-items: center;
-  max-width: 74ch;
   overflow: visible;
+  box-sizing: border-box;
 }
 
 /* Layered essence lines (all occupy the same center point) */
@@ -747,6 +763,9 @@ html.lang-rtl .section-comments [data-i18n-key]{
 
   /* Reserve space so lines don’t get clipped while layered */
   min-height: 3.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* When using the stack, the reveal container becomes a single centered stage */
@@ -762,8 +781,12 @@ html.lang-rtl .section-comments [data-i18n-key]{
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
+  width: auto;
+  max-width: 74ch;
+  display: inline-block;
   text-align: center;
+  box-sizing: border-box;
+  margin-left: 0;
 }
 
 /* Slightly taller stage on larger viewports */
@@ -847,21 +870,22 @@ html.lang-rtl .home-ink-reveal [data-i18n-key]{
   text-align: center !important;
 }
 
-/* Corrective override: viewport-centered stage + true layering */
+/* Corrective override: true center (viewport) */
 .home-ink-reveal{
-  width: 100vw;
-  max-width: none;
-  margin-left: 50%;
-  margin-right: 0;
-  transform: translateX(-50%);
-  padding-left: var(--site-gutter);
-  padding-right: var(--site-gutter);
-}
-
-.home-ink-reveal .home-ink-stack{
+  width: 100%;
   max-width: 74ch;
   margin-left: auto;
   margin-right: auto;
+  transform: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.home-ink-reveal .home-ink-stack{
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .home-ink-reveal .home-ink-layer{
@@ -869,7 +893,9 @@ html.lang-rtl .home-ink-reveal [data-i18n-key]{
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
+  width: auto;
+  max-width: 74ch;
+  display: inline-block;
   margin: 0;
 }
 

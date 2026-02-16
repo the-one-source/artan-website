@@ -694,24 +694,8 @@
 (() => {
   const section = document.querySelector('.home-essence');
   const wrap = document.querySelector('.home-ink-reveal');
-  const lines = document.querySelectorAll(
-    '.home-ink-reveal .home-ink-layer, .home-ink-reveal .ink-line'
-  );
+  const lines = document.querySelectorAll('.home-ink-reveal .home-ink-layer, .home-ink-reveal .ink-line');
   if (!section || !wrap || lines.length < 3) return;
-
-  // Ensure CSS overlay-sheen has a stable text source (future-proof across i18n swaps)
-  const syncEssenceText = () => {
-    for (const el of lines) {
-      const txt = (el.textContent || '').trim();
-      if (txt) el.setAttribute('data-essence-text', txt);
-    }
-  };
-
-  // Watch for translation updates inside the essence block
-  const mo = new MutationObserver(() => {
-    syncEssenceText();
-  });
-  mo.observe(wrap, { subtree: true, childList: true, characterData: true });
 
   let raf = false;
   let active = false;
@@ -794,7 +778,6 @@
 
       document.body.classList.add('essence-pinned');
       active = true;
-
       // Ensure layered visibility is controlled by JS (single line at a time)
       setOnly(0);
     } else {
@@ -870,8 +853,6 @@
 
   const update = () => {
     const y = window.scrollY || window.pageYOffset || 0;
-    syncEssenceText();
-
     const { start, end, length, top } = getRanges();
 
     if (resetIfAbove(y, top)) return;
@@ -883,9 +864,8 @@
 
       // Magnetic snap: after Essence completes, align Home — Music (the image owner) to the top edge.
       if (!snapped) {
-        const target =
-          document.querySelector('#home-sound-figure') ||
-          document.querySelector('#essence-scroll-spacer + section + section');
+        const target = document.querySelector('#home-sound-figure')
+          || document.querySelector('#essence-scroll-spacer + section + section');
 
         if (target) {
           const r = target.getBoundingClientRect();
@@ -922,12 +902,10 @@
       lines[0].style.transform = '';
       lines[1].style.transform = '';
       lines[2].style.transform = '';
-
       // Keep the first line staged but hidden before activation
       setOnly(0);
       lines[0].style.opacity = '0';
       lines[0].style.visibility = 'hidden';
-
       snapped = false;
       return;
     }
@@ -977,7 +955,6 @@
   };
 
   const boot = () => {
-    syncEssenceText();
     setRunwayHeight();
     update();
     window.addEventListener('scroll', onScroll, { passive: true });
