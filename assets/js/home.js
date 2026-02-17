@@ -758,13 +758,15 @@
       wrap.style.top = '50%';
       wrap.style.transform = 'translate(-50%, -50%)';
 
-      // Stable stage for layered lines (prevents collapse/disappear)
-      wrap.style.width = '100vw';
+      // Center stage: do NOT use 100vw (can visually bias the block)
+      // Keep the stage constrained and truly centered.
+      wrap.style.width = 'min(74ch, calc(100vw - (2 * var(--site-gutter))))';
       wrap.style.maxWidth = 'none';
       wrap.style.margin = '0';
-      wrap.style.display = 'flex';
-      wrap.style.alignItems = 'center';
-      wrap.style.justifyContent = 'center';
+      wrap.style.padding = '0';
+
+      wrap.style.display = 'block';
+      wrap.style.textAlign = 'center';
       wrap.style.zIndex = '3';
       wrap.style.visibility = 'visible';
       wrap.style.opacity = '1';

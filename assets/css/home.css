@@ -888,6 +888,7 @@ html.lang-rtl .home-ink-reveal [data-i18n-key]{
   margin-right: 0;
 }
 
+
 .home-ink-reveal .home-ink-layer{
   position: absolute;
   left: 50%;
@@ -897,6 +898,64 @@ html.lang-rtl .home-ink-reveal [data-i18n-key]{
   max-width: 74ch;
   display: inline-block;
   margin: 0;
+}
+
+/* --- Essence centering: single-source-of-truth (no viewport hacks) --- */
+.home-essence,
+.home-essence-inner{
+  width: 100%;
+}
+
+/* Keep the Essence stage truly centered with equal left/right margins */
+.home-essence .home-ink-reveal{
+  position: relative;
+  left: auto;
+  transform: none;
+
+  width: min(74ch, calc(100% - (var(--site-gutter) * 2)));
+  max-width: none;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stable centered stage for the layered lines */
+.home-essence .home-ink-stack{
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Make each layer occupy the same centered stage (no left:50% offset) */
+.home-essence .home-ink-layer{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: auto;
+  max-width: none;
+  margin: 0;
+
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.home-essence .ink-line{
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 
