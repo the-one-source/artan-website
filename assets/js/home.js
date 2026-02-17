@@ -694,7 +694,7 @@
 (() => {
   const section = document.querySelector('.home-essence');
   const wrap = document.querySelector('.home-ink-reveal');
-  const lines = document.querySelectorAll('.home-ink-reveal .home-ink-layer, .home-ink-reveal .ink-line');
+  const lines = document.querySelectorAll('.home-ink-reveal .ink-line');
   if (!section || !wrap || lines.length < 3) return;
 
   let raf = false;
@@ -702,13 +702,6 @@
   let snapped = false;
 
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-
-  const setOnly = (idx) => {
-    for (let i = 0; i < lines.length; i++) {
-      lines[i].style.opacity = i === idx ? '1' : '0';
-      lines[i].style.visibility = i === idx ? 'visible' : 'hidden';
-    }
-  };
 
   // Create scroll runway (additive; no HTML edits)
   const ensureSpacer = () => {
@@ -778,19 +771,11 @@
 
       document.body.classList.add('essence-pinned');
       active = true;
-      // Ensure layered visibility is controlled by JS (single line at a time)
-      setOnly(0);
     } else {
       backdrop.style.display = 'none';
 
       if (restore.wrapStyle) wrap.setAttribute('style', restore.wrapStyle);
       else wrap.removeAttribute('style');
-
-      // Restore default visibility so normal flow never “loses” the lines
-      for (const el of lines) {
-        el.style.opacity = '';
-        el.style.visibility = '';
-      }
 
       document.body.classList.remove('essence-pinned');
       active = false;
@@ -817,8 +802,6 @@
         el.style.setProperty('--ink', 0);
         el.style.setProperty('--sheen', 0);
         el.style.transform = '';
-        el.style.opacity = '';
-        el.style.visibility = '';
       }
       backdrop.style.display = 'none';
       snapped = false;
@@ -876,6 +859,10 @@
         }
       }
 
+      lines[0].style.setProperty('--ink', 1);
+      lines[1].style.setProperty('--ink', 1);
+      lines[2].style.setProperty('--ink', 1);
+
       setSheen(lines[0], 0);
       setSheen(lines[1], 0);
       setSheen(lines[2], 0);
@@ -883,7 +870,6 @@
       lines[0].style.transform = 'scale(1)';
       lines[1].style.transform = 'scale(1)';
       lines[2].style.transform = 'scale(1)';
-      setOnly(2);
       return;
     }
 
@@ -902,10 +888,6 @@
       lines[0].style.transform = '';
       lines[1].style.transform = '';
       lines[2].style.transform = '';
-      // Keep the first line staged but hidden before activation
-      setOnly(0);
-      lines[0].style.opacity = '0';
-      lines[0].style.visibility = 'hidden';
       snapped = false;
       return;
     }
@@ -914,11 +896,6 @@
     if (!active) setPinned(true);
 
     const progress = clamp((y - start) / length, 0, 1);
-
-    // One centered line at a time
-    if (progress < 0.55) setOnly(0);
-    else if (progress < 0.90) setOnly(1);
-    else setOnly(2);
 
     // Timeline
     // 0.00 → 0.40 : line 1 light pass
