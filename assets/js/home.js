@@ -426,6 +426,8 @@
 
   let raf = false;
   let active = false;
+  let lastStep = 0;
+  let lastStepSetAt = 0;
   let snapped = false;
   let released = false;
 
@@ -463,6 +465,7 @@
   };
 
   const backdrop = ensureBackdrop();
+
 
   const setBackdropOpacity = (o) => {
     backdrop.style.opacity = String(o);
@@ -717,7 +720,8 @@
 
   const spacer = ensureSpacer();
 
-  // Backdrop to prevent next section from bleeding in while pinned (no CSS dependency)
+  // Backdrop (fixed) — carries the blurred chroma during the Essence sequence
+  // NOTE: this is intentionally scoped to Essence only (no interaction with Hero pin logic).
   const ensureBackdrop = () => {
     let bd = document.querySelector('#essence-pin-backdrop');
     if (!bd) {
@@ -727,15 +731,94 @@
       bd.style.position = 'fixed';
       bd.style.inset = '0';
       bd.style.pointerEvents = 'none';
-      bd.style.opacity = '1';
       bd.style.display = 'none';
-      bd.style.zIndex = '2';
+      // Layering: below Essence text (wrap z=3), above the page background.
+      bd.style.zIndex = '1';
+      // Softness (visually “blurred” chroma wash)
+      bd.style.filter = 'saturate(1.06)';
+      bd.style.opacity = '0';
       document.body.appendChild(bd);
     }
     return bd;
   };
 
   const backdrop = ensureBackdrop();
+
+  const supportsColorMix = (() => {
+    try {
+      return (
+        typeof CSS !== 'undefined' &&
+        CSS.supports &&
+        CSS.supports('color', 'color-mix(in srgb, #000 50%, #fff)')
+      );
+    } catch (_) {
+      return false;
+    }
+  })();
+
+  const isLightMode = () => document.body.classList.contains('light-mode');
+
+  // Build a premium, restrained chroma wash using your palette vars.
+  // Step 1/2/3 maps to your 3 Essence lines.
+  const buildChroma = (step, intensity) => {
+    const a = Math.max(0, Math.min(1, intensity));
+
+    // Theme wash: keeps chroma premium on both dark/light.
+    const washTop = isLightMode()
+      ? `rgba(255,255,255,${0.16 * a})`
+      : `rgba(0,0,0,${0.28 * a})`;
+
+    // Step palettes (intentionally distinct)
+    // 1: Warm stone → deep brass
+    // 2: Petrol teal → olive shadow
+    // 3: Gold flare → warm stone echo
+    if (!supportsColorMix) {
+      const s1 = `radial-gradient(1200px 680px at 24% 42%, rgba(145,124,111,${0.26 * a}) 0%, transparent 62%),
+                  radial-gradient(900px 560px at 78% 62%, rgba(80,68,22,${0.22 * a}) 0%, transparent 60%),
+                  linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+      const s2 = `radial-gradient(1200px 680px at 22% 38%, rgba(0,128,128,${0.22 * a}) 0%, transparent 62%),
+                  radial-gradient(900px 560px at 80% 66%, rgba(34,43,0,${0.22 * a}) 0%, transparent 60%),
+                  linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+      const s3 = `radial-gradient(1200px 680px at 26% 42%, rgba(255,204,0,${0.18 * a}) 0%, transparent 62%),
+                  radial-gradient(900px 560px at 76% 62%, rgba(145,124,111,${0.18 * a}) 0%, transparent 60%),
+                  linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+      return step === 1 ? s1 : (step === 2 ? s2 : s3);
+    }
+
+    const pct = (n) => Math.round(n * a);
+
+    const s1 = `radial-gradient(1200px 680px at 24% 42%, color-mix(in srgb, var(--color-primary1) ${pct(34)}%, transparent) 0%, transparent 62%),
+                radial-gradient(900px 560px at 78% 62%, color-mix(in srgb, var(--color-primary2) ${pct(30)}%, transparent) 0%, transparent 60%),
+                linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+    const s2 = `radial-gradient(1200px 680px at 22% 38%, color-mix(in srgb, var(--color-primary5) ${pct(30)}%, transparent) 0%, transparent 62%),
+                radial-gradient(900px 560px at 80% 66%, color-mix(in srgb, var(--color-primary4) ${pct(30)}%, transparent) 0%, transparent 60%),
+                linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+    const s3 = `radial-gradient(1200px 680px at 26% 42%, color-mix(in srgb, var(--color-primary10) ${pct(24)}%, transparent) 0%, transparent 62%),
+                radial-gradient(900px 560px at 76% 62%, color-mix(in srgb, var(--color-primary1) ${pct(22)}%, transparent) 0%, transparent 60%),
+                linear-gradient(180deg, ${washTop} 0%, rgba(0,0,0,0) 74%)`;
+
+    return step === 1 ? s1 : (step === 2 ? s2 : s3);
+  };
+
+  const setEssenceBackdrop = (step, intensity) => {
+    // Make step changes visibly "switch" while still staying luxe-smooth.
+    backdrop.style.transition =
+      'opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), background 1200ms cubic-bezier(0.22, 1, 0.36, 1)';
+
+    backdrop.style.background = buildChroma(step, intensity);
+    backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
+  };
+
+  const hideEssenceBackdrop = () => {
+    backdrop.style.opacity = '0';
+    backdrop.style.background = '';
+    backdrop.style.display = 'none';
+  };
 
   const restore = {
     wrapStyle: wrap.getAttribute('style') || '',
@@ -748,23 +831,22 @@
     spacer.style.width = '1px';
   };
 
+
   const setPinned = (on) => {
     if (on) {
-      backdrop.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
       backdrop.style.display = 'block';
+      setEssenceBackdrop(1, 0.78);
 
       wrap.style.position = 'fixed';
       wrap.style.left = '50%';
       wrap.style.top = '50%';
       wrap.style.transform = 'translate(-50%, -50%)';
 
-      // Center stage: do NOT use 100vw (can visually bias the block)
-      // Keep the stage constrained and truly centered.
+      // Keep the stage centered and readable (no rail offsets)
       wrap.style.width = 'min(74ch, calc(100vw - (2 * var(--site-gutter))))';
       wrap.style.maxWidth = 'none';
       wrap.style.margin = '0';
       wrap.style.padding = '0';
-
       wrap.style.display = 'block';
       wrap.style.textAlign = 'center';
       wrap.style.zIndex = '3';
@@ -774,13 +856,12 @@
       document.body.classList.add('essence-pinned');
       active = true;
     } else {
-      backdrop.style.display = 'none';
-
       if (restore.wrapStyle) wrap.setAttribute('style', restore.wrapStyle);
       else wrap.removeAttribute('style');
 
       document.body.classList.remove('essence-pinned');
       active = false;
+      hideEssenceBackdrop();
     }
   };
 
@@ -805,7 +886,7 @@
         el.style.setProperty('--sheen', 0);
         el.style.transform = '';
       }
-      backdrop.style.display = 'none';
+      hideEssenceBackdrop();
       snapped = false;
       return true;
     }
@@ -844,8 +925,10 @@
 
     // After completion: release and REMOVE the highlight (do not “stay”).
     if (y >= end) {
+      lastStep = 0;
       if (active) setPinned(false);
-      backdrop.style.display = 'none';
+      hideEssenceBackdrop();
+      document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
 
       // Magnetic snap: after Essence completes, align Home — Music (the image owner) to the top edge.
       if (!snapped) {
@@ -877,6 +960,7 @@
 
     // Before start: unpinned, no highlight.
     if (y < start) {
+      lastStep = 0;
       if (active) setPinned(false);
 
       lines[0].style.setProperty('--ink', 0);
@@ -891,6 +975,8 @@
       lines[1].style.transform = '';
       lines[2].style.transform = '';
       snapped = false;
+      document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
+      hideEssenceBackdrop();
       return;
     }
 
@@ -898,6 +984,34 @@
     if (!active) setPinned(true);
 
     const progress = clamp((y - start) / length, 0, 1);
+
+    // Chroma progression across the 3 Essence lines (behind the text)
+    // Visible step switches (1→2→3), still smooth.
+    let step = 1;
+    if (progress >= 0.55 && progress < 0.90) step = 2;
+    if (progress >= 0.90) step = 3;
+
+    // Keep it present (no blank page), and let it grow slightly with progress.
+    const intensity = Math.min(0.96, 0.70 + (progress * 0.22));
+
+    // Only re-set the background when the step changes (prevents it feeling "stuck").
+    if (step !== lastStep) {
+      lastStep = step;
+      lastStepSetAt = performance.now();
+      setEssenceBackdrop(step, intensity);
+
+      // Micro "lift" on switch to make the change perceptible without harshness.
+      backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity * 0.85)));
+      requestAnimationFrame(() => {
+        backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
+      });
+    } else {
+      // Still update opacity gently as the user scrolls.
+      backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
+    }
+
+    document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
+    document.body.classList.add(`essence-step-${step}`);
 
     // Timeline
     // 0.00 → 0.40 : line 1 light pass
