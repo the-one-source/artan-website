@@ -31,7 +31,10 @@ rsync -av --delete \
 mkdir -p "$(dirname "$PUB_INDEX")"
 
 # Collect markdown files (relative paths from content_sync)
-mapfile -t MD_FILES < <(
+MD_FILES=()
+while IFS= read -r f; do
+  MD_FILES+=("$f")
+done < <(
   cd "$DEST" 2>/dev/null || exit 0
   find Essays Notes Research Visual -type f -name "*.md" 2>/dev/null | LC_ALL=C sort
 )
