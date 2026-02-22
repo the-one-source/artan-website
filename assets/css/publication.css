@@ -1,5 +1,6 @@
 
 
+<<<<<<< HEAD
 /* =================== Publication (Sovereign Module) =================== */
 
 .publication-main {
@@ -18,6 +19,28 @@
 .publication-content {
   text-align: left;
   color: var(--text-secondary-color);
+=======
+/* ======================================================================== */
+/* PUBLICATION — SOVEREIGN MODULE                                           */
+/* Scoped publication styling. No global overrides.                          */
+/* Depends on: assets/css/style.css (tokens + typography variables)          */
+/* ======================================================================== */
+
+.publication-main{
+  max-width:900px;
+  margin:0 auto;
+  padding:2rem;
+}
+
+.publication-title{
+  font-family:var(--font-base);
+  color:var(--text-color);
+  margin:0 0 0.75rem;
+}
+
+.publication-content{
+  color:var(--text-secondary-color);
+>>>>>>> 58bf571 (Update site)
 }
 
 .publication-content h1,
@@ -25,6 +48,7 @@
 .publication-content h3,
 .publication-content h4,
 .publication-content h5,
+<<<<<<< HEAD
 .publication-content h6 {
   color: var(--text-color);
   text-align: left;
@@ -96,3 +120,29 @@
   color: var(--text-secondary-color);
   font-size: 1rem;
 }
+=======
+.publication-content h6{
+  color:var(--text-color);
+}
+
+.publication-content p,
+.publication-content li{
+  line-height:1.7;
+}
+
+.publication-content a{
+  color:var(--link-color);
+  text-decoration:none;
+}
+
+.publication-content a:hover{
+  color:var(--link-hover-color);
+  text-decoration:underline;
+}
+
+.publication-heading{
+  font-family:var(--font-base);
+  color:var(--text-color);
+  margin:2rem 0 0.75rem;
+}
+>>>>>>> 58bf571 (Update site)
