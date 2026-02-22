@@ -4,23 +4,25 @@ set -euo pipefail
 
 # =================== Obsidian → Website Sync ===================
 # Source of truth: Obsidian vault 11_Publish
-# Mirror:          website/content_sync
+# Mirror:          website/content_sync/en (canonical)
 # Auto-index:      rebuild pages/publications/index.html from mirrored files
 
 VAULT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/I/11_Publish"
-DEST="$HOME/Documents/Site/artan-website/content_sync"
 SITE_ROOT="$HOME/Documents/Site/artan-website"
+CONTENT_SYNC_ROOT="$SITE_ROOT/content_sync"
+DEST_EN="$CONTENT_SYNC_ROOT/en"
 PUB_INDEX="$SITE_ROOT/pages/publications/index.html"
 
-mkdir -p "$DEST"
+mkdir -p "$DEST_EN"
 
+# Canonical content lives under content_sync/en (other languages may be added as content_sync/<lang>/...)
 # 1) Mirror published content into the website repo
 rsync -av --delete \
   --exclude ".DO_NOT_EDIT" \
   --exclude "DO_NOT_EDIT" \
   --exclude "Do Not Edit" \
   --exclude "README.md" \
-  "$VAULT"/ "$DEST"/
+  "$VAULT"/ "$DEST_EN"/
 
 # 2) Auto-build Publications index from current content_sync tree
 #    - Uses single.html renderer
@@ -35,7 +37,7 @@ MD_FILES=()
 while IFS= read -r f; do
   MD_FILES+=("$f")
 done < <(
-  cd "$DEST" 2>/dev/null || exit 0
+  cd "$DEST_EN" 2>/dev/null || exit 0
   find Essays Notes Research Visual -type f -name "*.md" 2>/dev/null | LC_ALL=C sort
 )
 
