@@ -61,7 +61,7 @@ for rel in "${MD_FILES[@]}"; do
   LIST_ITEMS+="\n        <li class=\"publication-item\"><a class=\"publication-link\" href=\"${href}\">${t}</a></li>"
 done
 
-cat > "$PUB_INDEX" <<'HTML'
+cat > "$PUB_INDEX" <<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,6 +1,11 @@
 ARTAN — UPDATE MANUAL
 Local → GitHub (Vault + Website)
 
+==========================================================================
+0) FULL UPDATE
+==========================================================================
+
+cd ~/Library/"Mobile Documents"/iCloud~md~obsidian/Documents/I && git add -A && (git diff --cached --quiet || git commit -m "Vault update") && git push && cd /Users/artan/Documents/Site/artan-website && bash ./sync_from_vault.sh && git add -A && (git diff --cached --quiet || git commit -m "Update site") && git push origin main
 
 ==========================================================================
 A) VAULT UPDATE
