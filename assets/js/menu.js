@@ -528,6 +528,15 @@
 
       item.__onEnter = onEnter;
       item.__onLeave = onLeave;
+      // Fallback: some pages may not match the rail selector used by the stabilizer.
+      // Bind direct hover so previews work everywhere the menu markup exists.
+      if (!menuList) {
+        item.addEventListener('pointerenter', () => {
+          if (!isOpen) return;
+          setActiveItem(item);
+          if (item.__onEnter) item.__onEnter();
+        });
+      }
     });
   }
 
