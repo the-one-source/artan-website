@@ -629,17 +629,18 @@ body[dir="rtl"] .site-logo.intro-logo{left:50% !important;right:auto !important;
 /* =============================================================================
    13) PRE-ENTER CONTENT GATE (HOMEPAGE)
 ============================================================================= */
-body:not(.site-entered) section,
-body:not(.site-entered) .featured-section,
-body:not(.site-entered) .section-posts,
-body:not(.site-entered) .section-comments,
-body:not(.site-entered) .site-footer,
-body:not(.site-entered) .footer-flex,
-body:not(.site-entered) .footer-separator{
+
+/* Homepage intro gate ONLY (prevent global lock) */
+body.home:not(.site-entered) section,
+body.home:not(.site-entered) .featured-section,
+body.home:not(.site-entered) .section-posts,
+body.home:not(.site-entered) .section-comments,
+body.home:not(.site-entered) .site-footer,
+body.home:not(.site-entered) .footer-flex,
+body.home:not(.site-entered) .footer-separator{
   display:none !important;
 }
 
-/* Keep stage visible without breaking its internal layout */
-body:not(.site-entered) #stage{display:flex !important;}
-body:not(.site-entered) #stage *{display:revert;}
-body:not(.site-entered){overflow:hidden;}
+body.home:not(.site-entered) #stage{display:flex !important;}
+body.home:not(.site-entered) #stage *{display:revert;}
+body.home:not(.site-entered){overflow:hidden;}

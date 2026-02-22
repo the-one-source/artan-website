@@ -5,9 +5,11 @@
 /* ======================================================================== */
 
 .publication-main{
+  position:relative;
+  z-index:2;
   max-width:900px;
   margin:0 auto;
-  padding:2rem;
+  padding:140px 2rem 4rem; /* offset header + breathing space */
 }
 
 .publication-title{

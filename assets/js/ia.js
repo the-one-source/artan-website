@@ -3,7 +3,7 @@
 // Emits: 'artan:ia:ready' and 'artan:ia:error'
 
 (() => {
-  const IA_URL = 'assets/data/ia.json';
+  const IA_URL = '/assets/data/ia.json';
 
   async function loadIA() {
     try {
