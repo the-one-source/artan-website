@@ -8,6 +8,8 @@
     <meta name="description" content="Post content page for Artan">
     <script src="assets/js/darkmode.js" defer></script>
     <script src="assets/js/main.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="assets/js/publication.js" defer></script>
 </head>
 <body>
     <!-- Header -->
@@ -32,25 +34,12 @@
         <div class="bg-img" style="background-size:cover; background-position:center;"></div>
 
         <!-- Post Title -->
-        <h1 style="font-family:'Helvetica Neue', sans-serif;">Post Title</h1>
+        <h1 id="post-title" style="font-family:'Helvetica Neue', sans-serif;">Loading…</h1>
 
         <!-- Post Content -->
-        <div class="content" style="font-family:'Georgia', serif; font-size:1.25rem; line-height:1.6; color:var(--text-secondary);">
-            <p>Your post content goes here. This replaces Hugo templating content with static HTML for full control.</p>
+        <div id="post-content" class="content" style="font-family:'Georgia', serif; font-size:1.25rem; line-height:1.6; color:var(--text-secondary); text-align:left;">
+            <p>Loading…</p>
         </div>
-
-        <!-- Comments Section -->
-        <section id="comments" class="thin">
-            <div class="container">
-                <h2>Comments</h2>
-                <div class="comment">
-                    <p><strong>User1:</strong> This is a sample comment.</p>
-                </div>
-                <div class="comment">
-                    <p><strong>User2:</strong> Another comment showcasing comment layout.</p>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- Footer -->
