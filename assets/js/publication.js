@@ -71,7 +71,7 @@
     // Canonical source: content_sync/<p>
     // No locale subfolders (future translations handled at render level)
 
-    const url = `content_sync/${p}`;
+    const url = `/${`content_sync/${p}`}`;
     const md = await fetchText(url);
     return { md, urlUsed: url };
   }
