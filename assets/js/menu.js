@@ -6,6 +6,8 @@
   // Safety: when the overlay is closed/hidden, it must not intercept clicks.
   // This prevents any “ghost” clicks that can trigger menu pack links (Spotify/Apple/etc.) underneath.
   menuOverlay.style.pointerEvents = 'none';
+  // Hard hide overlay at boot to eliminate any ghost hitboxes
+  menuOverlay.style.display = 'none';
 
   const menuLinks = menuOverlay.querySelectorAll('.menu-link');
   const menuItems = menuOverlay.querySelectorAll('.menu-item');
@@ -345,6 +347,7 @@
 
     menuButton.classList.add('menu-open');
     menuOverlay.classList.add('active');
+    menuOverlay.style.display = 'block';
     menuOverlay.setAttribute('aria-hidden', 'false');
     menuOverlay.style.pointerEvents = 'auto';
     animatedNodes.forEach(el => { el.style.transitionDelay = ''; });
@@ -380,6 +383,7 @@
 
     setTimeout(() => {
       menuOverlay.classList.remove('active', 'closing');
+      menuOverlay.style.display = 'none';
       menuOverlay.style.pointerEvents = 'none';
       menuOverlay.setAttribute('aria-hidden', 'true');
       menuButton.classList.remove('menu-open');

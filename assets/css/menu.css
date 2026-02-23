@@ -169,6 +169,7 @@ body.menu-active{ overflow: hidden; }
   position: fixed;
   inset: 0;
   z-index: 99999;
+  display: none;
 
   color: var(--menu-fg);
   fill: currentColor;
@@ -192,6 +193,7 @@ body.menu-active{ overflow: hidden; }
 
 #menu-overlay.menu-overlay.is-open[aria-hidden="false"],
 #menu-overlay.active[aria-hidden="false"]{
+  display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -199,6 +201,7 @@ body.menu-active{ overflow: hidden; }
 
 /* Hard safety: if aria-hidden is true, it must never capture clicks */
 #menu-overlay.menu-overlay[aria-hidden="true"]{
+  display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -206,6 +209,7 @@ body.menu-active{ overflow: hidden; }
 
 /* Safety: never let the overlay capture clicks unless JS also marked it open */
 #menu-overlay.menu-overlay[aria-hidden="false"]:not(.active):not(.is-open){
+  display: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -213,6 +217,7 @@ body.menu-active{ overflow: hidden; }
 
 /* Safety: if aria-hidden attribute is missing, default to non-interactive unless .active/.is-open */
 #menu-overlay.menu-overlay:not([aria-hidden]):not(.active):not(.is-open){
+  display: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1177,6 +1182,7 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
 
 /* Default state: fully non-interactive (strong override) */
 #menu-overlay.menu-overlay{
+  display: none !important;
   pointer-events: none !important;
 }
 
@@ -1185,6 +1191,7 @@ body.light-mode #menu-overlay .menu-pack-glyph{ filter: none; }
 #menu-overlay.menu-overlay.is-open,
 #menu-overlay.menu-overlay.active[aria-hidden="false"],
 #menu-overlay.menu-overlay.is-open[aria-hidden="false"]{
+  display: block !important;
   pointer-events: auto !important;
 }
 
