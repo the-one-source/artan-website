@@ -1,2 +1,6 @@
-content_sync/*
-!content_sync/.DO_NOT_EDIT
+# Allow content_sync markdown publications to be tracked
+# Only ignore temporary/system files if needed
+
+content_sync/**/*.tmp
+content_sync/**/*.bak
+content_sync/**/.DS_Store
