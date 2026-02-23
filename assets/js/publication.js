@@ -89,7 +89,24 @@
 
   function renderMarkdown(md) {
     if (!window.marked) throw new Error('marked not loaded');
-    return window.marked.parse(md);
+
+    // Strip YAML frontmatter (between first two --- lines)
+    let cleaned = md;
+    if (cleaned.startsWith('---')) {
+      const parts = cleaned.split('\n');
+      let endIndex = -1;
+      for (let i = 1; i < parts.length; i++) {
+        if (parts[i].trim() === '---') {
+          endIndex = i;
+          break;
+        }
+      }
+      if (endIndex !== -1) {
+        cleaned = parts.slice(endIndex + 1).join('\n');
+      }
+    }
+
+    return window.marked.parse(cleaned);
   }
 
   async function boot() {
