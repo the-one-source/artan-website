@@ -369,10 +369,11 @@
       body.classList.add("hero-lock-released");
       body.classList.add("hero-released");
       // Finalize: fully remove the hero stage after the release transition.
-      window.setTimeout(() => body.classList.add("hero-stage-hidden"), 1600);
+      window.setTimeout(() => body.classList.add("hero-stage-hidden"), 1400);
 
       // Release the page only when user explicitly enters.
       unlockScroll();
+      body.classList.add("enter-transition");
 
       [announcement, enterButton].forEach((el) => {
         if (!el) return;
@@ -384,11 +385,25 @@
       });
       if (enterButton) enterButton.tabIndex = -1;
 
-      // Delay post-enter DOM moves until the hero fade completes (prevents logo snap).
+      // Fade the in-stage logo + dial at the SAME time as the announcement (prevents late snap).
+      if (logoEl) {
+        logoEl.style.transition = `opacity 650ms ${EASE_OUT}, transform 850ms ${EASE_OUT}`;
+        logoEl.style.opacity = "0";
+        logoEl.style.transform = "translateY(-10px) scale(0.985)";
+        logoEl.style.pointerEvents = "none";
+        setA11yHidden(logoEl, true);
+      }
+
+      if (stageCircle) {
+        stageCircle.style.transition = `opacity 1100ms ${EASE_OUT}`;
+        stageCircle.style.opacity = "0";
+      }
+
+      // Delay chrome reveal until the hero stage is fully faded (prevents menu flicker).
       window.setTimeout(() => {
         restoreEssenceToOriginal();
         showChrome();
-      }, 720);
+      }, 1200);
 
       const mask = qs("#stage-video-mask");
       if (mask) {
@@ -398,6 +413,7 @@
           if (mask && mask.parentNode) mask.parentNode.removeChild(mask);
         }, 760);
       }
+      window.setTimeout(() => body.classList.remove("enter-transition"), 1600);
     });
 
     if (enterButton) {

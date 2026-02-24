@@ -432,8 +432,8 @@ body.site-entered.hero-lock-released #stage{
   opacity:0;
   transform:translateY(-6px);
   transition:
-    opacity 700ms cubic-bezier(0.22,1,0.36,1) 420ms,
-    transform 900ms cubic-bezier(0.22,1,0.36,1) 420ms;
+    opacity 700ms cubic-bezier(0.22,1,0.36,1) 0ms,
+    transform 900ms cubic-bezier(0.22,1,0.36,1) 0ms;
 }
 
 /* Logo exits slightly after text/CTA for a luxury handoff */
@@ -441,13 +441,14 @@ body.site-entered.hero-lock-released #stage .logo-container .site-logo,
 body.site-entered.hero-lock-released .site-logo.intro-docked{
   opacity:0;
   transform:translateY(-8px) scale(0.985);
-  transition-delay: 420ms;
+  transition-delay: 0ms;
 }
 
-/* Dial fades after text for a luxury handoff */
+/* Dial fades smoothly after text for a luxury handoff (no scale to avoid edge artifacts) */
 body.site-entered.hero-lock-released .stage-circle{
   opacity:0;
-  transition: opacity 900ms cubic-bezier(0.22,1,0.36,1) 520ms;
+  will-change: opacity;
+  transition: opacity 1400ms cubic-bezier(0.22,1,0.36,1) 500ms;
 }
 
 body.hero-stage-hidden #stage,
@@ -466,12 +467,6 @@ body:not(.site-entered) .stage-circle{
     transform 1100ms cubic-bezier(0.22,1,0.36,1);
 }
 
-body.site-entered.hero-lock-released .stage-circle{
-  opacity:0;
-  pointer-events:none;
-  animation:stage-circle-kill 0ms linear 1600ms forwards;
-}
-@keyframes stage-circle-kill{to{visibility:hidden;}}
 
 /* =============================================================================
    7) HERO — MOBILE / TABLET REFINEMENTS
@@ -647,6 +642,8 @@ body[dir="rtl"] .site-logo.intro-logo{left:50% !important;right:auto !important;
   margin:0 auto 2rem auto;
   z-index:1;
   opacity:1;
+  will-change: transform, opacity;
+  transition: opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1);
 }
 @media (max-width:640px){
   .site-logo.intro-logo{width:min(78vw, var(--intro-logo-mobile-max));}
