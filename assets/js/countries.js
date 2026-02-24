@@ -166,9 +166,13 @@
   // Expose for other modules (read-only)
   window.ARTAN_COUNTRIES_DATA = COUNTRIES_DATA;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function buildCountryRegions() {
     const container = document.getElementById('country-regions');
     if (!container) return;
+
+    // Prevent duplicate builds
+    if (container.dataset.built === 'true') return;
+    container.dataset.built = 'true';
 
     COUNTRIES_DATA.forEach((region, idx) => {
       const regionEl = document.createElement('div');
@@ -188,7 +192,7 @@
         const btn = document.createElement('button');
         btn.className = 'country-option';
 
-        // Data for countrylanguage.js (single source: countries.js)
+        // Data for country-language.js (single source: countries.js)
         const native = (country.languageCode || 'en').toLowerCase();
         const langs = Array.isArray(country.languages) && country.languages.length
           ? country.languages.map(l => String(l).toLowerCase())
@@ -237,5 +241,11 @@
         new CustomEvent('country-selected', { detail: { name, label, language, languages } })
       );
     });
-  });
+  }
+
+  // Initial attempt (in case overlay already exists)
+  document.addEventListener('DOMContentLoaded', buildCountryRegions);
+
+  // Rebuild after fragment injection
+  document.addEventListener('country-overlay-mounted', buildCountryRegions);
 })();

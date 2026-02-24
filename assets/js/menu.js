@@ -1,7 +1,41 @@
 (function () {
-  const menuButton = document.getElementById('menu-button');
-  const menuOverlay = document.getElementById('menu-overlay');
-  if (!menuButton || !menuOverlay) return;
+  // ============================
+  // Single-Source Menu Injection
+  // ============================
+  // If a page does not include the menu overlay markup inline, we inject it from:
+  //   /assets/fragments/menu.html
+  // Pages should provide a mount point:
+  //   <div id="menu-mount"></div>
+  // This is additive and preserves existing baseline behavior where markup is already present.
+
+  const MENU_FRAGMENT_URL = '/assets/fragments/menu.html';
+
+  const injectMenuIfNeeded = async () => {
+    const existing = document.getElementById('menu-overlay');
+    if (existing) return true;
+
+    const mount = document.getElementById('menu-mount');
+    if (!mount) return false;
+
+    // Avoid double-injection
+    if (mount.dataset.menuInjected === 'true') return !!document.getElementById('menu-overlay');
+    mount.dataset.menuInjected = 'true';
+
+    try {
+      const res = await fetch(MENU_FRAGMENT_URL, { cache: 'no-cache' });
+      if (!res.ok) return false;
+      const html = await res.text();
+      mount.innerHTML = html;
+      return !!document.getElementById('menu-overlay');
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const initMenu = () => {
+    const menuButton = document.getElementById('menu-button');
+    const menuOverlay = document.getElementById('menu-overlay');
+    if (!menuButton || !menuOverlay) return;
 
   // Safety: when the overlay is closed/hidden, it must not intercept clicks.
   // This prevents any “ghost” clicks that can trigger menu pack links (Spotify/Apple/etc.) underneath.
@@ -594,5 +628,20 @@
 
     menuList.addEventListener('pointermove', onMove);
     menuList.addEventListener('pointerleave', onLeaveRail);
+  }
+  };
+
+  // Boot: inject (if needed) then init.
+  // If the fragment is injected, ensure we init after it exists in DOM.
+  const boot = async () => {
+    await injectMenuIfNeeded();
+    initMenu();
+  };
+
+  // Run after DOM is ready to ensure #menu-mount exists on all pages.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
   }
 })();

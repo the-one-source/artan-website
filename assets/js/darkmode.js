@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
-    const toggle = document.getElementById("theme-toggle");
+    const getToggle = () => document.getElementById("theme-toggle");
 
     const applyTheme = (theme) => {
         body.classList.remove("dark-mode", "light-mode");
         body.classList.add(theme === "dark" ? "dark-mode" : "light-mode");
         localStorage.setItem("theme", theme);
 
+        const toggle = getToggle();
         if (toggle) {
             toggle.setAttribute("aria-pressed", theme === "dark");
         }
@@ -21,13 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
         applyTheme(prefersDark ? "dark" : "light");
     }
 
-    // Toggle interaction
-    if (toggle) {
-        toggle.addEventListener("click", () => {
-            const isDark = body.classList.contains("dark-mode");
-            applyTheme(isDark ? "light" : "dark");
-        });
-    }
+    // Toggle interaction (works even if injected later)
+    document.addEventListener("click", (e) => {
+        const toggle = e.target.closest("#theme-toggle");
+        if (!toggle) return;
+
+        const isDark = body.classList.contains("dark-mode");
+        applyTheme(isDark ? "light" : "dark");
+    });
 
     // React to system changes only if user hasn't chosen explicitly
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {

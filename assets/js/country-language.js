@@ -16,6 +16,31 @@
 (() => {
   'use strict';
 
+  /* =================== Fragment Injection =================== */
+  const COUNTRY_FRAGMENT_URL = '/assets/fragments/country-overlay.html';
+
+  const injectCountryOverlayIfNeeded = async () => {
+    const existing = document.getElementById('country-overlay');
+    if (existing) return true;
+
+    const mount = document.getElementById('country-overlay-mount');
+    if (!mount) return false;
+
+    if (mount.dataset.injected === 'true') return !!document.getElementById('country-overlay');
+    mount.dataset.injected = 'true';
+
+    try {
+      const res = await fetch(COUNTRY_FRAGMENT_URL, { cache: 'no-cache' });
+      if (!res.ok) return false;
+      const html = await res.text();
+      mount.innerHTML = html;
+      document.dispatchEvent(new Event('country-overlay-mounted'));
+      return !!document.getElementById('country-overlay');
+    } catch {
+      return false;
+    }
+  };
+
   const STORAGE = {
     COUNTRY_CODE: 'artan_country_code',
     COUNTRY_LABEL: 'artan_country_label',
@@ -494,6 +519,7 @@
   /* =================== Init =================== */
 
   async function init() {
+    await injectCountryOverlayIfNeeded();
     const isNewSession = !sessionStorage.getItem(STORAGE.SESSION);
 
     if (isNewSession) {
