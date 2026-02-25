@@ -4,6 +4,7 @@
    - Drives the internal light sweep via scroll runway.
    - Releases scroll after completion.
    - Header logo fades across steps (INTELLIGENCE → SYSTEMS) and stays hidden after.
+   - FIX: reduced scroll runway (less scrolls) + correct post-essence snap anchor (system node)
 ============================================================================= */
 (() => {
   window.__artanRunAfterEnter(() => {
@@ -59,8 +60,8 @@
     if (!header) return;
     ensureHeaderFx(header);
 
-    // Fade window: start at INTELLIGENCE (0.55), fully gone by SYSTEMS (0.90)
-    const t = clamp((progress - 0.55) / (0.90 - 0.55), 0, 1);
+    // Premium: fade begins mid-step-2, completes near step-3
+    const t = clamp((progress - 0.56) / (0.92 - 0.56), 0, 1);
     const o = String(1 - t);
 
     if (!active) return;
@@ -175,7 +176,8 @@
   };
 
   const setRunwayHeight = () => {
-    const h = Math.round(window.innerHeight * 4.6);
+    // Reduced runway: fewer scrolls to progress (premium but not confusing)
+    const h = Math.round(window.innerHeight * 4.2);
     spacer.style.height = `${h}px`;
     spacer.style.width = '1px';
   };
@@ -210,8 +212,6 @@
       active = false;
       hideEssenceBackdrop();
 
-      // Leaving pinned state: restore logo unless we already completed (completion keeps it hidden).
-      // If you want completion to always win, it will be enforced in `update()` when y>=end.
       const y = window.scrollY || window.pageYOffset || 0;
       const { start } = getRanges();
       if (y < start) logoShow();
@@ -225,7 +225,7 @@
 
     const start = top + Math.round(window.innerHeight * 0.15);
     const length =
-      spacer.getBoundingClientRect().height || Math.round(window.innerHeight * 4.6);
+      spacer.getBoundingClientRect().height || Math.round(window.innerHeight * 4.2);
     const end = start + length;
 
     return { start, end, length, top };
@@ -267,9 +267,30 @@
     el.style.setProperty('--sheen', dirT);
   };
 
+  const getPostEssenceAnchor = () => {
+    // Primary: System Node mount (vector) or the injected fragment
+    const mount = document.querySelector('#system-node-mount');
+    if (mount) {
+      const host = mount.closest('section') || mount.closest('figure') || mount;
+      return host;
+    }
+
+    const node = document.querySelector('.system-node');
+    if (node) return node.closest('section') || node;
+
+    // Fallback: next real section after home-essence
+    const next = section.nextElementSibling;
+    if (next && next.tagName === 'SECTION') return next;
+
+    const all = [...document.querySelectorAll('section')];
+    const idx = all.indexOf(section);
+    if (idx >= 0 && all[idx + 1]) return all[idx + 1];
+
+    return null;
+  };
+
   // Tracking for step changes
   let lastStep = 0;
-  let lastStepSetAt = 0;
 
   const update = () => {
     const y = window.scrollY || window.pageYOffset || 0;
@@ -277,7 +298,6 @@
 
     if (resetIfAbove(y, top)) return;
 
-    // After completion: release and remove highlight (and keep logo hidden).
     if (y >= end) {
       lastStep = 0;
       if (active) setPinned(false);
@@ -285,9 +305,7 @@
       document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
 
       if (!snapped) {
-        const target = document.querySelector('#home-sound-figure')
-          || document.querySelector('#essence-scroll-spacer + section + section');
-
+        const target = getPostEssenceAnchor();
         if (target) {
           const r = target.getBoundingClientRect();
           const pageY = window.scrollY || window.pageYOffset || 0;
@@ -313,7 +331,6 @@
       return;
     }
 
-    // Before start: unpinned, show logo.
     if (y < start) {
       lastStep = 0;
       if (active) setPinned(false);
@@ -337,23 +354,20 @@
       return;
     }
 
-    // Inside pinned narrative
     if (!active) setPinned(true);
 
     const progress = clamp((y - start) / length, 0, 1);
-
-    // Sync header logo fade with Essence progression.
     logoAuto(progress);
 
+    // Fewer scroll “beats”: step windows tightened
     let step = 1;
-    if (progress >= 0.55 && progress < 0.90) step = 2;
-    if (progress >= 0.90) step = 3;
+    if (progress >= 0.52 && progress < 0.88) step = 2;
+    if (progress >= 0.88) step = 3;
 
     const intensity = Math.min(0.96, 0.70 + (progress * 0.22));
 
     if (step !== lastStep) {
       lastStep = step;
-      lastStepSetAt = performance.now();
       setEssenceBackdrop(step, intensity);
 
       backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity * 0.85)));
@@ -367,9 +381,9 @@
     document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
     document.body.classList.add(`essence-step-${step}`);
 
-    const l1 = clamp(progress / 0.40, 0, 1);
-    const l2 = clamp((progress - 0.55) / 0.25, 0, 1);
-    const l3 = clamp((progress - 0.90) / 0.10, 0, 1);
+    const l1 = clamp(progress / 0.36, 0, 1);
+    const l2 = clamp((progress - 0.52) / 0.24, 0, 1);
+    const l3 = clamp((progress - 0.88) / 0.12, 0, 1);
 
     lines[0].style.setProperty('--ink', l1);
     setSheen(lines[0], l1);
@@ -380,9 +394,9 @@
     lines[2].style.setProperty('--ink', l3);
     setSheen(lines[2], l3);
 
-    lines[0].style.transform = `scale(${bump(progress, 0.40, 0.55)})`;
-    lines[1].style.transform = `scale(${bump(progress, 0.80, 0.90)})`;
-    lines[2].style.transform = `scale(${bump(progress, 0.98, 1.00)})`;
+    lines[0].style.transform = `scale(${bump(progress, 0.36, 0.52)})`;
+    lines[1].style.transform = `scale(${bump(progress, 0.76, 0.88)})`;
+    lines[2].style.transform = `scale(${bump(progress, 0.96, 1.00)})`;
   };
 
   const onScroll = () => {
@@ -417,20 +431,20 @@
 })();
 
 /* =============================================================================
-   02) HOME CLOSING — SCROLL REVEAL
-   - SEO-safe: text remains in DOM.
-   - Adds/removes `.is-visible` as the closing enters/leaves viewport.
+   02) HOME CLOSING — MOTION SYSTEM (BIDIRECTIONAL)
+   - Uses global motion-init / motion-visible
 ============================================================================= */
 
 (() => {
   window.__artanRunAfterEnter(() => {
   const boot = () => {
-    const closing = document.querySelector('#home-closing.reveal-on-scroll');
+    const closing = document.querySelector('#home-closing');
     if (!closing) return;
 
-    // Fallback: keep visible if IO unsupported
+    closing.classList.add('motion-init');
+
     if (!('IntersectionObserver' in window)) {
-      closing.classList.add('is-visible');
+      closing.classList.add('motion-visible');
       return;
     }
 
@@ -438,9 +452,9 @@
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && entry.intersectionRatio > 0.15) {
-            closing.classList.add('is-visible');
+            closing.classList.add('motion-visible');
           } else {
-            closing.classList.remove('is-visible');
+            closing.classList.remove('motion-visible');
           }
         }
       },

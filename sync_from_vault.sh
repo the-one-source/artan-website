@@ -379,14 +379,20 @@ if [[ -f "$SITEMAP_FILE" ]]; then
   mv "$tmp_sm" "$SITEMAP_FILE"
 fi
 
-# 3) Commit and push
+# 3) Commit and push (PUBLICATIONS ONLY — protects homepage + UI modules)
 cd "$SITE_ROOT"
 
-git add .
+# Stage only Obsidian-driven outputs
+# (Prevents overwriting homepage layout/CSS/JS/collections work)
+git add content_sync/
+git add pages/publications/
+git add publications/
+[[ -f "$SITEMAP_FILE" ]] && git add sitemap.xml
+
 if ! git diff --cached --quiet; then
-  git commit -m "Auto sync: Obsidian → Website"
+  git commit -m "Auto sync: Obsidian → Website (publications only)"
   git push origin main
-  printf "\n[OK] Synced and rebuilt index.\n"
+  printf "\n[OK] Synced publications safely.\n"
 else
-  printf "\n[OK] No changes detected.\n"
+  printf "\n[OK] No publication changes detected.\n"
 fi

@@ -1,11 +1,7 @@
 /* =============================================================================
-   01) SECTIONS (LEGACY PLACEHOLDERS)
+   01) HOME SECTIONS (SOVEREIGN)
+   NOTE: legacy global <section> styling removed to avoid cross-page overrides
 ============================================================================= */
-section{padding:6rem 0;}
-.section-music,.section-about{background-color:#f5f5f5;}
-.section-projects,.section-contact{background-color:#eaeaea;}
-section h2{font-size:2rem;font-weight:600;margin-bottom:1rem;}
-section p{font-size:1.1rem;line-height:1.6;max-width:800px;margin-bottom:var(--spacing-md);}
 
 /* =============================================================================
    02) FEATURED COLLECTIONS
@@ -650,26 +646,24 @@ body.country-overlay-active .home-hero-headlines{
    10) RTL HOME ALIGNMENT (TEXT-ONLY, KEEP LTR RAIL)
 ============================================================================= */
 
-/* Keep the same left rail alignment in RTL languages (no centering, no layout flip) */
+/* RTL: respect direction while keeping the same rail geometry */
 html.lang-rtl .home-hero-headlines,
 html.lang-rtl .home-inner,
 html.lang-rtl .home-rail,
 html.lang-rtl .featured-header,
-html.lang-rtl .featured-grid,
-html.lang-rtl .section-posts .post,
-html.lang-rtl .section-comments h2,
-html.lang-rtl .section-comments .comment{
-  text-align: left !important;
+html.lang-rtl .featured-grid{
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: start; /* becomes right in RTL */
 }
 
-/* Force translated nodes to respect the left rail (overrides global [data-i18n-key] text-align) */
 html.lang-rtl .home-inner [data-i18n-key],
 html.lang-rtl .home-hero-headlines [data-i18n-key],
 html.lang-rtl .featured-header [data-i18n-key],
-html.lang-rtl .featured-grid [data-i18n-key],
-html.lang-rtl .section-posts [data-i18n-key],
-html.lang-rtl .section-comments [data-i18n-key]{
-  text-align: left !important;
+html.lang-rtl .featured-grid [data-i18n-key]{
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: start;
 }
 
 
@@ -1101,20 +1095,7 @@ body.essence-pinned #essence-scroll-spacer + section{
   margin-right: auto;
 }
 
-/* Scroll reveal motion (no SEO penalty; text remains in DOM) */
-.reveal-on-scroll{
-  opacity: 0;
-  transform: translateY(42px);
-  transition:
-    transform 1.2s cubic-bezier(0.22,1,0.36,1),
-    opacity 0.9s ease;
-  will-change: transform, opacity;
-}
-
-.reveal-on-scroll.is-visible{
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Reveal behavior is handled globally by the Motion System (assets/js/motion.js + style.css) */
 
 @media (max-width: 820px){
   .home-closing{padding: 3.6rem 0 5rem;}

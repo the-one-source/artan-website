@@ -541,9 +541,56 @@ html,body,body *{cursor:none !important;}
   .custom-cursor{display:none !important;}
   html,body,body *{cursor:auto !important;}
 }
+
 html[dir="rtl"] .custom-cursor,
 body[dir="rtl"] .custom-cursor{
   direction:ltr;
   unicode-bidi:isolate;
   transform:translate(-50%,-50%) !important;
+}
+
+/* =============================================================================
+   12) MOTION SYSTEM — GLOBAL REVEAL BASE
+   - Used by assets/js/motion.js
+   - Direction-safe (LTR/RTL)
+   - Luxury easing + smooth bidirectional transitions
+============================================================================= */
+
+.motion-init{
+  opacity:0;
+  transform: translateY(56px);
+  transition:
+    transform 1.55s cubic-bezier(0.22,1,0.36,1),
+    opacity 1.30s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, opacity;
+}
+
+.motion-visible{
+  opacity:1;
+  transform: translateY(0);
+}
+
+/* Optional subtle lift variant */
+[data-motion="lift"].motion-init{
+  transform: translateY(68px);
+}
+
+/* Optional fade-only variant */
+[data-motion="fade"].motion-init{
+  transform: none;
+  opacity:0;
+}
+
+[data-motion="fade"].motion-visible{
+  opacity:1;
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion:reduce){
+  .motion-init,
+  .motion-visible{
+    transition:none !important;
+    transform:none !important;
+    opacity:1 !important;
+  }
 }

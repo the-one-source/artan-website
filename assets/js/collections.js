@@ -1,10 +1,8 @@
-
-
 /* =============================================================================
-   COLLECTIONS MODULE — SOVEREIGN / REUSABLE / BIDIRECTIONAL REVEAL
-   - No dependency on home.js (only loaded by it)
-   - Handles featured section reveal + stagger
-   - Safe for reuse on any page
+   COLLECTIONS MODULE — SOVEREIGN / MOTION SYSTEM INTEGRATED
+   - Independent from home.js
+   - Uses global motion-init / motion-visible classes
+   - Bidirectional reveal
 ============================================================================= */
 
 (() => {
@@ -15,20 +13,21 @@
     if (!headers.length && !cards.length) return;
 
     /* -------------------------------------------------------------------------
-       01) ATTACH REVEAL CLASS + STAGGER
+       01) ATTACH MOTION BASE + STAGGER
     ------------------------------------------------------------------------- */
 
     headers.forEach((h) => {
-      h.classList.add('reveal-on-scroll');
-      h.style.setProperty('--reveal-delay', '0ms');
+      h.classList.add('motion-init');
+      h.dataset.motion = 'lift';
     });
 
     cards.forEach((card, i) => {
-      card.classList.add('reveal-on-scroll');
-      card.style.setProperty('--reveal-delay', `${Math.min(i * 120, 720)}ms`);
+      card.classList.add('motion-init');
+      card.dataset.motion = 'lift';
+      card.style.transitionDelay = `${Math.min(i * 120, 720)}ms`;
     });
 
-    const nodes = document.querySelectorAll('.reveal-on-scroll');
+    const nodes = document.querySelectorAll('.featured-header.motion-init, .featured-card.motion-init');
     if (!nodes.length) return;
 
     /* -------------------------------------------------------------------------
@@ -36,7 +35,7 @@
     ------------------------------------------------------------------------- */
 
     if (!('IntersectionObserver' in window)) {
-      nodes.forEach((n) => n.classList.add('is-visible'));
+      nodes.forEach((n) => n.classList.add('motion-visible'));
       return;
     }
 
@@ -44,9 +43,9 @@
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio > 0.18) {
-            entry.target.classList.add('is-visible');
+            entry.target.classList.add('motion-visible');
           } else {
-            entry.target.classList.remove('is-visible');
+            entry.target.classList.remove('motion-visible');
           }
         });
       },

@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/hero.css">
     <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="stylesheet" href="assets/css/collections.css">
+    <link rel="stylesheet" href="assets/css/system-node.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/menu.css">
     <link rel="stylesheet" href="assets/css/country-overlay.css">
@@ -131,7 +133,7 @@
 <main id="site-main">
 
 <!-- =================== Home Hero (Post-Enter) =================== -->
-<section id="home-hero" class="home-hero" aria-hidden="true">
+<section id="home-hero" class="home-hero" aria-hidden="true" data-motion="fade">
   <div class="home-hero-video" aria-hidden="true">
     <video class="home-hero-video-media" autoplay muted playsinline loop preload="metadata">
       <source src="assets/video/video-4.webm" type="video/webm" />
@@ -155,7 +157,7 @@
 </section>
 
 <!-- =================== Home — Essence =================== -->
-<section class="home-section home-essence home-essence--center" id="home-essence">
+<section class="home-section home-essence home-essence--center" id="home-essence" data-motion="lift">
   <div class="home-inner home-essence-inner">
     <div class="home-ink-reveal home-essence-reveal" id="home-ink-reveal" aria-label="Site essence">
       <div class="home-ink-stack" aria-hidden="false">
@@ -188,64 +190,47 @@
   </div>
 </section>
 
-<!-- =================== Home — Music =================== -->
-<section class="home-section home-music">
-  <figure class="home-figure home-rail" id="home-sound-figure">
-    <img src="assets/images/homepage/placeholder-music.jpg.png" alt="Abstract sound architecture">
-  </figure>
-  <div class="home-inner home-rail">
-    <h2 class="home-title" data-i18n-key="home.music.title">Records</h2>
-    <p class="home-text" data-i18n-key="home.music.text">
-      Releases as architecture<br>
-      Rhythm as memory<br>
-      Sound shaped through restraint, repetition, and depth
-    </p>
-  </div>
-</section>
-
-<!-- =================== Home — Books =================== -->
-<section class="home-section home-books">
-  <div class="home-inner home-rail">
-    <h2 class="home-title" data-i18n-key="home.language.title">Press</h2>
-    <p class="home-text" data-i18n-key="home.language.text">
-      Books, essays, publications<br>
-      Language as a precise instrument of perception
-    </p>
-  </div>
-</section>
-
-<!-- =================== Home — Awareness =================== -->
-<section class="home-section home-awareness">
+<!-- =================== Home — NeuroArtan =================== -->
+<section class="home-section home-awareness" data-motion="lift">
   <figure class="home-figure home-rail">
-    <img src="assets/images/homepage/placeholder-awareness.png" alt="Light and structure">
+    <div id="system-node-mount"></div>
   </figure>
   <div class="home-inner home-rail">
-    <h2 class="home-title" data-i18n-key="home.awareness.title">NeuroArtan</h2>
-    <p class="home-text" data-i18n-key="home.awareness.text">
-      Research that observes itself<br>
-      Cognitive architecture as method<br>
-      Measurement before myth
+    <h2 class="home-title">NeuroArtan</h2>
+    <p class="home-text">
+      Neuroscience and cognitive architecture<br>
+      Artificial intelligence systems and modeling<br>
+      Research infrastructure before narrative
     </p>
   </div>
 </section>
 
-<!-- =================== Home — Form =================== -->
-<section class="home-section home-form">
-  <figure class="home-figure home-rail">
-    <img src="assets/images/homepage/placeholder-form.png" alt="Minimal object and material">
-  </figure>
+<!-- =================== Home — Press =================== -->
+<section class="home-section home-books" data-motion="lift">
   <div class="home-inner home-rail">
-    <h2 class="home-title" data-i18n-key="home.form.title">Form</h2>
-    <p class="home-text" data-i18n-key="home.form.text">
-      Design guided by clarity<br>
-      Objects reduced to necessity<br>
-      Luxury through precision
+    <h2 class="home-title">Press</h2>
+    <p class="home-text">
+      Books and long‑form publications<br>
+      Essays and analytical frameworks<br>
+      Structured language as institutional output
+    </p>
+  </div>
+</section>
+
+<!-- =================== Home — Records =================== -->
+<section class="home-section home-music" data-motion="lift">
+  <div class="home-inner home-rail">
+    <h2 class="home-title">Records</h2>
+    <p class="home-text">
+      Albums and structured releases<br>
+      Signal architecture and distribution<br>
+      Sound systems engineered for longevity
     </p>
   </div>
 </section>
 
 <!-- =================== Home — Featured Music =================== -->
-<section class="home-section home-featured home-featured-music">
+<section class="home-section home-featured home-featured-music" data-motion="lift">
   <div class="home-inner home-rail">
     <div class="featured-header">
       <h2 class="home-title" data-i18n-key="home.featuredMusic.title">Featured Records</h2>
@@ -256,7 +241,7 @@
 </section>
 
 <!-- =================== Home — Featured Objects =================== -->
-<section class="home-section home-featured home-featured-products">
+<section class="home-section home-featured home-featured-products" data-motion="lift">
   <div class="home-inner home-rail">
     <div class="featured-header">
       <h2 class="home-title" data-i18n-key="home.featuredProducts.title">Featured Objects</h2>
@@ -267,7 +252,7 @@
 </section>
 
 <!-- =================== Home — Notes / News =================== -->
-<section class="home-section home-notes">
+<section class="home-section home-notes" data-motion="lift">
   <div class="home-inner home-rail">
     <div class="featured-header">
       <h2 class="home-title" data-i18n-key="home.notes.title">Notes</h2>
@@ -278,12 +263,12 @@
 </section>
 
 <!-- =================== Home — Closing =================== -->
-<div class="home-closing reveal-on-scroll" id="home-closing" aria-label="ARTAN status">
-  <p class="home-closing-line" data-i18n-key="home.closing.line1">
-    ARTAN is an evolving ecosystem.
+<div class="home-closing" id="home-closing" aria-label="ARTAN status" data-motion="fade">
+  <p class="home-closing-line">
+    ARTAN is an evolving ecosystem
   </p>
-  <p class="home-closing-line home-closing-line--sub" data-i18n-key="home.closing.line2">
-    Architecture, Intelligence, and Systems are being expanded and refined — publications, releases, and research nodes update continuously.
+  <p class="home-closing-line home-closing-line--sub">
+    Architecture, Intelligence, and Systems expand through publications, releases, and research nodes
   </p>
 </div>
 
@@ -306,6 +291,7 @@
 <script src="assets/js/menu.js" defer></script>
 <script src="assets/js/hero.js" defer></script>
 <script src="assets/js/home.js" defer></script>
+<script src="assets/js/system-node.js" defer></script>
 <script src="assets/js/footer.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 
