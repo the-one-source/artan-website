@@ -3,6 +3,7 @@
    - Pins the essence lines in-frame.
    - Drives the internal light sweep via scroll runway.
    - Releases scroll after completion.
+   - Header logo fades across steps (INTELLIGENCE → SYSTEMS) and stays hidden after.
 ============================================================================= */
 (() => {
   window.__artanRunAfterEnter(() => {
@@ -16,6 +17,57 @@
   let snapped = false;
 
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  /* ---------------------------------------------------------------------------
+     HOME HEADER (top-left logo container)
+     - Fade the entire header to guarantee sync with Essence.
+  --------------------------------------------------------------------------- */
+  const getHomeHeader = () =>
+    document.querySelector('#site-header')
+    || document.querySelector('header')
+    || document.querySelector('.site-header');
+
+  const ensureHeaderFx = (el) => {
+    if (!el || el.dataset.essenceHeaderFx === '1') return;
+    el.dataset.essenceHeaderFx = '1';
+    el.style.willChange = 'opacity';
+    el.style.setProperty(
+      'transition',
+      'opacity 650ms cubic-bezier(0.22, 1, 0.36, 1)',
+      'important'
+    );
+  };
+
+  const logoShow = () => {
+    const header = getHomeHeader();
+    if (!header) return;
+    ensureHeaderFx(header);
+    header.style.setProperty('opacity', '1', 'important');
+    header.style.setProperty('pointer-events', '', 'important');
+  };
+
+  const logoHide = () => {
+    const header = getHomeHeader();
+    if (!header) return;
+    ensureHeaderFx(header);
+    header.style.setProperty('opacity', '0', 'important');
+    header.style.setProperty('pointer-events', 'none', 'important');
+  };
+
+  const logoAuto = (progress) => {
+    const header = getHomeHeader();
+    if (!header) return;
+    ensureHeaderFx(header);
+
+    // Fade window: start at INTELLIGENCE (0.55), fully gone by SYSTEMS (0.90)
+    const t = clamp((progress - 0.55) / (0.90 - 0.55), 0, 1);
+    const o = String(1 - t);
+
+    if (!active) return;
+
+    header.style.setProperty('opacity', o, 'important');
+    header.style.setProperty('pointer-events', (t >= 0.98) ? 'none' : '', 'important');
+  };
 
   // Create scroll runway (additive; no HTML edits)
   const ensureSpacer = () => {
@@ -32,7 +84,6 @@
   const spacer = ensureSpacer();
 
   // Backdrop (fixed) — carries the blurred chroma during the Essence sequence
-  // NOTE: this is intentionally scoped to Essence only (no interaction with Hero pin logic).
   const ensureBackdrop = () => {
     let bd = document.querySelector('#essence-pin-backdrop');
     if (!bd) {
@@ -43,9 +94,7 @@
       bd.style.inset = '0';
       bd.style.pointerEvents = 'none';
       bd.style.display = 'none';
-      // Layering: below Essence text (wrap z=3), above the page background.
       bd.style.zIndex = '1';
-      // Softness (visually “blurred” chroma wash)
       bd.style.filter = 'saturate(1.06)';
       bd.style.opacity = '0';
       document.body.appendChild(bd);
@@ -69,20 +118,12 @@
 
   const isLightMode = () => document.body.classList.contains('light-mode');
 
-  // Build a premium, restrained chroma wash using your palette vars.
-  // Step 1/2/3 maps to your 3 Essence lines.
   const buildChroma = (step, intensity) => {
     const a = Math.max(0, Math.min(1, intensity));
-
-    // Theme wash: keeps chroma premium on both dark/light.
     const washTop = isLightMode()
       ? `rgba(255,255,255,${0.16 * a})`
       : `rgba(0,0,0,${0.28 * a})`;
 
-    // Step palettes (intentionally distinct)
-    // 1: Warm stone → deep brass
-    // 2: Petrol teal → olive shadow
-    // 3: Gold flare → warm stone echo
     if (!supportsColorMix) {
       const s1 = `radial-gradient(1200px 680px at 24% 42%, rgba(145,124,111,${0.26 * a}) 0%, transparent 62%),
                   radial-gradient(900px 560px at 78% 62%, rgba(80,68,22,${0.22 * a}) 0%, transparent 60%),
@@ -117,10 +158,8 @@
   };
 
   const setEssenceBackdrop = (step, intensity) => {
-    // Make step changes visibly "switch" while still staying luxe-smooth.
     backdrop.style.transition =
       'opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), background 1200ms cubic-bezier(0.22, 1, 0.36, 1)';
-
     backdrop.style.background = buildChroma(step, intensity);
     backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
   };
@@ -136,12 +175,10 @@
   };
 
   const setRunwayHeight = () => {
-    // Slow, readable pace: ~4.6 viewports of runway.
     const h = Math.round(window.innerHeight * 4.6);
     spacer.style.height = `${h}px`;
     spacer.style.width = '1px';
   };
-
 
   const setPinned = (on) => {
     if (on) {
@@ -153,7 +190,6 @@
       wrap.style.top = '50%';
       wrap.style.transform = 'translate(-50%, -50%)';
 
-      // Keep the stage centered and readable (no rail offsets)
       wrap.style.width = 'min(74ch, calc(100vw - (2 * var(--site-gutter))))';
       wrap.style.maxWidth = 'none';
       wrap.style.margin = '0';
@@ -173,6 +209,12 @@
       document.body.classList.remove('essence-pinned');
       active = false;
       hideEssenceBackdrop();
+
+      // Leaving pinned state: restore logo unless we already completed (completion keeps it hidden).
+      // If you want completion to always win, it will be enforced in `update()` when y>=end.
+      const y = window.scrollY || window.pageYOffset || 0;
+      const { start } = getRanges();
+      if (y < start) logoShow();
     }
   };
 
@@ -199,6 +241,7 @@
       }
       hideEssenceBackdrop();
       snapped = false;
+      logoShow();
       return true;
     }
     return false;
@@ -220,13 +263,13 @@
 
   const setSheen = (el, t) => {
     const tt = clamp(t, 0, 1);
-
-    // NOTE: CSS sheen sweep moves right→left when --sheen increases.
-    // Flip for LTR so it reads left→right; keep RTL mirrored.
     const dirT = isRTL() ? tt : (1 - tt);
-
     el.style.setProperty('--sheen', dirT);
   };
+
+  // Tracking for step changes
+  let lastStep = 0;
+  let lastStepSetAt = 0;
 
   const update = () => {
     const y = window.scrollY || window.pageYOffset || 0;
@@ -234,14 +277,13 @@
 
     if (resetIfAbove(y, top)) return;
 
-    // After completion: release and REMOVE the highlight (do not “stay”).
+    // After completion: release and remove highlight (and keep logo hidden).
     if (y >= end) {
       lastStep = 0;
       if (active) setPinned(false);
       hideEssenceBackdrop();
       document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
 
-      // Magnetic snap: after Essence completes, align Home — Music (the image owner) to the top edge.
       if (!snapped) {
         const target = document.querySelector('#home-sound-figure')
           || document.querySelector('#essence-scroll-spacer + section + section');
@@ -266,10 +308,12 @@
       lines[0].style.transform = 'scale(1)';
       lines[1].style.transform = 'scale(1)';
       lines[2].style.transform = 'scale(1)';
+
+      logoHide();
       return;
     }
 
-    // Before start: unpinned, no highlight.
+    // Before start: unpinned, show logo.
     if (y < start) {
       lastStep = 0;
       if (active) setPinned(false);
@@ -288,6 +332,8 @@
       snapped = false;
       document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
       hideEssenceBackdrop();
+
+      logoShow();
       return;
     }
 
@@ -296,40 +342,30 @@
 
     const progress = clamp((y - start) / length, 0, 1);
 
-    // Chroma progression across the 3 Essence lines (behind the text)
-    // Visible step switches (1→2→3), still smooth.
+    // Sync header logo fade with Essence progression.
+    logoAuto(progress);
+
     let step = 1;
     if (progress >= 0.55 && progress < 0.90) step = 2;
     if (progress >= 0.90) step = 3;
 
-    // Keep it present (no blank page), and let it grow slightly with progress.
     const intensity = Math.min(0.96, 0.70 + (progress * 0.22));
 
-    // Only re-set the background when the step changes (prevents it feeling "stuck").
     if (step !== lastStep) {
       lastStep = step;
       lastStepSetAt = performance.now();
       setEssenceBackdrop(step, intensity);
 
-      // Micro "lift" on switch to make the change perceptible without harshness.
       backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity * 0.85)));
       requestAnimationFrame(() => {
         backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
       });
     } else {
-      // Still update opacity gently as the user scrolls.
       backdrop.style.opacity = String(Math.max(0, Math.min(1, intensity)));
     }
 
     document.body.classList.remove('essence-step-1', 'essence-step-2', 'essence-step-3');
     document.body.classList.add(`essence-step-${step}`);
-
-    // Timeline
-    // 0.00 → 0.40 : line 1 light pass
-    // 0.40 → 0.55 : line 1 bump
-    // 0.55 → 0.80 : line 2 light pass
-    // 0.80 → 0.90 : line 2 bump
-    // 0.90 → 1.00 : line 3 light pass + bump
 
     const l1 = clamp(progress / 0.40, 0, 1);
     const l2 = clamp((progress - 0.55) / 0.25, 0, 1);
@@ -419,5 +455,35 @@
   } else {
     boot();
   }
+  });
+})();
+
+/* =============================================================================
+   03) COLLECTIONS MODULE — HOME LOADER (SOVEREIGN)
+   - Loads collections.js only on homepage (CSS is linked statically)
+   - Keeps home.js focused on hero/essence
+============================================================================= */
+
+(() => {
+  window.__artanRunAfterEnter(() => {
+
+    const loadJS = (src, id) => {
+      if (id && document.getElementById(id)) return;
+      if ([...document.scripts].some((s) => (s.src || '').includes(src))) return;
+      const script = document.createElement('script');
+      script.src = src;
+      script.defer = true;
+      if (id) script.id = id;
+      document.body.appendChild(script);
+    };
+
+    const hasCollections =
+      document.querySelector('.featured-grid') ||
+      document.querySelector('.featured-card') ||
+      document.querySelector('[data-collections]');
+
+    if (!hasCollections) return;
+
+    loadJS('assets/js/collections.js', 'collections-js');
   });
 })();

@@ -337,8 +337,8 @@ body.menu-open #header-controls .theme-toggle{display:inline-flex;}
 .site-footer{
   width:100%;
   font-size:0.9rem;
-  margin:0;
-  padding:0;
+  margin:2.4rem 0 0 0; /* balanced top breathing */
+  padding:1.8rem 0 1.6rem 0; /* refined vertical rhythm */
   background-color:transparent;
   color:var(--text-secondary-color);
   text-align:center;
