@@ -9,7 +9,7 @@ document_id: "COM-PUB-ESS-2026-0003-ACT"
 classification: Public
 authority_level: Executive
 department: "06 - Communication"
-office: "04 - Publications / 01 - Publications / Essays"
+office: "04 - Publications / 01 - Essays"
 owner: "Founder / CEO (Public: ARTAN)"
 
 stakeholders:
@@ -35,11 +35,11 @@ system: "GSA-Governed"
 
 spine_version: "1.4"
 template_lock: "Global-Metadata-Standard-v1.6"
-version: "1.6"
+version: "1.7"
 
 created_date: "2026-02-23"
-last_updated: "2026-03-08"
-last_reviewed: "2026-03-08"
+last_updated: "2026-03-10"
+last_reviewed: "2026-03-10"
 review_cycle: "Annual"
 
 effective_date: "2026-03-08"
@@ -78,7 +78,7 @@ index_targets:
   - "Communication Master Index"
   - "Publications Index"
 
-vault_path: "06 - Communication/04 - Publications/01 - Publications/Essays/STUDY.md"
+vault_path: "06 - Communication/04 - Publications/01 - Essays/01 - Records/03 - STUDY.md"
 
 related_documents:
   - "06 - Communication/02 - Corporate Communications/01 - Corporate/Registers/Public Release Register.md"
@@ -100,6 +100,8 @@ This document presents a non-metaphysical structural model in which awareness is
 
 ## Change Log
 
+- 2026-03-10 — v1.7 Publication metadata continuity synchronized to the current Communication publication hierarchy. Office and vault path references were updated from the obsolete pre-restructure publication path to the current Essays records path; publication body and release status preserved unchanged. Operator: Artan · Personnel ID: CEO-001-01-01. Agent: Public Content & Publishing Agent (PCPA) · Agent ID: A-2026-0023. Execution Context: Source-level metadata continuity correction after publication hierarchy restructuring.
+
 - 2026-03-08 — v1.6 STUDY normalized to the current institutional metadata authority; legacy publication metadata replaced with canonical field order; abstract preserved; publication governance, draft-state visibility, and institutional traceability aligned to the active communication publication system. Operator: Artan · Personnel ID: CEO-001-01-01. Agent: Vault Governance Agent (A-2026-0001). Execution Context: Immediate normalization of publication files into the canonical communication publication architecture.
 
 ---
@@ -112,6 +114,7 @@ DOCUMENT STATUS: Draft — Canonical Essay Publication
 VISIBILITY: Internal  
 PUBLISH TO WEBSITE: No  
 VERSION: 1.6
+VERSION: 1.7
 
 ---
 END OF DOCUMENT
