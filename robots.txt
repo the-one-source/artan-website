@@ -1,4 +1,8 @@
 User-agent: *
-Disallow:
+Disallow: /pages/legacy/
+Disallow: /pages/transitional/
+Disallow: /pages/architecture/
+Disallow: /pages/books/
+Disallow: /profile.html
 
-Sitemap: https://artan.live/sitemap.xml
+Sitemap: https://neuroartan.com/sitemap.xml

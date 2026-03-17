@@ -4,38 +4,40 @@
     <!-- =================== Basic Meta =================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neuroartan</title>
+    <title>Neuroartan — Cognitive Systems, Research Infrastructure & Software</title>
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/hero.css">
-    <link rel="stylesheet" href="assets/css/home.css">
-    <link rel="stylesheet" href="assets/css/collections.css">
-    <link rel="stylesheet" href="assets/css/system-node.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-    <link rel="stylesheet" href="assets/css/menu.css">
-    <link rel="stylesheet" href="assets/css/country-overlay.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
-    <meta name="description" content="Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, and software development.">
+    <link rel="stylesheet" href="assets/css/core/style.css">
+    <link rel="stylesheet" href="assets/css/layout/hero.css">
+    <link rel="stylesheet" href="assets/css/layout/home.css">
+    <link rel="stylesheet" href="assets/css/layout/collections.css">
+    <link rel="stylesheet" href="assets/css/system/system-node.css">
+    <link rel="stylesheet" href="assets/css/components/components.css">
+    <link rel="stylesheet" href="assets/css/navigation/menu.css">
+    <link rel="stylesheet" href="assets/css/overlays/country-overlay.css">
+    <link rel="stylesheet" href="assets/css/navigation/footer.css">
+    <link rel="stylesheet" href="assets/css/navigation/institutional-links.css">
+    <meta name="description" content="Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, software development, and structured communication.">
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="keywords" content="Neuroartan, cognitive systems, research infrastructure, artificial intelligence, neuroscience, publications, software platform, cognitive architecture, institutional systems, essays, research, updates, careers">
     <link rel="canonical" href="https://neuroartan.com/">
 
     <!-- =================== Open Graph =================== -->
-    <meta property="og:title" content="Neuroartan">
+    <meta property="og:title" content="Neuroartan — Cognitive Systems, Research Infrastructure & Software">
     <meta property="og:description" content="Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, and software development.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Neuroartan">
     <meta property="og:url" content="https://neuroartan.com/">
-    <meta property="og:image" content="https://neuroartan.com/assets/images/logo.svg">
+    <meta property="og:image" content="https://neuroartan.com/assets/images/brand/logo.svg">
 
     <!-- =================== Twitter Card =================== -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Neuroartan">
+    <meta name="twitter:title" content="Neuroartan — Cognitive Systems, Research Infrastructure & Software">
     <meta name="twitter:description" content="Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, and software development.">
-    <meta name="twitter:image" content="https://neuroartan.com/assets/images/logo.svg">
+    <meta name="twitter:image" content="https://neuroartan.com/assets/images/brand/logo.svg">
     <meta name="twitter:site" content="@artandavoodi">
 
     <!-- =================== Structured Data =================== -->
@@ -45,8 +47,8 @@
       "@type": "Organization",
       "name": "Neuroartan",
       "url": "https://neuroartan.com/",
-      "logo": "https://neuroartan.com/assets/images/logo.svg",
-      "description": "Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, and software development.",
+      "logo": "https://neuroartan.com/assets/images/brand/logo.svg",
+      "description": "Neuroartan is an institutional platform for cognitive systems, research infrastructure, publications, software development, and structured communication.",
       "sameAs": [
         "https://x.com/artandavoodi"
       ]
@@ -65,17 +67,6 @@
 <!-- =================== Custom Cursor =================== -->
 <div class="custom-cursor"></div>
 
-<!-- =================== Header Controls =================== -->
-<header id="header-controls" class="site-header">
-    <button id="menu-button" aria-label="Open secondary navigation">
-        <span class="line line-top"></span>
-        <span class="line line-bottom"></span>
-    </button>
-</header>
-<!-- =================== Institutional Menu Mount =================== -->
-<div id="institutional-menu-mount" data-include="institutional-menu"></div>
-<!-- =================== Menu Mount =================== -->
-<div id="menu-mount"></div>
 
 <!-- =================== Hidden Site Name =================== -->
 <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Neuroartan</h1>
@@ -87,14 +78,14 @@
     <div class="stage-video-overlay" aria-hidden="true"></div>
 
     <video class="stage-video-media" autoplay muted playsinline preload="metadata" loop>
-      <source src="assets/video/video-1.webm" type="video/webm">
+      <source src="assets/video/core/video-1.webm" type="video/webm">
     </video>
   </div>
     <div class="stage-container" id="stage">
         <div class="stage-stack">
             <div class="stage-intro" id="stage-intro">
                 <div class="logo-container stage-fade-on-enter" id="stage-logo">
-                    <img src="assets/images/logo.svg" alt="Neuroartan Logo" class="site-logo">
+                    <img src="assets/images/brand/logo.svg" alt="Neuroartan Logo" class="site-logo">
                 </div>
 
                 <div class="stage-container stage-fade-on-enter" id="stage-announcement">
@@ -107,7 +98,7 @@
                     </button>
                 </div>
 
-                <p class="site-essence stage-fade-on-enter" id="stage-essence" data-i18n-key="site.essence">ARCHITECTURE • INTELLIGENCE • SYSTEMS</p>
+                <p class="site-essence stage-fade-on-enter" id="stage-essence" data-i18n-key="site.essence">INTELLIGENCE COGNITIVE • OPERATING SYSTEM • RESEARCH INFRASTRUCTURE</p>
             </div>
         </div>
     </div>
@@ -117,12 +108,23 @@
 
 <!-- =================== Main Content (Post-Enter) =================== -->
 <main id="site-main">
+<!-- =================== Header Controls =================== -->
+<header id="header-controls" class="site-header">
+    <button id="menu-button" aria-label="Open secondary navigation">
+        <span class="line line-top"></span>
+        <span class="line line-bottom"></span>
+    </button>
+</header>
+<!-- =================== Institutional Menu Mount =================== -->
+<div id="institutional-menu-mount" data-include="institutional-menu"></div>
+<!-- =================== Menu Mount =================== -->
+<div id="menu-mount"></div>
 
 <!-- =================== Home Hero (Post-Enter) =================== -->
 <section id="home-hero" class="home-hero" aria-hidden="true" data-motion="fade">
   <div class="home-hero-video" aria-hidden="true">
     <video class="home-hero-video-media" autoplay muted playsinline loop preload="metadata">
-      <source src="assets/video/video-4.webm" type="video/webm" />
+      <source src="assets/video/core/video-4.webm" type="video/webm" />
     </video>
   </div>
 
@@ -131,14 +133,14 @@
 
   <div class="home-hero-logo-layer" aria-hidden="false">
     <a class="home-hero-logo-link" href="index.html" aria-label="ARTAN">
-      <img class="home-hero-logo" src="assets/icons/artan-logos/logo-typo.svg" alt="ARTAN" />
+      <img class="home-hero-logo" src="assets/icons/brand/logos/neuroartan/logo-typo.svg" alt="ARTAN" />
     </a>
   </div>
 
   <div class="home-hero-headlines" aria-hidden="false">
-    <p class="home-hero-headline" data-headline="architecture" data-i18n-key="home.hero.headline.architecture">ARCHITECTURE</p>
-    <p class="home-hero-headline" data-headline="intelligence" data-i18n-key="home.hero.headline.intelligence">INTELLIGENCE</p>
-    <p class="home-hero-headline" data-headline="systems" data-i18n-key="home.hero.headline.systems">SYSTEMS</p>
+    <p class="home-hero-headline" data-headline="intelligence-cognitive" data-i18n-key="home.hero.headline.intelligenceCognitive">INTELLIGENCE COGNITIVE</p>
+    <p class="home-hero-headline" data-headline="operating-system" data-i18n-key="home.hero.headline.operatingSystem">OPERATING SYSTEM</p>
+    <p class="home-hero-headline" data-headline="research-infrastructure" data-i18n-key="home.hero.headline.researchInfrastructure">RESEARCH INFRASTRUCTURE</p>
   </div>
 </section>
 
@@ -151,16 +153,16 @@
            aria-hidden="false"
            data-ink-layer="1"
            data-i18n-key="home.essence.line1"
-           data-essence-text="Architecture as the spine of the ecosystem">
-          Architecture as the spine of the ecosystem
+           data-essence-text="Intelligence cognitive as the core operating layer">
+          Intelligence cognitive as the core operating layer
         </p>
 
         <p class="home-text ink-line ink-line--sub home-ink-layer"
            aria-hidden="false"
            data-ink-layer="2"
            data-i18n-key="home.essence.line2"
-           data-essence-text="Intelligence as research and method">
-          Intelligence as research and method
+           data-essence-text="Software as execution, interface, and scale">
+          Software as execution, interface, and scale
         </p>
 
         <p class="home-text ink-line ink-line--sub home-ink-layer"
@@ -168,49 +170,38 @@
            data-ink-layer="3"
            data-ink-last="true"
            data-i18n-key="home.essence.line3"
-           data-essence-text="Systems as publishing and signal">
-          Systems as publishing and signal
+           data-essence-text="Research infrastructure as method and continuity">
+          Research infrastructure as method and continuity
         </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- =================== Home — Neuroartan =================== -->
+<!-- =================== Home — Cognitive Architecture =================== -->
 <section class="home-section home-awareness" data-motion="lift">
   <figure class="home-figure home-rail">
     <div id="system-node-mount"></div>
   </figure>
   <div class="home-inner home-rail">
-    <h2 class="home-title">Neuroartan</h2>
+    <h2 class="home-title">Cognitive Architecture</h2>
     <p class="home-text">
-      Cognitive systems and product architecture<br>
-      Research infrastructure and applied intelligence<br>
-      Software development before narrative
+      ICOS — Intelligence Cognitive Operating System — is the primary product layer of Neuroartan<br>
+      It structures intelligence, software execution, and research continuity into one operational model grounded in real system behavior
     </p>
   </div>
 </section>
+
 
 <!-- =================== Home — Updates =================== -->
 <section class="home-section home-books" data-motion="lift">
   <div class="home-inner home-rail">
     <h2 class="home-title">Updates</h2>
     <p class="home-text">
-      Institutional updates and company signals<br>
-      Publications, announcements, and strategic releases<br>
+      Institutional updates, releases, and public signals<br>
+      Publications, research, and software progression<br>
       Structured communication from the canonical system
     </p>
-  </div>
-</section>
-
-<!-- =================== Home — Featured Items =================== -->
-<section class="home-section home-featured home-featured-products" data-motion="lift">
-  <div class="home-inner home-rail">
-    <div class="featured-header">
-      <h2 class="home-title" data-i18n-key="home.featuredProducts.title">Featured Systems</h2>
-      <p class="home-text" data-i18n-key="home.featuredProducts.text">Selected systems, publications, and strategic outputs.</p>
-    </div>
-    <div id="featured-products" class="featured-grid" role="list" aria-label="Featured products" data-collection="featuredProducts"></div>
   </div>
 </section>
 
@@ -218,8 +209,8 @@
 <section class="home-section home-notes" data-motion="lift">
   <div class="home-inner home-rail">
     <div class="featured-header">
-      <h2 class="home-title" data-i18n-key="home.notes.title">Notes</h2>
-      <p class="home-text" data-i18n-key="home.notes.text">Updates, announcements, and operational signals.</p>
+      <h2 class="home-title" data-i18n-key="home.notes.title">Notes &amp; Research Signals</h2>
+      <p class="home-text" data-i18n-key="home.notes.text">Notes, research signals, and institutional observations from the active system.</p>
     </div>
     <div id="featured-notes" class="notes-list" role="list" aria-label="Notes" data-collection="featuredNotes"></div>
   </div>
@@ -228,12 +219,14 @@
 <!-- =================== Home — Closing =================== -->
 <div class="home-closing" id="home-closing" aria-label="ARTAN status" data-motion="fade">
   <p class="home-closing-line">
-    Neuroartan is an evolving institutional platform
+    Neuroartan is the institutional platform built around ICOS and research infrastructure
   </p>
   <p class="home-closing-line home-closing-line--sub">
-    Architecture, Intelligence, and Systems advance through publications, software, research, and structured communication
+    It integrates product logic, research continuity, and software execution into one coherent system while advancing cognitive systems, research infrastructure, and software through publications, implementation, and structured communication
   </p>
 </div>
+<!-- =================== Institutional Links Mount =================== -->
+<div id="institutional-links-mount" data-include="institutional-links"></div>
 
 </main>
 
@@ -244,20 +237,20 @@
 <div id="country-overlay-mount"></div>
 
 <!-- =================== Scripts =================== -->
-<script src="assets/js/ia.js" defer></script>
-<script src="assets/js/darkmode.js" defer></script>
-<script src="assets/js/countries.js" defer></script>
-<script src="assets/js/translation.js" defer></script>
-<script src="assets/js/country-language.js" defer></script>
-<script src="assets/js/logo-animation.js" defer></script>
-<script src="collections/collections.js" defer></script>
-<script src="assets/js/institutional-menu.js" defer></script>
-<script src="assets/js/menu.js" defer></script>
-<script src="assets/js/hero.js" defer></script>
-<script src="assets/js/home.js" defer></script>
-<script src="assets/js/system-node.js" defer></script>
-<script src="assets/js/footer.js" defer></script>
-<script src="assets/js/main.js" defer></script>
+<script src="assets/js/system/ia.js" defer></script>
+<script src="assets/js/ui/darkmode.js" defer></script>
+<script src="assets/js/i18n/countries.js" defer></script>
+<script src="assets/js/i18n/translation.js" defer></script>
+<script src="assets/js/i18n/country-language.js" defer></script>
+<script src="assets/js/motion/logo-animation.js" defer></script>
+<script src="collections/config/core/collections.js" defer></script>
+<script src="assets/js/navigation/institutional-menu.js" defer></script>
+<script src="assets/js/navigation/menu.js" defer></script>
+<script src="assets/js/ui/hero.js" defer></script>
+<script src="assets/js/ui/home.js" defer></script>
+<script src="assets/js/renderers/system-node.js" defer></script>
+<script src="assets/js/navigation/footer.js" defer></script>
+<script src="assets/js/core/main.js" defer></script>
 
 </body>
 </html>

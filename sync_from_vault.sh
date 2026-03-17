@@ -5,7 +5,7 @@ set -euo pipefail
 # Canonical public website source is pulled from the private Obsidian vault.
 # Current synced branch: Publications only.
 # Source vault branch: 06 - Communication/04 - Publications
-# Website outputs: content_sync/, pages/publications/, publications/, sitemap.xml block
+# Website outputs: content_sync/publications/, pages/publications/, publications/, sitemap.xml block
 
 VAULT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/I/06 - Communication/04 - Publications"
 SITE_ROOT="$HOME/Documents/Site/artan-website"
@@ -18,10 +18,10 @@ NOTES_SRC="$VAULT/02 - Notes/01 - Records"
 RESEARCH_SRC="$VAULT/03 - Research/01 - Records"
 VISUAL_SRC="$VAULT/04 - Visual/01 - Records"
 
-DEST_ESSAYS="$CONTENT_SYNC_ROOT/Essays"
-DEST_NOTES="$CONTENT_SYNC_ROOT/Notes"
-DEST_RESEARCH="$CONTENT_SYNC_ROOT/Research"
-DEST_VISUAL="$CONTENT_SYNC_ROOT/Visual"
+DEST_ESSAYS="$CONTENT_SYNC_ROOT/publications/essays"
+DEST_NOTES="$CONTENT_SYNC_ROOT/publications/notes"
+DEST_RESEARCH="$CONTENT_SYNC_ROOT/publications/research"
+DEST_VISUAL="$CONTENT_SYNC_ROOT/publications/visual"
 
 if [[ ! -d "$VAULT" ]]; then
   echo "[ERROR] Vault source path not found: $VAULT" >&2
@@ -72,7 +72,7 @@ while IFS= read -r f; do
   MD_FILES+=("$f")
 done < <(
   cd "$DEST_CANON" 2>/dev/null || exit 0
-  find Essays Notes Research Visual -type f -name "*.md" 2>/dev/null | LC_ALL=C sort
+  find publications/essays publications/notes publications/research publications/visual -type f -name "*.md" 2>/dev/null | LC_ALL=C sort
 )
 
 extract_yaml_field() {
@@ -198,7 +198,6 @@ if [[ -f "$PUB_INDEX" ]]; then
   mv "$tmp_out" "$PUB_INDEX"
   rm -f "$tmp_list"
 fi
-
 
 # 2b) Build static publication pages + sitemap block (SEO-friendly)
 # Output: /publications/<slug>/index.html built from flattened content_sync publication buckets
@@ -406,11 +405,12 @@ for rel in "${MD_FILES[@]}"; do
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg">
 
-  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/style.css">
-  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/components.css">
-  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/menu.css">
-  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/country-overlay.css">
-  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/publication.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/core/style.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/components/components.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/navigation/menu.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/overlays/country-overlay.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/layout/publication.css">
+  <link rel="stylesheet" href="${ASSET_PREFIX}assets/css/navigation/institutional-menu.css">
 
   <link rel="canonical" href="${SITE_BASE}/publications/${slug_val}/">
 
@@ -482,13 +482,14 @@ EOF
   <!-- =================== Country Overlay Mount =================== -->
   <div id="country-overlay-mount"></div>
 
-  <script src="${ASSET_PREFIX}assets/js/ia.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/darkmode.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/countries.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/translation.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/country-language.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/menu.js" defer></script>
-  <script src="${ASSET_PREFIX}assets/js/main.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/system/ia.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/ui/darkmode.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/i18n/countries.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/i18n/translation.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/i18n/country-language.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/navigation/institutional-menu.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/navigation/menu.js" defer></script>
+  <script src="${ASSET_PREFIX}assets/js/core/main.js" defer></script>
 
 </body>
 </html>
