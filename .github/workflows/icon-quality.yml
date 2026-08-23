@@ -1,0 +1,26 @@
+name: Icon Quality
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  duplicate-icon-artifacts:
+    name: Block duplicate icon artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check duplicate icon artifacts
+        run: npm run check:duplicate-icons

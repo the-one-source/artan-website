@@ -1,4 +1,5 @@
-import { existsSync, unlinkSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import { relative, resolve, dirname, basename, join } from "node:path";
 import { readdirSync, statSync } from "node:fs";
 
@@ -21,6 +22,22 @@ const duplicatePatterns = [
 const ignored = new Set([".git", "node_modules", "dist", "build"]);
 const deleted = [];
 const blocked = [];
+
+function fileHash(path) {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+function findCanonicalOriginal(path, base, ext) {
+  const exactOriginal = resolve(dirname(path), `${base}${ext}`);
+  if (existsSync(exactOriginal)) return exactOriginal;
+
+  const lowerOriginal = resolve(dirname(path), `${base}${ext.toLowerCase()}`);
+  if (existsSync(lowerOriginal)) return lowerOriginal;
+
+  const target = `${base}${ext}`.toLowerCase();
+  const sibling = readdirSync(dirname(path)).find((entry) => entry.toLowerCase() === target);
+  return sibling ? resolve(dirname(path), sibling) : exactOriginal;
+}
 
 function walk(directory) {
   let entries = [];
@@ -50,12 +67,20 @@ function walk(directory) {
     const ext = match.groups.ext.toLowerCase();
     if (!IMAGE_EXTENSIONS.has(ext)) continue;
 
-    const original = resolve(dirname(path), `${match.groups.base}${ext}`);
+    const original = findCanonicalOriginal(path, match.groups.base, match.groups.ext);
 
     if (!existsSync(original)) {
       blocked.push({
         duplicate: relative(ROOT, path),
         missingOriginal: relative(ROOT, original),
+      });
+      continue;
+    }
+
+    if (fileHash(path) !== fileHash(original)) {
+      blocked.push({
+        duplicate: relative(ROOT, path),
+        conflictingOriginal: relative(ROOT, original),
       });
       continue;
     }
@@ -78,9 +103,13 @@ if (deleted.length) {
 }
 
 if (blocked.length) {
-  console.error("\nBlocked duplicate cleanup because canonical originals are missing:");
+  console.error("\nBlocked duplicate cleanup because canonical originals are missing or content differs:");
   for (const item of blocked) {
-    console.error(`- ${item.duplicate} -> missing ${item.missingOriginal}`);
+    if (item.missingOriginal) {
+      console.error(`- ${item.duplicate} -> missing ${item.missingOriginal}`);
+    } else {
+      console.error(`- ${item.duplicate} -> differs from ${item.conflictingOriginal}`);
+    }
   }
   process.exit(1);
 }

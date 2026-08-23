@@ -8,5 +8,57 @@ development/__pycache__/
 .DS_Store
 **/.DS_Store
 
+# Finder/export duplicate image artifacts are forbidden by the icon quality gate.
+**/* [0-9]*.svg
+**/* [0-9]*.SVG
+**/* [0-9]*.png
+**/* [0-9]*.PNG
+**/* [0-9]*.jpg
+**/* [0-9]*.JPG
+**/* [0-9]*.jpeg
+**/* [0-9]*.JPEG
+**/* [0-9]*.webp
+**/* [0-9]*.WEBP
+**/* copy*.svg
+**/* copy*.SVG
+**/* copy*.png
+**/* copy*.PNG
+**/* copy*.jpg
+**/* copy*.JPG
+**/* copy*.jpeg
+**/* copy*.JPEG
+**/* copy*.webp
+**/* copy*.WEBP
+**/*-copy*.svg
+**/*-copy*.SVG
+**/*-copy*.png
+**/*-copy*.PNG
+**/*-copy*.jpg
+**/*-copy*.JPG
+**/*-copy*.jpeg
+**/*-copy*.JPEG
+**/*-copy*.webp
+**/*-copy*.WEBP
+**/*_copy*.svg
+**/*_copy*.SVG
+**/*_copy*.png
+**/*_copy*.PNG
+**/*_copy*.jpg
+**/*_copy*.JPG
+**/*_copy*.jpeg
+**/*_copy*.JPEG
+**/*_copy*.webp
+**/*_copy*.WEBP
+**/*([0-9]*).svg
+**/*([0-9]*).SVG
+**/*([0-9]*).png
+**/*([0-9]*).PNG
+**/*([0-9]*).jpg
+**/*([0-9]*).JPG
+**/*([0-9]*).jpeg
+**/*([0-9]*).JPEG
+**/*([0-9]*).webp
+**/*([0-9]*).WEBP
+
 # Supabase local temp state
 supabase/.temp/
